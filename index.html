@@ -1803,8 +1803,26 @@ body._ts-animations-paused *{animation-play-state:paused!important;transition-du
     slides[idx].classList.add('active');
     _tsCur=idx;
     updateUI(idx);
+    // Update URL hash for direct linking
+    history.replaceState(null,null,'#slide-'+(idx+1));
     document.dispatchEvent(new CustomEvent('ts:slidechange',{detail:{index:idx,total:slides.length}}));
   }
+
+  // Handle initial hash (e.g. #slide-5)
+  function handleHash(){
+    var h=location.hash.match(/^#slide-(\d+)$/);
+    if(h){
+      var idx=parseInt(h[1])-1;
+      if(idx>=0&&idx<slides.length&&idx!==_tsCur){
+        cleanAllSlides();
+        slides[idx].classList.add('active');
+        _tsCur=idx;
+        updateUI(idx);
+      }
+    }
+  }
+  handleHash();
+  window.addEventListener('hashchange',handleHash);
 
   // Keyboard
   document.addEventListener('keydown',function(e){
