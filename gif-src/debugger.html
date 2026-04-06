@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #1e1e1e; color: #d4d4d4; width: 800px; height: 500px; overflow: hidden; }
+
+.titlebar { background: #323233; height: 30px; display: flex; align-items: center; padding: 0 12px; font-size: 12px; color: #999; }
+
+/* Debug toolbar */
+.debug-toolbar {
+  display: none; height: 32px; background: #333; border-bottom: 1px solid #444;
+  align-items: center; justify-content: center; gap: 4px; padding: 0 12px;
+}
+.debug-toolbar.show { display: flex; }
+.debug-btn {
+  width: 28px; height: 28px; border-radius: 4px; border: none;
+  background: transparent; color: #ccc; font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.debug-btn:hover { background: #444; }
+.debug-btn.active { color: #75beff; }
+.debug-btn.continue { color: #89d185; }
+.debug-btn.stop { color: #f48771; }
+
+.editor-area { display: flex; height: calc(100% - 52px); }
+.editor-area.debugging { height: calc(100% - 84px); }
+
+/* Debug sidebar */
+.debug-sidebar {
+  width: 240px; background: #252526; border-right: 1px solid #1e1e1e;
+  font-size: 12px; display: none; overflow-y: auto;
+}
+.debug-sidebar.show { display: block; }
+.debug-section { border-bottom: 1px solid #333; }
+.debug-section-header {
+  padding: 6px 12px; font-size: 11px; color: #ccc; text-transform: uppercase;
+  letter-spacing: 0.5px; background: #2a2a2e; cursor: pointer; font-weight: 600;
+}
+.debug-var {
+  padding: 3px 12px 3px 24px; display: flex; gap: 8px; font-family: 'Fira Code', monospace; font-size: 12px;
+}
+.debug-var .name { color: #9cdcfe; }
+.debug-var .value { color: #ce9178; }
+.debug-var .value.num { color: #b5cea8; }
+.debug-var .value.bool { color: #569cd6; }
+.debug-var .value.changed { color: #f0c674; background: rgba(240,198,116,0.1); padding: 0 4px; border-radius: 2px; }
+
+/* Call stack */
+.callstack-item { padding: 3px 12px 3px 24px; font-size: 12px; color: #ccc; }
+.callstack-item.active { background: #094771; color: #fff; }
+.callstack-item .file { color: #888; margin-left: 4px; }
+
+.activity-bar { width: 48px; background: #333; display: flex; flex-direction: column; align-items: center; padding-top: 8px; gap: 16px; }
+.activity-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #888; }
+.activity-icon.active { color: #fff; }
+
+.main-editor { flex: 1; display: flex; flex-direction: column; }
+.tabs { display: flex; background: #252526; height: 35px; }
+.tab { padding: 0 16px; display: flex; align-items: center; font-size: 13px; color: #999; }
+.tab.active { background: #1e1e1e; color: #fff; border-top: 1px solid #007acc; }
+.code-area { flex: 1; padding: 8px 0; font-family: 'Fira Code', 'Cascadia Code', monospace; font-size: 14px; line-height: 22px; }
+
+.line { display: flex; padding: 0 16px 0 0; height: 22px; position: relative; }
+.line.current-line { background: rgba(255,255,0,0.07); }
+.line-gutter {
+  width: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer;
+}
+.breakpoint {
+  width: 10px; height: 10px; border-radius: 50%; background: #e51400;
+  display: none;
+}
+.breakpoint.show { display: block; }
+.line-num { width: 32px; text-align: right; padding-right: 12px; color: #555; flex-shrink: 0; }
+.line-code { white-space: pre; }
+.kw { color: #c586c0; }
+.fn { color: #dcdcaa; }
+.str { color: #ce9178; }
+.cm { color: #6a9955; }
+.num { color: #b5cea8; }
+.var { color: #9cdcfe; }
+
+/* Current execution arrow */
+.exec-arrow {
+  color: #ffcc00; font-size: 10px; display: none;
+  position: absolute; left: 0; top: 3px;
+}
+.exec-arrow.show { display: block; }
+
+/* Inline value display */
+.inline-value {
+  color: #888; font-size: 12px; margin-left: 24px; font-style: italic;
+  display: none;
+}
+.inline-value.show { display: inline; }
+
+/* Status bar */
+.statusbar { height: 22px; display: flex; align-items: center; padding: 0 12px; font-size: 11px; color: #fff; gap: 16px; position: fixed; bottom: 0; width: 100%; }
+.statusbar.normal { background: #007acc; }
+.statusbar.debugging { background: #cc6633; }
+
+/* Keystroke overlay */
+.keystroke {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.85); border: 1px solid #555; border-radius: 8px;
+  padding: 8px 20px; font-size: 16px; color: #fff; font-family: 'Fira Code', monospace;
+  display: none; z-index: 50; white-space: nowrap;
+}
+.keystroke.show { display: block; }
+.keystroke kbd {
+  background: #444; border: 1px solid #666; border-bottom: 2px solid #777;
+  border-radius: 4px; padding: 2px 8px; font-family: inherit; color: #fff;
+}
+</style>
+</head>
+<body>
+
+<div class="titlebar">calc.py — my-project — Visual Studio Code</div>
+
+<div class="debug-toolbar" id="debugToolbar">
+  <div class="debug-btn continue" title="Continue">&#x25B6;</div>
+  <div class="debug-btn" title="Step Over" id="stepOverBtn">&#x23ED;</div>
+  <div class="debug-btn" title="Step Into">&#x2935;</div>
+  <div class="debug-btn" title="Step Out">&#x2934;</div>
+  <div class="debug-btn" title="Restart">&#x1F504;</div>
+  <div class="debug-btn stop" title="Stop">&#x25A0;</div>
+</div>
+
+<div class="editor-area" id="editorArea">
+  <div class="activity-bar">
+    <div class="activity-icon">&#x1F4C1;</div>
+    <div class="activity-icon">&#x1F50D;</div>
+    <div class="activity-icon">&#x1F500;</div>
+    <div class="activity-icon active" id="debugIcon">&#x1F41E;</div>
+    <div class="activity-icon">&#x1F9E9;</div>
+  </div>
+
+  <div class="debug-sidebar" id="debugSidebar">
+    <div class="debug-section">
+      <div class="debug-section-header">Variables</div>
+      <div id="localVars">
+        <!-- filled by JS -->
+      </div>
+    </div>
+    <div class="debug-section">
+      <div class="debug-section-header">Watch</div>
+      <div id="watchVars"></div>
+    </div>
+    <div class="debug-section">
+      <div class="debug-section-header">Call Stack</div>
+      <div id="callStack"></div>
+    </div>
+  </div>
+
+  <div class="main-editor">
+    <div class="tabs">
+      <div class="tab active">calc.py</div>
+    </div>
+    <div class="code-area" id="codeArea"></div>
+  </div>
+</div>
+
+<div class="statusbar normal" id="statusbar">
+  <span>main</span>
+  <span>Python 3.12.0</span>
+  <span id="statusMode">Ready</span>
+</div>
+
+<div class="keystroke" id="keystroke"></div>
+
+<script>
+const codeLines = [
+  { num: 1,  code: '<span class="kw">def</span> <span class="fn">calculate_average</span>(numbers):', bp: false },
+  { num: 2,  code: '    <span class="var">total</span> = <span class="num">0</span>', bp: false },
+  { num: 3,  code: '    <span class="var">count</span> = <span class="fn">len</span>(numbers)', bp: true },
+  { num: 4,  code: '    <span class="kw">for</span> <span class="var">num</span> <span class="kw">in</span> numbers:', bp: false },
+  { num: 5,  code: '        <span class="var">total</span> += <span class="var">num</span>', bp: false },
+  { num: 6,  code: '    <span class="var">average</span> = <span class="var">total</span> / <span class="var">count</span>', bp: true },
+  { num: 7,  code: '    <span class="kw">return</span> <span class="var">average</span>', bp: false },
+  { num: 8,  code: '', bp: false },
+  { num: 9,  code: '<span class="var">data</span> = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>]', bp: false },
+  { num: 10, code: '<span class="var">result</span> = <span class="fn">calculate_average</span>(<span class="var">data</span>)', bp: false },
+  { num: 11, code: '<span class="fn">print</span>(<span class="str">f"Average: </span>{<span class="var">result</span>}<span class="str">"</span>)', bp: false },
+];
+
+const codeArea = document.getElementById('codeArea');
+const debugToolbar = document.getElementById('debugToolbar');
+const debugSidebar = document.getElementById('debugSidebar');
+const editorArea = document.getElementById('editorArea');
+const statusbar = document.getElementById('statusbar');
+const statusMode = document.getElementById('statusMode');
+const keystroke = document.getElementById('keystroke');
+const localVars = document.getElementById('localVars');
+const watchVars = document.getElementById('watchVars');
+const callStack = document.getElementById('callStack');
+
+function renderCode(breakpoints, execLine, inlineValues) {
+  let html = '';
+  codeLines.forEach((l, idx) => {
+    const isCurrent = execLine === idx;
+    const hasBP = breakpoints.includes(idx);
+    const iv = inlineValues ? inlineValues[idx] : null;
+    html += `<div class="line${isCurrent ? ' current-line' : ''}">`;
+    html += `<div class="line-gutter"><span class="breakpoint${hasBP ? ' show' : ''}"></span><span class="exec-arrow${isCurrent ? ' show' : ''}">&#x25B6;</span></div>`;
+    html += `<span class="line-num">${l.num}</span>`;
+    html += `<span class="line-code">${l.code}`;
+    if (iv) html += `<span class="inline-value show">${iv}</span>`;
+    html += `</span></div>`;
+  });
+  codeArea.innerHTML = html;
+}
+
+function setVars(vars) {
+  localVars.innerHTML = vars.map(v =>
+    `<div class="debug-var"><span class="name">${v.name}</span><span class="value ${v.cls || ''}">${v.val}</span></div>`
+  ).join('');
+}
+
+function setWatch(vars) {
+  watchVars.innerHTML = vars.map(v =>
+    `<div class="debug-var"><span class="name">${v.name}</span><span class="value ${v.cls || ''}">${v.val}</span></div>`
+  ).join('');
+}
+
+function setCallStack(items) {
+  callStack.innerHTML = items.map(i =>
+    `<div class="callstack-item${i.active ? ' active' : ''}">${i.fn}<span class="file">${i.file}</span></div>`
+  ).join('');
+}
+
+function showKeystroke(text) {
+  keystroke.innerHTML = text;
+  keystroke.classList.add('show');
+}
+function hideKeystroke() { keystroke.classList.remove('show'); }
+
+function setDebugging(on) {
+  if (on) {
+    debugToolbar.classList.add('show');
+    debugSidebar.classList.add('show');
+    editorArea.classList.add('debugging');
+    statusbar.className = 'statusbar debugging';
+    statusMode.textContent = 'Debugging';
+  } else {
+    debugToolbar.classList.remove('show');
+    debugSidebar.classList.remove('show');
+    editorArea.classList.remove('debugging');
+    statusbar.className = 'statusbar normal';
+    statusMode.textContent = 'Ready';
+  }
+}
+
+window.runStep = function(step) {
+  switch(step) {
+    case 0: // Initial - no breakpoints
+      setDebugging(false);
+      renderCode([], -1, null);
+      hideKeystroke();
+      break;
+
+    case 1: // Click to add breakpoint on line 3
+      setDebugging(false);
+      renderCode([2], -1, null);
+      showKeystroke('Click gutter to set breakpoint');
+      break;
+
+    case 2: // Add breakpoint on line 6
+      setDebugging(false);
+      renderCode([2, 5], -1, null);
+      showKeystroke('Add another breakpoint');
+      break;
+
+    case 3: // Press F5 - start debugging, pause at line 3
+      setDebugging(true);
+      renderCode([2, 5], 2, { 2: '  count = 5' });
+      showKeystroke('<kbd>F5</kbd> Start Debugging');
+      setVars([
+        { name: 'numbers', val: '[10, 20, 30, 40, 50]' },
+        { name: 'total', val: '0', cls: 'num' },
+        { name: 'count', val: '5', cls: 'num changed' },
+      ]);
+      setWatch([{ name: 'len(numbers)', val: '5', cls: 'num' }]);
+      setCallStack([
+        { fn: 'calculate_average', file: ' calc.py:3', active: true },
+        { fn: '<module>', file: ' calc.py:10', active: false },
+      ]);
+      break;
+
+    case 4: // F10 Step Over -> line 4 (for loop)
+      setDebugging(true);
+      renderCode([2, 5], 3, null);
+      showKeystroke('<kbd>F10</kbd> Step Over');
+      setVars([
+        { name: 'numbers', val: '[10, 20, 30, 40, 50]' },
+        { name: 'total', val: '0', cls: 'num' },
+        { name: 'count', val: '5', cls: 'num' },
+      ]);
+      setCallStack([
+        { fn: 'calculate_average', file: ' calc.py:4', active: true },
+        { fn: '<module>', file: ' calc.py:10', active: false },
+      ]);
+      break;
+
+    case 5: // F10 Step Over -> line 5 (total += num), first iteration
+      setDebugging(true);
+      renderCode([2, 5], 4, { 4: '  num = 10' });
+      showKeystroke('<kbd>F10</kbd> Step Over');
+      setVars([
+        { name: 'numbers', val: '[10, 20, 30, 40, 50]' },
+        { name: 'total', val: '0', cls: 'num' },
+        { name: 'count', val: '5', cls: 'num' },
+        { name: 'num', val: '10', cls: 'num changed' },
+      ]);
+      setCallStack([
+        { fn: 'calculate_average', file: ' calc.py:5', active: true },
+        { fn: '<module>', file: ' calc.py:10', active: false },
+      ]);
+      break;
+
+    case 6: // Continue (F5) -> hits breakpoint at line 6
+      setDebugging(true);
+      renderCode([2, 5], 5, { 5: '  average = 30.0' });
+      showKeystroke('<kbd>F5</kbd> Continue → breakpoint hit!');
+      setVars([
+        { name: 'numbers', val: '[10, 20, 30, 40, 50]' },
+        { name: 'total', val: '150', cls: 'num changed' },
+        { name: 'count', val: '5', cls: 'num' },
+        { name: 'num', val: '50', cls: 'num' },
+        { name: 'average', val: '30.0', cls: 'num changed' },
+      ]);
+      setWatch([
+        { name: 'len(numbers)', val: '5', cls: 'num' },
+        { name: 'total/count', val: '30.0', cls: 'num' },
+      ]);
+      setCallStack([
+        { fn: 'calculate_average', file: ' calc.py:6', active: true },
+        { fn: '<module>', file: ' calc.py:10', active: false },
+      ]);
+      break;
+
+    case 7: // F10 -> line 7 return
+      setDebugging(true);
+      renderCode([2, 5], 6, { 6: '  average = 30.0' });
+      showKeystroke('<kbd>F10</kbd> Step Over');
+      setVars([
+        { name: 'numbers', val: '[10, 20, 30, 40, 50]' },
+        { name: 'total', val: '150', cls: 'num' },
+        { name: 'count', val: '5', cls: 'num' },
+        { name: 'average', val: '30.0', cls: 'num' },
+      ]);
+      setCallStack([
+        { fn: 'calculate_average', file: ' calc.py:7', active: true },
+        { fn: '<module>', file: ' calc.py:10', active: false },
+      ]);
+      break;
+
+    case 8: // F5 Continue -> program finishes
+      setDebugging(false);
+      renderCode([2, 5], -1, null);
+      showKeystroke('<kbd>F5</kbd> Continue → Program finished');
+      setVars([]);
+      setWatch([]);
+      setCallStack([]);
+      break;
+
+    case 9: // Final clean
+      setDebugging(false);
+      renderCode([2, 5], -1, null);
+      hideKeystroke();
+      break;
+  }
+};
+
+// Initialize
+renderCode([], -1, null);
+</script>
+</body>
+</html>

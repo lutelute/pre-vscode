@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #1e1e1e; color: #d4d4d4; width: 800px; height: 500px; overflow: hidden; }
+
+.titlebar { background: #323233; height: 30px; display: flex; align-items: center; padding: 0 12px; font-size: 12px; color: #999; }
+.editor-area { display: flex; height: 448px; }
+.activity-bar { width: 48px; background: #333; display: flex; flex-direction: column; align-items: center; padding-top: 8px; gap: 16px; }
+.activity-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #888; }
+.activity-icon.active { color: #fff; }
+.main-editor { flex: 1; display: flex; flex-direction: column; }
+.tabs { display: flex; background: #252526; height: 35px; }
+.tab { padding: 0 16px; display: flex; align-items: center; font-size: 13px; color: #999; border-right: 1px solid #1e1e1e; }
+.tab.active { background: #1e1e1e; color: #fff; border-top: 1px solid #007acc; }
+.code-area { flex: 1; padding: 8px 0; font-family: 'Fira Code', 'Cascadia Code', 'Menlo', monospace; font-size: 14px; line-height: 22px; }
+.line { display: flex; padding: 0 16px 0 0; height: 22px; }
+.line-num { width: 48px; text-align: right; padding-right: 16px; color: #555; flex-shrink: 0; }
+.line-code { white-space: pre; position: relative; }
+.kw { color: #c586c0; }
+.fn { color: #dcdcaa; }
+.str { color: #ce9178; }
+.cm { color: #6a9955; }
+.num { color: #b5cea8; }
+.var { color: #9cdcfe; }
+
+/* Selection highlight */
+.highlight {
+  background: #264f78; border-radius: 2px; padding: 0 1px;
+  transition: background 0.15s;
+}
+.highlight.active {
+  background: #007acc; outline: 1px solid #007acc;
+}
+/* Cursor */
+.mc-cursor {
+  display: none; width: 2px; height: 17px; background: #fff;
+  position: absolute; top: 2px;
+}
+.mc-cursor.show { display: inline-block; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.mc-cursor.blink { animation: blink 1s step-end infinite; }
+
+/* New text after rename */
+.new-text { color: #9cdcfe; }
+
+/* Status bar */
+.statusbar { height: 22px; background: #007acc; display: flex; align-items: center; padding: 0 12px; font-size: 11px; color: #fff; gap: 16px; position: fixed; bottom: 0; width: 100%; }
+.statusbar .cursors-indicator { margin-left: auto; }
+
+/* Keystroke overlay */
+.keystroke {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.85); border: 1px solid #555; border-radius: 8px;
+  padding: 8px 20px; font-size: 16px; color: #fff; font-family: 'Fira Code', monospace;
+  display: none; z-index: 50; white-space: nowrap;
+}
+.keystroke.show { display: block; }
+.keystroke kbd {
+  background: #444; border: 1px solid #666; border-bottom: 2px solid #777;
+  border-radius: 4px; padding: 2px 8px; font-family: inherit; color: #fff;
+}
+</style>
+</head>
+<body>
+
+<div class="titlebar">utils.py — my-project — Visual Studio Code</div>
+
+<div class="editor-area">
+  <div class="activity-bar">
+    <div class="activity-icon active">&#x1F4C1;</div>
+    <div class="activity-icon">&#x1F50D;</div>
+    <div class="activity-icon">&#x1F500;</div>
+    <div class="activity-icon">&#x1F41E;</div>
+    <div class="activity-icon">&#x1F9E9;</div>
+  </div>
+  <div class="main-editor">
+    <div class="tabs">
+      <div class="tab active">utils.py</div>
+    </div>
+    <div class="code-area" id="codeArea">
+      <!-- Lines will be set by JS based on step -->
+    </div>
+  </div>
+</div>
+
+<div class="statusbar">
+  <span>main</span>
+  <span>Python 3.12.0</span>
+  <span id="cursorInfo">Ln 3, Col 5</span>
+  <span class="cursors-indicator" id="cursorsCount"></span>
+</div>
+
+<div class="keystroke" id="keystroke"></div>
+
+<script>
+const codeArea = document.getElementById('codeArea');
+const keystroke = document.getElementById('keystroke');
+const cursorInfo = document.getElementById('cursorInfo');
+const cursorsCount = document.getElementById('cursorsCount');
+
+const originalCode = [
+  { num: 1, code: '<span class="kw">def</span> <span class="fn">process_data</span>(<span class="var">user_name</span>, data):' },
+  { num: 2, code: '    <span class="cm"># Validate user_name</span>' },
+  { num: 3, code: '    <span class="kw">if not</span> <span class="var">user_name</span>:' },
+  { num: 4, code: '        <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">"user_name is required"</span>)' },
+  { num: 5, code: '' },
+  { num: 6, code: '    result = <span class="fn">transform</span>(<span class="var">user_name</span>, data)' },
+  { num: 7, code: '    <span class="fn">log</span>(<span class="str">f"Processed: </span>{<span class="var">user_name</span>}<span class="str">"</span>)' },
+  { num: 8, code: '    <span class="kw">return</span> result' },
+  { num: 9, code: '' },
+  { num: 10, code: '<span class="kw">def</span> <span class="fn">get_user</span>(db, <span class="var">user_name</span>):' },
+  { num: 11, code: '    <span class="kw">return</span> db.<span class="fn">query</span>(<span class="var">user_name</span>)' },
+];
+
+// Renamed version
+const renamedCode = [
+  { num: 1, code: '<span class="kw">def</span> <span class="fn">process_data</span>(<span class="new-text">display_name</span>, data):' },
+  { num: 2, code: '    <span class="cm"># Validate display_name</span>' },
+  { num: 3, code: '    <span class="kw">if not</span> <span class="new-text">display_name</span>:' },
+  { num: 4, code: '        <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">"display_name is required"</span>)' },
+  { num: 5, code: '' },
+  { num: 6, code: '    result = <span class="fn">transform</span>(<span class="new-text">display_name</span>, data)' },
+  { num: 7, code: '    <span class="fn">log</span>(<span class="str">f"Processed: </span>{<span class="new-text">display_name</span>}<span class="str">"</span>)' },
+  { num: 8, code: '    <span class="kw">return</span> result' },
+  { num: 9, code: '' },
+  { num: 10, code: '<span class="kw">def</span> <span class="fn">get_user</span>(db, <span class="new-text">display_name</span>):' },
+  { num: 11, code: '    <span class="kw">return</span> db.<span class="fn">query</span>(<span class="new-text">display_name</span>)' },
+];
+
+// Which "user_name" occurrences to highlight (line index, approximate)
+const highlights = [
+  { line: 0, label: 'user_name' },  // def process_data(user_name
+  { line: 2, label: 'user_name' },  // if not user_name
+  { line: 3, label: 'user_name' },  // "user_name is required"
+  { line: 5, label: 'user_name' },  // transform(user_name
+  { line: 6, label: 'user_name' },  // {user_name}
+  { line: 9, label: 'user_name' },  // get_user(db, user_name
+  { line: 10, label: 'user_name' }, // db.query(user_name)
+];
+
+function renderCode(lines, highlightCount, showCursors, renamed) {
+  let html = '';
+  const src = renamed ? renamedCode : lines;
+  src.forEach((l, idx) => {
+    let code = l.code;
+    // Add highlights to user_name occurrences
+    if (!renamed && highlightCount > 0) {
+      let hlIdx = highlights.filter(h => h.line === idx);
+      if (hlIdx.length > 0) {
+        // Find position in highlights array
+        const globalIdx = highlights.indexOf(hlIdx[0]);
+        if (globalIdx < highlightCount) {
+          const isActive = globalIdx === highlightCount - 1;
+          code = code.replace(
+            /(<span class="var">)?user_name(<\/span>)?/,
+            `<span class="highlight${isActive ? ' active' : ''}">user_name</span>`
+          );
+          // Also handle user_name in strings/comments
+          if (code.includes('user_name') && !code.includes('highlight')) {
+            code = code.replace(
+              'user_name',
+              `<span class="highlight${isActive ? ' active' : ''}">user_name</span>`
+            );
+          }
+        }
+      }
+    }
+    html += `<div class="line"><span class="line-num">${l.num}</span><span class="line-code">${code}</span></div>`;
+  });
+  codeArea.innerHTML = html;
+}
+
+function showKeystroke(text) {
+  keystroke.innerHTML = text;
+  keystroke.classList.add('show');
+}
+
+function hideKeystroke() {
+  keystroke.classList.remove('show');
+}
+
+window.runStep = function(step) {
+  switch(step) {
+    case 0: // Initial state - cursor on user_name line 1
+      renderCode(originalCode, 0, false, false);
+      hideKeystroke();
+      cursorInfo.textContent = 'Ln 1, Col 20';
+      cursorsCount.textContent = '';
+      break;
+
+    case 1: // Double-click select user_name on line 1
+      renderCode(originalCode, 1, true, false);
+      showKeystroke('Double-click to select word');
+      cursorInfo.textContent = 'Ln 1, Col 20';
+      cursorsCount.textContent = '';
+      break;
+
+    case 2: // Cmd+D - select 2nd occurrence
+      renderCode(originalCode, 2, true, false);
+      showKeystroke('<kbd>Cmd</kbd> + <kbd>D</kbd>');
+      cursorsCount.textContent = '2 cursors';
+      break;
+
+    case 3: // Cmd+D - select 3rd
+      renderCode(originalCode, 3, true, false);
+      showKeystroke('<kbd>Cmd</kbd> + <kbd>D</kbd>');
+      cursorsCount.textContent = '3 cursors';
+      break;
+
+    case 4: // Cmd+D - select 4th
+      renderCode(originalCode, 4, true, false);
+      showKeystroke('<kbd>Cmd</kbd> + <kbd>D</kbd>');
+      cursorsCount.textContent = '4 cursors';
+      break;
+
+    case 5: // Cmd+D - select 5th
+      renderCode(originalCode, 5, true, false);
+      showKeystroke('<kbd>Cmd</kbd> + <kbd>D</kbd>');
+      cursorsCount.textContent = '5 cursors';
+      break;
+
+    case 6: // Cmd+D - select 6th
+      renderCode(originalCode, 6, true, false);
+      showKeystroke('<kbd>Cmd</kbd> + <kbd>D</kbd>');
+      cursorsCount.textContent = '6 cursors';
+      break;
+
+    case 7: // Cmd+D - select 7th (all)
+      renderCode(originalCode, 7, true, false);
+      showKeystroke('<kbd>Cmd</kbd> + <kbd>D</kbd> (all selected!)');
+      cursorsCount.textContent = '7 cursors';
+      break;
+
+    case 8: // Typing new name
+      showKeystroke('Type: <kbd>display_name</kbd>');
+      cursorsCount.textContent = '7 cursors';
+      // Show partially renamed
+      renderCode(originalCode, 0, false, false);
+      break;
+
+    case 9: // Final renamed state
+      renderCode(renamedCode, 0, false, true);
+      showKeystroke('All renamed simultaneously!');
+      cursorsCount.textContent = '';
+      cursorInfo.textContent = 'Ln 1, Col 24';
+      break;
+
+    case 10: // Clean final
+      renderCode(renamedCode, 0, false, true);
+      hideKeystroke();
+      cursorsCount.textContent = '';
+      break;
+  }
+};
+
+// Initialize
+renderCode(originalCode, 0, false, false);
+</script>
+</body>
+</html>

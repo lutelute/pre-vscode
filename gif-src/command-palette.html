@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #1e1e1e; color: #d4d4d4; width: 800px; height: 500px; overflow: hidden; }
+
+/* VS Code chrome */
+.titlebar { background: #323233; height: 30px; display: flex; align-items: center; padding: 0 12px; font-size: 12px; color: #999; }
+.editor-area { display: flex; height: 470px; }
+.activity-bar { width: 48px; background: #333; display: flex; flex-direction: column; align-items: center; padding-top: 8px; gap: 16px; }
+.activity-icon { width: 28px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #888; cursor: pointer; }
+.activity-icon.active { color: #fff; border-left: 2px solid #007acc; }
+.sidebar { width: 200px; background: #252526; border-right: 1px solid #1e1e1e; padding: 8px 0; font-size: 12px; }
+.sidebar-title { padding: 4px 16px; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+.file-item { padding: 4px 16px 4px 28px; color: #ccc; cursor: pointer; }
+.file-item:hover { background: #2a2d2e; }
+.file-item.active { background: #37373d; }
+.main-editor { flex: 1; display: flex; flex-direction: column; }
+.tabs { display: flex; background: #252526; height: 35px; }
+.tab { padding: 0 16px; display: flex; align-items: center; font-size: 13px; color: #999; border-right: 1px solid #1e1e1e; cursor: pointer; }
+.tab.active { background: #1e1e1e; color: #fff; border-top: 1px solid #007acc; }
+.code-area { flex: 1; padding: 8px 0; font-family: 'Fira Code', 'Cascadia Code', monospace; font-size: 14px; line-height: 22px; overflow: hidden; position: relative; }
+.line { display: flex; padding: 0 16px 0 0; }
+.line-num { width: 48px; text-align: right; padding-right: 16px; color: #555; user-select: none; flex-shrink: 0; }
+.line-code { white-space: pre; }
+.kw { color: #c586c0; }
+.fn { color: #dcdcaa; }
+.str { color: #ce9178; }
+.cm { color: #6a9955; }
+.num { color: #b5cea8; }
+.var { color: #9cdcfe; }
+.type { color: #4ec9b0; }
+
+/* Command palette overlay */
+.palette-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4); z-index: 100;
+  display: none; justify-content: center; padding-top: 60px;
+}
+.palette-overlay.show { display: flex; }
+.palette {
+  width: 520px; background: #252526; border: 1px solid #454545;
+  border-radius: 6px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  overflow: hidden; max-height: 340px;
+}
+.palette-input {
+  padding: 10px 14px; font-size: 14px; background: #3c3c3c;
+  border: none; border-bottom: 1px solid #454545; color: #fff;
+  width: 100%; outline: none; font-family: 'Segoe UI', sans-serif;
+}
+.palette-input::placeholder { color: #888; }
+.palette-list { max-height: 280px; overflow-y: auto; }
+.palette-item {
+  padding: 6px 14px; font-size: 13px; color: #ccc; cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+}
+.palette-item:hover, .palette-item.selected { background: #04395e; color: #fff; }
+.palette-item .shortcut { margin-left: auto; font-size: 11px; color: #888; font-family: monospace; }
+.palette-item.hidden { display: none; }
+.palette-item .match { color: #18a3ff; font-weight: 600; }
+
+/* Status bar */
+.statusbar { height: 22px; background: #007acc; display: flex; align-items: center; padding: 0 12px; font-size: 11px; color: #fff; gap: 16px; position: fixed; bottom: 0; width: 100%; }
+
+/* Cursor blink */
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.cursor { display: inline-block; width: 2px; height: 16px; background: #fff; animation: blink 1s step-end infinite; vertical-align: middle; }
+
+/* Typing indicator */
+.typing-text { display: inline; }
+</style>
+</head>
+<body>
+
+<div class="titlebar">app.py — my-project — Visual Studio Code</div>
+
+<div class="editor-area">
+  <div class="activity-bar">
+    <div class="activity-icon active">&#x1F4C1;</div>
+    <div class="activity-icon">&#x1F50D;</div>
+    <div class="activity-icon">&#x1F500;</div>
+    <div class="activity-icon">&#x1F41E;</div>
+    <div class="activity-icon">&#x1F9E9;</div>
+  </div>
+  <div class="sidebar">
+    <div class="sidebar-title">Explorer</div>
+    <div class="file-item active">app.py</div>
+    <div class="file-item">config.py</div>
+    <div class="file-item">utils.py</div>
+    <div class="file-item">requirements.txt</div>
+  </div>
+  <div class="main-editor">
+    <div class="tabs">
+      <div class="tab active">app.py</div>
+      <div class="tab">config.py</div>
+    </div>
+    <div class="code-area">
+      <div class="line"><span class="line-num">1</span><span class="line-code"><span class="kw">from</span> flask <span class="kw">import</span> Flask, jsonify</span></div>
+      <div class="line"><span class="line-num">2</span><span class="line-code"><span class="kw">from</span> config <span class="kw">import</span> Settings</span></div>
+      <div class="line"><span class="line-num">3</span><span class="line-code"></span></div>
+      <div class="line"><span class="line-num">4</span><span class="line-code"><span class="var">app</span> = <span class="fn">Flask</span>(<span class="var">__name__</span>)</span></div>
+      <div class="line"><span class="line-num">5</span><span class="line-code"><span class="var">settings</span> = <span class="fn">Settings</span>()</span></div>
+      <div class="line"><span class="line-num">6</span><span class="line-code"></span></div>
+      <div class="line"><span class="line-num">7</span><span class="line-code"><span class="kw">@</span><span class="var">app</span>.<span class="fn">route</span>(<span class="str">"/"</span>)</span></div>
+      <div class="line"><span class="line-num">8</span><span class="line-code"><span class="kw">def</span> <span class="fn">index</span>():</span></div>
+      <div class="line"><span class="line-num">9</span><span class="line-code">    <span class="kw">return</span> <span class="fn">jsonify</span>({<span class="str">"status"</span>: <span class="str">"ok"</span>})</span></div>
+      <div class="line"><span class="line-num">10</span><span class="line-code"></span></div>
+      <div class="line"><span class="line-num">11</span><span class="line-code"><span class="kw">if</span> <span class="var">__name__</span> == <span class="str">"__main__"</span>:</span></div>
+      <div class="line"><span class="line-num">12</span><span class="line-code">    <span class="var">app</span>.<span class="fn">run</span>(<span class="var">debug</span>=<span class="kw">True</span>)</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="palette-overlay" id="paletteOverlay">
+  <div class="palette">
+    <input class="palette-input" id="paletteInput" placeholder="Type a command..." value="">
+    <div class="palette-list" id="paletteList">
+      <div class="palette-item selected" data-cmd="format"><span>Format Document</span><span class="shortcut">Shift+Alt+F</span></div>
+      <div class="palette-item" data-cmd="terminal"><span>Toggle Terminal</span><span class="shortcut">Ctrl+`</span></div>
+      <div class="palette-item" data-cmd="gitcommit"><span>Git: Commit</span><span class="shortcut"></span></div>
+      <div class="palette-item" data-cmd="theme"><span>Color Theme</span><span class="shortcut"></span></div>
+      <div class="palette-item" data-cmd="settings"><span>Open Settings (JSON)</span><span class="shortcut"></span></div>
+      <div class="palette-item" data-cmd="rename"><span>Rename Symbol</span><span class="shortcut">F2</span></div>
+      <div class="palette-item" data-cmd="fold"><span>Fold All</span><span class="shortcut">Ctrl+K Ctrl+0</span></div>
+      <div class="palette-item" data-cmd="format-sel"><span>Format Selection</span><span class="shortcut">Ctrl+K Ctrl+F</span></div>
+      <div class="palette-item" data-cmd="toggle-word"><span>Toggle Word Wrap</span><span class="shortcut">Alt+Z</span></div>
+      <div class="palette-item" data-cmd="zen"><span>Toggle Zen Mode</span><span class="shortcut">Ctrl+K Z</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="statusbar">
+  <span>main</span>
+  <span>Python 3.12.0</span>
+  <span>UTF-8</span>
+  <span>Ln 8, Col 1</span>
+</div>
+
+<script>
+// Animation timeline (driven by capture script via window.animationStep)
+window.animationState = { step: 0 };
+
+const overlay = document.getElementById('paletteOverlay');
+const input = document.getElementById('paletteInput');
+const items = document.querySelectorAll('.palette-item');
+
+window.runStep = function(step) {
+  switch(step) {
+    case 0: // idle editor
+      overlay.classList.remove('show');
+      break;
+    case 1: // show palette
+      overlay.classList.add('show');
+      input.value = '>';
+      showAll(); selectItem(0);
+      break;
+    case 2: // type 'f'
+      input.value = '>f';
+      filterItems('f');
+      break;
+    case 3: // type 'fo'
+      input.value = '>fo';
+      filterItems('fo');
+      break;
+    case 4: // type 'for'
+      input.value = '>for';
+      filterItems('for');
+      break;
+    case 5: // type 'form'
+      input.value = '>form';
+      filterItems('form');
+      break;
+    case 6: // type 'format'
+      input.value = '>format';
+      filterItems('format');
+      break;
+    case 7: // highlight Format Document
+      input.value = '>format';
+      filterItems('format');
+      selectFiltered(0);
+      break;
+    case 8: // select - palette closes, code gets formatted indicator
+      overlay.classList.remove('show');
+      break;
+    case 9: // show palette again for second demo
+      overlay.classList.add('show');
+      input.value = '>';
+      showAll(); selectItem(0);
+      break;
+    case 10: // type 'the'
+      input.value = '>the';
+      filterItems('the');
+      break;
+    case 11: // type 'theme'
+      input.value = '>theme';
+      filterItems('theme');
+      break;
+    case 12: // select theme
+      filterItems('theme');
+      selectFiltered(0);
+      break;
+    case 13: // close
+      overlay.classList.remove('show');
+      break;
+  }
+};
+
+function showAll() {
+  items.forEach(i => { i.classList.remove('hidden'); i.classList.remove('selected'); });
+}
+
+function selectItem(idx) {
+  items.forEach(i => i.classList.remove('selected'));
+  if (items[idx]) items[idx].classList.add('selected');
+}
+
+function filterItems(query) {
+  const q = query.toLowerCase();
+  let first = true;
+  items.forEach(i => {
+    const text = i.querySelector('span').textContent.toLowerCase();
+    if (text.includes(q)) {
+      i.classList.remove('hidden');
+      i.classList.remove('selected');
+      if (first) { i.classList.add('selected'); first = false; }
+    } else {
+      i.classList.add('hidden');
+      i.classList.remove('selected');
+    }
+  });
+}
+
+function selectFiltered(idx) {
+  const visible = [...items].filter(i => !i.classList.contains('hidden'));
+  visible.forEach(i => i.classList.remove('selected'));
+  if (visible[idx]) visible[idx].classList.add('selected');
+}
+</script>
+</body>
+</html>

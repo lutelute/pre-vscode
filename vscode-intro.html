@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VS Code 入門 — 開発効率を上げるエディタ活用術</title>
+<style>
+/* ── Dark Theme ── */
+:root {
+  --ts-bg: #0f0f1a;
+  --ts-text: #e0e0e0;
+  --ts-accent: #0098ff;
+  --ts-accent2: #7b61ff;
+  --ts-card-bg: #1a1a2e;
+  --ts-card-border: #2a2a4a;
+  --ts-code-bg: #1e1e2e;
+  --ts-code-text: #0098ff;
+  --ts-muted: #888;
+  --vscode-blue: #007acc;
+  --vscode-green: #51cf66;
+  --vscode-orange: #f78c6c;
+  --vscode-red: #ff6b6b;
+  --vscode-yellow: #f0c674;
+}
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--ts-bg); color: var(--ts-text); }
+/* ── Slide ── */
+.slide {
+  display: none; flex-direction: column; justify-content: center; align-items: center;
+  width: 100vw; height: 100vh; padding: 60px 80px;
+  position: absolute; top: 0; left: 0;
+}
+.slide.active { display: flex; }
+.slide.out-left  { display: flex; animation: slideOutLeft .3s ease-out forwards; }
+.slide.out-right { display: flex; animation: slideOutRight .3s ease-out forwards; }
+@keyframes slideIn        { from { opacity:0; transform:translateX(60px) } to { opacity:1; transform:translateX(0) } }
+@keyframes slideInReverse { from { opacity:0; transform:translateX(-60px)} to { opacity:1; transform:translateX(0) } }
+@keyframes slideOutLeft   { to   { opacity:0; transform:translateX(-60px) } }
+@keyframes slideOutRight  { to   { opacity:0; transform:translateX(60px)  } }
+/* ── Typography ── */
+h1 { font-size: 3.2rem; font-weight: 700; color: #fff; line-height: 1.15; }
+h2 { font-size: 2.4rem; font-weight: 600; color: #fff; line-height: 1.2; margin-bottom: 24px; }
+h3 { font-size: 1.4rem; font-weight: 600; color: var(--ts-accent); }
+p, li { font-size: 1.15rem; line-height: 1.7; color: #ccc; }
+strong { color: #fff; }
+em { color: var(--ts-muted); font-style: italic; }
+a { color: var(--ts-accent); text-decoration: none; }
+/* ── Cards ── */
+.card {
+  background: var(--ts-card-bg); border: 1px solid var(--ts-card-border);
+  border-radius: 12px; padding: 28px;
+}
+/* ── Bullets ── */
+ul.bullets { list-style: none; padding: 0; }
+ul.bullets li { padding: 6px 0 6px 28px; position: relative; font-size: 1.15rem; }
+ul.bullets li::before { content: '\25B8'; position: absolute; left: 0; color: var(--ts-accent); font-weight: 700; }
+/* ── Code ── */
+code { background: var(--ts-code-bg); color: var(--ts-code-text); padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.9em; font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace; }
+pre.code-block {
+  background: #0a0a18; border: 1px solid var(--ts-card-border);
+  border-radius: 10px; padding: 24px 28px;
+  font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace;
+  font-size: 1rem; line-height: 1.7; overflow-x: auto; color: #c8d6e5; width: 100%;
+}
+pre.code-block .kw { color: #c792ea; }
+pre.code-block .fn { color: #82aaff; }
+pre.code-block .str { color: #c3e88d; }
+pre.code-block .cm { color: #546e7a; }
+pre.code-block .num { color: #f78c6c; }
+/* ── Tables ── */
+table { border-collapse: collapse; margin: 1rem 0; font-size: 1.05rem; width: 100%; }
+th, td { border: 1px solid var(--ts-card-border); padding: 0.5rem 0.8rem; text-align: left; }
+th { background: var(--ts-card-bg); color: var(--ts-accent); font-weight: 600; }
+/* ── Stats ── */
+.stat { text-align: center; }
+.stat .number { font-size: 3.2rem; font-weight: 800; color: var(--ts-accent); line-height: 1; }
+.stat .label { font-size: 1rem; color: var(--ts-muted); margin-top: 8px; }
+/* ── Kbd ── */
+kbd {
+  background: #2a2a4a; border: 1px solid #444; border-bottom: 2px solid #555;
+  border-radius: 4px; padding: 2px 8px; font-family: 'Fira Code', monospace;
+  font-size: 0.85em; color: #fff; white-space: nowrap;
+}
+/* ── Utility ── */
+.text-accent { color: var(--ts-accent); }
+.text-center { text-align: center; }
+.mt-1 { margin-top: 12px; }
+.mt-2 { margin-top: 24px; }
+.mt-3 { margin-top: 40px; }
+.w-full { width: 100%; }
+/* ── GIF area ── */
+.gif-area {
+  background: #0a0a18; border: 1px solid var(--ts-card-border);
+  border-radius: 12px; overflow: hidden; position: relative;
+}
+.gif-area img { width: 100%; height: auto; display: block; }
+/* ── Shortcut grid ── */
+.shortcut-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+.shortcut-item { display: flex; align-items: center; gap: 16px; padding: 10px 14px; background: var(--ts-card-bg); border-radius: 8px; border: 1px solid var(--ts-card-border); }
+.shortcut-item kbd { min-width: 140px; text-align: center; }
+.shortcut-item span { font-size: 1rem; }
+/* ── Blockquote ── */
+blockquote {
+  border-left: 4px solid var(--ts-accent); padding: 20px 32px;
+  font-size: 1.5rem; font-style: italic; color: #ddd; max-width: 720px;
+}
+blockquote cite { display: block; margin-top: 16px; font-size: 1rem; font-style: normal; color: var(--ts-muted); }
+/* ── Section divider ── */
+.section-bar { width: 80px; height: 4px; background: var(--ts-accent); border-radius: 2px; margin-top: 20px; }
+/* ── Tip box ── */
+.tip-box {
+  padding: 16px 20px; background: #0a0a18; border-radius: 8px;
+  border-left: 3px solid var(--vscode-green); font-size: 0.95rem;
+}
+.tip-box.warning { border-left-color: var(--vscode-orange); }
+.tip-box.danger { border-left-color: var(--vscode-red); }
+.tip-box .tip-label { font-weight: 600; margin-bottom: 4px; }
+.tip-box .tip-label.green { color: var(--vscode-green); }
+.tip-box .tip-label.orange { color: var(--vscode-orange); }
+.tip-box .tip-label.red { color: var(--vscode-red); }
+/* ── Step indicator ── */
+.step-circle {
+  background: var(--ts-accent); color: var(--ts-bg); border-radius: 50%;
+  width: 32px; height: 32px; display: flex; align-items: center;
+  justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+}
+/* ── Progress ── */
+#progress { position: fixed; bottom: 16px; right: 24px; font-size: 0.85rem; color: var(--ts-muted); z-index: 100; }
+/* ── Pulse animation ── */
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+.pulse { animation: pulse 2s ease-in-out infinite; }
+/* ── Numbered list ── */
+ol.numbered { list-style: none; padding: 0; counter-reset: step-counter; }
+ol.numbered li { counter-increment: step-counter; padding: 8px 0 8px 40px; position: relative; font-size: 1.1rem; }
+ol.numbered li::before {
+  content: counter(step-counter); position: absolute; left: 0; top: 8px;
+  background: var(--ts-accent); color: var(--ts-bg); border-radius: 50%;
+  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SLIDE 1 — TITLE
+     ============================================================ -->
+<div class="slide active" data-slide="1">
+  <div class="pulse" style="font-size:5rem;">&#x1F4DD;</div>
+  <h1 style="font-size:3.6rem; margin-top:20px;" class="text-center">Visual Studio Code 入門</h1>
+  <p style="font-size:1.5rem; color:var(--ts-accent); margin-top:16px;" class="text-center">開発効率を上げるエディタ活用術</p>
+  <p style="margin-top:40px; color:var(--ts-muted); font-size:1.1rem;">PWS Lab &mdash; April 2026</p>
+  <p style="margin-top:16px; color:var(--ts-muted); font-size:0.9rem;">矢印キー or <kbd>j</kbd>/<kbd>k</kbd> で操作</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 2 — 目次
+     ============================================================ -->
+<div class="slide" data-slide="2">
+  <h2 class="text-center w-full">今日の内容</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; max-width:800px;">
+    <div class="card" style="display:flex; align-items:center; gap:16px;">
+      <span style="font-size:1.8rem;">1&#xFE0F;&#x20E3;</span>
+      <div><h3>VS Code とは</h3><p style="font-size:0.95rem;">なぜ選ばれるのか</p></div>
+    </div>
+    <div class="card" style="display:flex; align-items:center; gap:16px;">
+      <span style="font-size:1.8rem;">2&#xFE0F;&#x20E3;</span>
+      <div><h3>基本操作</h3><p style="font-size:0.95rem;">画面構成・コマンドパレット</p></div>
+    </div>
+    <div class="card" style="display:flex; align-items:center; gap:16px;">
+      <span style="font-size:1.8rem;">3&#xFE0F;&#x20E3;</span>
+      <div><h3>編集テクニック</h3><p style="font-size:0.95rem;">マルチカーソル・ショートカット</p></div>
+    </div>
+    <div class="card" style="display:flex; align-items:center; gap:16px;">
+      <span style="font-size:1.8rem;">4&#xFE0F;&#x20E3;</span>
+      <div><h3>拡張機能</h3><p style="font-size:0.95rem;">おすすめ・インストール方法</p></div>
+    </div>
+    <div class="card" style="display:flex; align-items:center; gap:16px;">
+      <span style="font-size:1.8rem;">5&#xFE0F;&#x20E3;</span>
+      <div><h3>統合ターミナル &amp; Git</h3><p style="font-size:0.95rem;">エディタ内で全て完結</p></div>
+    </div>
+    <div class="card" style="display:flex; align-items:center; gap:16px;">
+      <span style="font-size:1.8rem;">6&#xFE0F;&#x20E3;</span>
+      <div><h3>Remote SSH &amp; デバッグ</h3><p style="font-size:0.95rem;">サーバー開発・print卒業</p></div>
+    </div>
+    <div class="card" style="display:flex; align-items:center; gap:16px;">
+      <span style="font-size:1.8rem;">7&#xFE0F;&#x20E3;</span>
+      <div><h3>設定 &amp; カスタマイズ</h3><p style="font-size:0.95rem;">自分だけの環境を作る</p></div>
+    </div>
+    <div class="card" style="display:flex; align-items:center; gap:16px;">
+      <span style="font-size:1.8rem;">8&#xFE0F;&#x20E3;</span>
+      <div><h3>上級テクニック</h3><p style="font-size:0.95rem;">Workspace・Snippet・AI</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 3 — VS Code とは
+     ============================================================ -->
+<div class="slide" data-slide="3">
+  <h1 style="font-size:3.6rem;" class="text-center">VS Code とは？</h1>
+  <div class="section-bar"></div>
+</div>
+
+<!-- ============================================================
+     SLIDE 4 — VS Code 概要
+     ============================================================ -->
+<div class="slide" data-slide="4">
+  <h2 class="text-center w-full">世界で最も使われるエディタ</h2>
+  <div style="display:flex; gap:32px; width:100%; align-items:stretch;">
+    <div class="card" style="flex:1; text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:12px;">&#x1F30D;</div>
+      <h3>オープンソース</h3>
+      <p class="mt-1">Microsoft 開発の無料エディタ<br>GitHub上でオープンに開発</p>
+    </div>
+    <div class="card" style="flex:1; text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:12px;">&#x26A1;</div>
+      <h3>軽量 &amp; 高速</h3>
+      <p class="mt-1">Electron ベースだが起動が速い<br>大規模プロジェクトにも対応</p>
+    </div>
+    <div class="card" style="flex:1; text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:12px;">&#x1F9E9;</div>
+      <h3>豊富な拡張機能</h3>
+      <p class="mt-1">40,000+ の拡張機能<br>あらゆる言語に対応</p>
+    </div>
+    <div class="card" style="flex:1; text-align:center;">
+      <div style="font-size:2.5rem; margin-bottom:12px;">&#x1F4BB;</div>
+      <h3>クロスプラットフォーム</h3>
+      <p class="mt-1">Windows / macOS / Linux<br>どこでも同じ操作感</p>
+    </div>
+  </div>
+  <p style="margin-top:32px; font-size:1.1rem; color:var(--ts-muted);">Stack Overflow Developer Survey 2024: 開発者の <strong>73%</strong> が使用</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 5 — 他エディタとの比較
+     ============================================================ -->
+<div class="slide" data-slide="5">
+  <h2 class="text-center w-full">エディタ比較</h2>
+  <table style="max-width:900px;">
+    <thead>
+      <tr><th style="width:150px;">エディタ</th><th>特徴</th><th>長所</th><th>短所</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong style="color:var(--ts-accent);">VS Code</strong></td><td>多機能エディタ</td><td>拡張性・Git統合・Remote開発</td><td>メモリ使用量やや多い</td></tr>
+      <tr><td>Vim / Neovim</td><td>ターミナルエディタ</td><td>超高速・SSH先で使える</td><td>学習コストが高い</td></tr>
+      <tr><td>PyCharm</td><td>Python特化 IDE</td><td>リファクタ・デバッグが強力</td><td>重い・有料版あり</td></tr>
+      <tr><td>Jupyter Notebook</td><td>対話型実行環境</td><td>データ分析・可視化向き</td><td>大規模開発に不向き</td></tr>
+      <tr><td>Sublime Text</td><td>軽量テキストエディタ</td><td>起動が爆速</td><td>拡張エコシステムが小さい</td></tr>
+    </tbody>
+  </table>
+  <div class="tip-box" style="margin-top:20px; max-width:900px; width:100%;">
+    <div class="tip-label green">Point</div>
+    VS Code は「エディタの軽さ」と「IDEの機能」のバランスが最も良い。拡張機能で自分に必要な機能だけ追加できる。
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 6 — インストール
+     ============================================================ -->
+<div class="slide" data-slide="6">
+  <h2 class="text-center w-full">インストール方法</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">&#x1F34E; macOS</h3>
+      <pre class="code-block" style="padding:16px; font-size:0.9rem;"><span class="cm"># Homebrew で一発</span>
+brew install --cask visual-studio-code
+
+<span class="cm"># または公式サイトからダウンロード</span>
+<span class="cm"># code.visualstudio.com</span></pre>
+      <p class="mt-1" style="font-size:0.95rem;">インストール後、<kbd>Cmd+Shift+P</kbd> → <code>Shell Command: Install 'code'</code> でターミナルから <code>code .</code> で起動可能に</p>
+    </div>
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">&#x1F427; Linux (Ubuntu)</h3>
+      <pre class="code-block" style="padding:16px; font-size:0.9rem;"><span class="cm"># Snap で一発</span>
+sudo snap install code --classic
+
+<span class="cm"># または apt</span>
+sudo apt install code</pre>
+      <p class="mt-1" style="font-size:0.95rem;">研究室サーバー (Docker) では<br><strong>code-server</strong> (ブラウザ版) も利用可能</p>
+    </div>
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">&#x1F3C1; Windows</h3>
+      <pre class="code-block" style="padding:16px; font-size:0.9rem;"><span class="cm"># winget で一発</span>
+winget install Microsoft.VisualStudioCode
+
+<span class="cm"># または公式インストーラー</span>
+<span class="cm"># code.visualstudio.com</span></pre>
+      <p class="mt-1" style="font-size:0.95rem;">インストール時に「PATHに追加」にチェックを忘れずに</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 7 — セクション: 基本操作
+     ============================================================ -->
+<div class="slide" data-slide="7">
+  <h1 style="font-size:3.6rem;" class="text-center">基本操作</h1>
+  <div class="section-bar"></div>
+  <p style="margin-top:24px; font-size:1.3rem; color:var(--ts-muted);">まずはこれだけ覚えよう</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 8 — UI 概要
+     ============================================================ -->
+<div class="slide" data-slide="8">
+  <h2 class="text-center w-full">画面構成</h2>
+  <div style="display:flex; gap:24px; width:100%; align-items:stretch;">
+    <!-- 左: UI図解 -->
+    <div style="flex:2; display:flex; flex-direction:column; gap:6px;">
+      <div style="background:#1a1a2e; border:1px solid var(--ts-card-border); border-radius:8px; padding:6px 16px; text-align:center; color:var(--ts-accent); font-weight:600; font-size:0.9rem;">
+        Menu Bar / Title Bar
+      </div>
+      <div style="display:flex; gap:6px; flex:1;">
+        <div style="background:#16213e; border:1px solid var(--ts-card-border); border-radius:8px; padding:12px 6px; width:44px; display:flex; flex-direction:column; align-items:center; gap:10px; font-size:1.1rem;">
+          <span title="Explorer">&#x1F4C1;</span>
+          <span title="Search">&#x1F50D;</span>
+          <span title="Git">&#x1F500;</span>
+          <span title="Debug">&#x1F41E;</span>
+          <span title="Extensions">&#x1F9E9;</span>
+        </div>
+        <div style="background:#1e1e2e; border:1px solid var(--ts-card-border); border-radius:8px; padding:8px; width:130px; font-size:0.7rem; color:#999;">
+          <div style="font-size:0.65rem; color:#666; text-transform:uppercase; margin-bottom:4px;">Explorer</div>
+          <div style="padding:2px 4px; background:#37373d; border-radius:3px; margin-bottom:2px; color:#ccc;">app.py</div>
+          <div style="padding:2px 4px; margin-bottom:2px;">config.py</div>
+          <div style="padding:2px 4px; margin-bottom:2px;">utils.py</div>
+          <div style="padding:2px 4px;">tests/</div>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+          <div style="background:#1a1a2e; border:1px solid var(--ts-card-border); border-radius:8px; padding:4px 10px; color:#82aaff; font-size:0.75rem; font-family:monospace;">
+            app.py &times; &nbsp; config.py &times;
+          </div>
+          <div style="flex:1; background:#0a0a18; border:1px solid var(--ts-card-border); border-radius:8px; padding:10px; font-family:monospace; font-size:0.75rem; text-align:left; line-height:1.6;">
+            <span style="color:#546e7a">1</span> <span style="color:#c792ea">from</span> flask <span style="color:#c792ea">import</span> Flask<br>
+            <span style="color:#546e7a">2</span> <span style="color:#9cdcfe">app</span> = <span style="color:#dcdcaa">Flask</span>(<span style="color:#9cdcfe">__name__</span>)<br>
+            <span style="color:#546e7a">3</span><br>
+            <span style="color:#546e7a">4</span> <span style="color:#c792ea">@</span>app.<span style="color:#dcdcaa">route</span>(<span style="color:#ce9178">"/"</span>)<br>
+            <span style="color:#546e7a">5</span> <span style="color:#c792ea">def</span> <span style="color:#dcdcaa">index</span>():<br>
+            <span style="color:#546e7a">6</span> &nbsp;&nbsp;return <span style="color:#ce9178">"Hello"</span>
+          </div>
+          <div style="background:#1a1a2e; border:1px solid var(--ts-card-border); border-radius:8px; padding:4px 10px; color:var(--ts-muted); font-size:0.7rem; font-family:monospace;">
+            TERMINAL | PROBLEMS | OUTPUT
+          </div>
+        </div>
+      </div>
+      <div style="background:#007acc; border-radius:8px; padding:4px 16px; text-align:center; color:#fff; font-size:0.75rem;">
+        Status Bar &mdash; Git / Errors / Encoding / Language
+      </div>
+    </div>
+    <!-- 右: 説明 -->
+    <div style="flex:1;">
+      <ul class="bullets" style="font-size:1.05rem;">
+        <li><strong>Activity Bar</strong> (左端)<br><em>主要機能への切替</em></li>
+        <li><strong>Side Bar</strong><br><em>ファイルツリー・検索・Git</em></li>
+        <li><strong>Editor Group</strong> (中央)<br><em>タブで複数ファイル切替</em></li>
+        <li><strong>Panel</strong> (下部)<br><em>ターミナル・問題・出力</em></li>
+        <li><strong>Status Bar</strong> (最下部)<br><em>現在の状態を一目で確認</em></li>
+      </ul>
+      <div class="tip-box" style="margin-top:16px;">
+        <div class="tip-label green">Tip</div>
+        <kbd>Cmd+B</kbd> でサイドバーを素早く非表示にして画面を広く使える
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 9 — コマンドパレット (GIF付き)
+     ============================================================ -->
+<div class="slide" data-slide="9">
+  <h2 class="text-center w-full">コマンドパレット — 最も重要な機能</h2>
+  <div style="display:flex; gap:32px; width:100%; align-items:center;">
+    <div class="gif-area" style="flex:1;">
+      <img src="assets/command-palette.gif" alt="Command Palette Demo">
+    </div>
+    <div style="flex:1;">
+      <div style="background:#0a0a18; border:2px solid var(--ts-accent); border-radius:12px; padding:20px 28px; text-align:center; margin-bottom:20px;">
+        <p style="color:var(--ts-muted); font-size:0.9rem; margin-bottom:6px;">Show All Commands</p>
+        <div style="font-size:1.5rem;"><kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px;">プレフィックスで使い分け</h3>
+        <table style="font-size:0.95rem;">
+          <tr><td><code>&gt;</code></td><td>コマンド実行</td></tr>
+          <tr><td><code>@</code></td><td>ファイル内シンボル</td></tr>
+          <tr><td><code>#</code></td><td>ワークスペース全体のシンボル</td></tr>
+          <tr><td><code>:</code></td><td>行番号にジャンプ</td></tr>
+          <tr><td>なし</td><td>ファイル名検索 (<kbd>Cmd+P</kbd>)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 10 — ファイル操作
+     ============================================================ -->
+<div class="slide" data-slide="10">
+  <h2 class="text-center w-full">ファイル操作を高速化</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">ファイルを開く</h3>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="shortcut-item" style="background:transparent; border:none; padding:8px 0;">
+          <kbd style="min-width:130px;">Cmd + P</kbd>
+          <span>ファイル名であいまい検索</span>
+        </div>
+        <div class="shortcut-item" style="background:transparent; border:none; padding:8px 0;">
+          <kbd style="min-width:130px;">Cmd + O</kbd>
+          <span>ファイルを開くダイアログ</span>
+        </div>
+        <div class="shortcut-item" style="background:transparent; border:none; padding:8px 0;">
+          <kbd style="min-width:130px;">Cmd + Tab</kbd>
+          <span>最近のタブに切替</span>
+        </div>
+      </div>
+      <div class="tip-box" style="margin-top:16px;">
+        <div class="tip-label green">Tip</div>
+        <code>Cmd+P</code> は部分一致で検索可能。<br><code>apco</code> と入力するだけで <code>app/config.py</code> にマッチ
+      </div>
+    </div>
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">ファイル管理</h3>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="shortcut-item" style="background:transparent; border:none; padding:8px 0;">
+          <kbd style="min-width:130px;">Cmd + N</kbd>
+          <span>新規ファイル</span>
+        </div>
+        <div class="shortcut-item" style="background:transparent; border:none; padding:8px 0;">
+          <kbd style="min-width:130px;">Cmd + S</kbd>
+          <span>保存</span>
+        </div>
+        <div class="shortcut-item" style="background:transparent; border:none; padding:8px 0;">
+          <kbd style="min-width:130px;">Cmd + W</kbd>
+          <span>タブを閉じる</span>
+        </div>
+        <div class="shortcut-item" style="background:transparent; border:none; padding:8px 0;">
+          <kbd style="min-width:130px;">Cmd + \\</kbd>
+          <span>エディタを分割</span>
+        </div>
+      </div>
+      <div class="tip-box" style="margin-top:16px;">
+        <div class="tip-label green">Tip</div>
+        ターミナルから <code>code ファイル名</code> で直接ファイルを開ける
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 11 — セクション: 編集テクニック
+     ============================================================ -->
+<div class="slide" data-slide="11">
+  <h1 style="font-size:3.6rem;" class="text-center">編集テクニック</h1>
+  <div class="section-bar"></div>
+  <p style="margin-top:24px; font-size:1.3rem; color:var(--ts-muted);">VS Code の真骨頂</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 12 — 必須ショートカット
+     ============================================================ -->
+<div class="slide" data-slide="12">
+  <h2 class="text-center w-full">必須ショートカット (macOS)</h2>
+  <div class="shortcut-grid">
+    <div class="shortcut-item"><kbd>Cmd + Shift + P</kbd><span>コマンドパレット</span></div>
+    <div class="shortcut-item"><kbd>Cmd + P</kbd><span>ファイルを素早く開く</span></div>
+    <div class="shortcut-item"><kbd>Cmd + Shift + F</kbd><span>プロジェクト全体を検索</span></div>
+    <div class="shortcut-item"><kbd>Cmd + D</kbd><span>同じ単語を追加選択</span></div>
+    <div class="shortcut-item"><kbd>Cmd + /</kbd><span>コメントの切替</span></div>
+    <div class="shortcut-item"><kbd>Alt + &#x2191; / &#x2193;</kbd><span>行の移動</span></div>
+    <div class="shortcut-item"><kbd>Cmd + B</kbd><span>サイドバーの表示切替</span></div>
+    <div class="shortcut-item"><kbd>Ctrl + `</kbd><span>統合ターミナルの切替</span></div>
+    <div class="shortcut-item"><kbd>Cmd + Shift + K</kbd><span>行の削除</span></div>
+    <div class="shortcut-item"><kbd>Shift + Alt + &#x2193;</kbd><span>行のコピー（下に複製）</span></div>
+    <div class="shortcut-item"><kbd>Cmd + L</kbd><span>行全体を選択</span></div>
+    <div class="shortcut-item"><kbd>Cmd + Shift + \\</kbd><span>対応する括弧にジャンプ</span></div>
+  </div>
+  <p style="margin-top:16px; color:var(--ts-muted); font-size:0.9rem;">Windows/Linux: <kbd>Cmd</kbd> &#x2192; <kbd>Ctrl</kbd> に置き換え</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 13 — マルチカーソル (GIF付き)
+     ============================================================ -->
+<div class="slide" data-slide="13">
+  <h2 class="text-center w-full">マルチカーソル編集</h2>
+  <div style="display:flex; gap:32px; width:100%; align-items:center;">
+    <div class="gif-area" style="flex:1;">
+      <img src="assets/multi-cursor.gif" alt="Multi-cursor Demo">
+    </div>
+    <div style="flex:1;">
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">操作方法</h3>
+        <table style="font-size:0.95rem;">
+          <tr><td><kbd>Alt + Click</kbd></td><td>カーソルを追加</td></tr>
+          <tr><td><kbd>Cmd + Alt + &#x2191;/&#x2193;</kbd></td><td>上/下にカーソル追加</td></tr>
+          <tr><td><kbd>Cmd + D</kbd></td><td>同じ単語を追加選択</td></tr>
+          <tr><td><kbd>Cmd + Shift + L</kbd></td><td>全ての同一単語を選択</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:8px;">活用シーン</h3>
+        <ul class="bullets" style="font-size:0.95rem;">
+          <li>変数名の一括リネーム</li>
+          <li>同じパターンの一括修正</li>
+          <li>CSV/JSON の一括編集</li>
+          <li>HTML タグの一括変更</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 14 — 検索と置換
+     ============================================================ -->
+<div class="slide" data-slide="14">
+  <h2 class="text-center w-full">検索 &amp; 置換</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">ファイル内検索</h3>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <kbd style="min-width:100px;">Cmd + F</kbd>
+          <span style="font-size:1rem;">検索ダイアログ</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <kbd style="min-width:100px;">Cmd + H</kbd>
+          <span style="font-size:1rem;">置換ダイアログ</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <kbd style="min-width:100px;">F3 / Shift+F3</kbd>
+          <span style="font-size:1rem;">次/前の一致へ</span>
+        </div>
+      </div>
+      <div class="tip-box" style="margin-top:16px;">
+        <div class="tip-label green">Tip</div>
+        検索ボックスで <strong>正規表現</strong> ボタン (<code>.*</code>) を有効にすると<br>パターンマッチも可能
+      </div>
+    </div>
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">プロジェクト全体検索</h3>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <kbd style="min-width:130px;">Cmd + Shift + F</kbd>
+          <span style="font-size:1rem;">全ファイル検索</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <kbd style="min-width:130px;">Cmd + Shift + H</kbd>
+          <span style="font-size:1rem;">全ファイル置換</span>
+        </div>
+      </div>
+      <div style="margin-top:16px; padding:12px; background:#0a0a18; border-radius:8px; font-size:0.9rem;">
+        <p style="color:var(--ts-accent); font-weight:600; margin-bottom:8px;">フィルタ機能</p>
+        <p><code>*.py</code> — Python ファイルだけ検索</p>
+        <p><code>!node_modules</code> — 特定フォルダを除外</p>
+        <p><code>src/**/*.ts</code> — サブディレクトリも含む</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 15 — テキスト編集の便利操作
+     ============================================================ -->
+<div class="slide" data-slide="15">
+  <h2 class="text-center w-full">テキスト編集の便利操作</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%;">
+    <div class="card">
+      <h3>行の移動</h3>
+      <p class="mt-1" style="font-size:0.95rem;"><kbd>Alt + &#x2191;/&#x2193;</kbd> で行をドラッグせずに上下移動。<br>複数行選択してからでも使える。</p>
+    </div>
+    <div class="card">
+      <h3>行の複製</h3>
+      <p class="mt-1" style="font-size:0.95rem;"><kbd>Shift + Alt + &#x2193;</kbd> で行をコピー。<br>繰り返しパターンの作成に便利。</p>
+    </div>
+    <div class="card">
+      <h3>矩形選択 (Box Select)</h3>
+      <p class="mt-1" style="font-size:0.95rem;"><kbd>Shift + Alt + ドラッグ</kbd> で矩形に選択。<br>CSV やテーブルデータの編集に最適。</p>
+    </div>
+    <div class="card">
+      <h3>インデント操作</h3>
+      <p class="mt-1" style="font-size:0.95rem;"><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> でインデント調整。<br>複数行選択して一括インデント。</p>
+    </div>
+    <div class="card">
+      <h3>定義へジャンプ</h3>
+      <p class="mt-1" style="font-size:0.95rem;"><kbd>F12</kbd> または <kbd>Cmd + Click</kbd>。<br>関数やクラスの定義に一瞬で移動。</p>
+    </div>
+    <div class="card">
+      <h3>Peek Definition</h3>
+      <p class="mt-1" style="font-size:0.95rem;"><kbd>Alt + F12</kbd> でインラインプレビュー。<br>ファイルを開かずに定義を確認。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 16 — セクション: 拡張機能
+     ============================================================ -->
+<div class="slide" data-slide="16">
+  <h1 style="font-size:3.6rem;" class="text-center">拡張機能 (Extensions)</h1>
+  <div class="section-bar"></div>
+  <p style="margin-top:24px; font-size:1.3rem; color:var(--ts-muted);">VS Code を自分好みにカスタマイズ</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 17 — おすすめ拡張機能 Python
+     ============================================================ -->
+<div class="slide" data-slide="17">
+  <h2 class="text-center w-full">Python 開発に必須の拡張機能</h2>
+  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; width:100%;">
+    <div class="card" style="border-top:3px solid var(--vscode-green);">
+      <h3>Python</h3>
+      <p style="font-size:0.85rem; color:var(--ts-muted);">Microsoft</p>
+      <p class="mt-1" style="font-size:0.95rem;">IntelliSense, Linting, デバッグ, Jupyter。<strong>必須中の必須。</strong></p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--vscode-green);">
+      <h3>Pylance</h3>
+      <p style="font-size:0.85rem; color:var(--ts-muted);">Microsoft</p>
+      <p class="mt-1" style="font-size:0.95rem;">高速な型チェック、自動補完、インポート整理。Python拡張と連携。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--vscode-green);">
+      <h3>Ruff</h3>
+      <p style="font-size:0.85rem; color:var(--ts-muted);">Astral</p>
+      <p class="mt-1" style="font-size:0.95rem;">超高速 Python Linter &amp; Formatter。flake8 + isort + black を1つで。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--ts-accent);">
+      <h3>Jupyter</h3>
+      <p style="font-size:0.85rem; color:var(--ts-muted);">Microsoft</p>
+      <p class="mt-1" style="font-size:0.95rem;">VS Code 内で .ipynb を直接編集・実行。セル単位の実行も可能。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--ts-accent);">
+      <h3>Python Debugger</h3>
+      <p style="font-size:0.85rem; color:var(--ts-muted);">Microsoft</p>
+      <p class="mt-1" style="font-size:0.95rem;">Python のデバッグ機能を提供。ブレークポイント、ステップ実行。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--ts-accent);">
+      <h3>autoDocstring</h3>
+      <p style="font-size:0.85rem; color:var(--ts-muted);">Nils Werner</p>
+      <p class="mt-1" style="font-size:0.95rem;">関数の下で <code>"""</code> を入力すると docstring を自動生成。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 18 — おすすめ拡張機能 汎用
+     ============================================================ -->
+<div class="slide" data-slide="18">
+  <h2 class="text-center w-full">汎用 おすすめ拡張機能</h2>
+  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; width:100%;">
+    <div class="card" style="border-top:3px solid var(--ts-accent2);">
+      <h3>GitLens</h3>
+      <p class="mt-1" style="font-size:0.95rem;">行ごとの blame 表示、コミット履歴の可視化。Git の真価を発揮。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--ts-accent2);">
+      <h3>Remote - SSH</h3>
+      <p class="mt-1" style="font-size:0.95rem;">リモートサーバーに接続して開発。<strong>研究室サーバーとの連携に必須。</strong></p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--ts-accent2);">
+      <h3>Japanese Language Pack</h3>
+      <p class="mt-1" style="font-size:0.95rem;">UI を日本語化。メニューや設定が日本語で表示される。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--vscode-yellow);">
+      <h3>Error Lens</h3>
+      <p class="mt-1" style="font-size:0.95rem;">エラー/警告をコード行の横にインライン表示。問題を見逃さない。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--vscode-yellow);">
+      <h3>indent-rainbow</h3>
+      <p class="mt-1" style="font-size:0.95rem;">インデントを色分け表示。Python のようなインデント重要言語に最適。</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--vscode-yellow);">
+      <h3>Path Intellisense</h3>
+      <p class="mt-1" style="font-size:0.95rem;">ファイルパスの自動補完。import 文やファイル参照の入力が楽に。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 19 — 拡張機能のインストール
+     ============================================================ -->
+<div class="slide" data-slide="19">
+  <h2 class="text-center w-full">拡張機能のインストール方法</h2>
+  <div style="display:flex; gap:32px; width:100%; align-items:stretch;">
+    <div style="flex:1; display:flex; flex-direction:column; gap:20px;">
+      <div style="display:flex; align-items:flex-start; gap:16px;">
+        <div class="step-circle">1</div>
+        <div>
+          <p style="font-size:1.15rem; color:#fff;"><strong>サイドバーから</strong></p>
+          <p>Extensions アイコン or <kbd>Cmd + Shift + X</kbd></p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:flex-start; gap:16px;">
+        <div class="step-circle">2</div>
+        <div>
+          <p style="font-size:1.15rem; color:#fff;"><strong>検索して Install</strong></p>
+          <p>拡張機能名を入力 → Install ボタン</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:flex-start; gap:16px;">
+        <div class="step-circle">3</div>
+        <div>
+          <p style="font-size:1.15rem; color:#fff;"><strong>コマンドラインから</strong></p>
+          <pre class="code-block" style="margin-top:8px; padding:10px 14px; font-size:0.85rem;">code --install-extension ms-python.python
+code --install-extension ms-python.pylance</pre>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="flex:1; border-top:3px solid var(--ts-accent);">
+      <h3 style="margin-bottom:12px;">Tips</h3>
+      <ul class="bullets" style="font-size:0.95rem;">
+        <li>拡張機能の入れすぎは起動が遅くなる</li>
+        <li>不要な拡張機能は無効化でなく<strong>アンインストール</strong></li>
+        <li>ワークスペースごとに推奨拡張機能を設定:<br><code>.vscode/extensions.json</code></li>
+      </ul>
+      <pre class="code-block" style="margin-top:12px; padding:10px 14px; font-size:0.8rem;">{
+  <span class="str">"recommendations"</span>: [
+    <span class="str">"ms-python.python"</span>,
+    <span class="str">"charliermarsh.ruff"</span>
+  ]
+}</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 20 — セクション: ターミナル & Git
+     ============================================================ -->
+<div class="slide" data-slide="20">
+  <h1 style="font-size:3.6rem;" class="text-center">統合ターミナル &amp; Git</h1>
+  <div class="section-bar"></div>
+  <p style="margin-top:24px; font-size:1.3rem; color:var(--ts-muted);">エディタから離れずに全て完結</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 21 — 統合ターミナル
+     ============================================================ -->
+<div class="slide" data-slide="21">
+  <h2 class="text-center w-full">統合ターミナルの活用</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div style="flex:1;">
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">基本操作</h3>
+        <table style="width:100%; font-size:0.95rem;">
+          <tr><td><kbd>Ctrl + `</kbd></td><td>ターミナル表示切替</td></tr>
+          <tr><td><kbd>Cmd + Shift + `</kbd></td><td>新しいターミナルを作成</td></tr>
+          <tr><td><kbd>Cmd + \\</kbd></td><td>ターミナルを分割</td></tr>
+          <tr><td><kbd>Cmd + &#x2191;/&#x2193;</kbd></td><td>出力のスクロール</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:8px;">便利な設定</h3>
+        <pre class="code-block" style="font-size:0.8rem; padding:12px;"><span class="cm">// settings.json</span>
+{
+  <span class="str">"terminal.integrated.defaultProfile.osx"</span>: <span class="str">"zsh"</span>,
+  <span class="str">"terminal.integrated.fontSize"</span>: <span class="num">14</span>,
+  <span class="str">"terminal.integrated.scrollback"</span>: <span class="num">10000</span>
+}</pre>
+      </div>
+    </div>
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">なぜ統合ターミナル？</h3>
+      <ul class="bullets" style="font-size:0.95rem;">
+        <li>プロジェクトのルートで自動的に開く</li>
+        <li>エラーメッセージから<strong>ファイルへ直接ジャンプ</strong></li>
+        <li>複数ターミナルを並行して使える</li>
+        <li>エディタとの<strong>コピペが楽</strong></li>
+        <li>パスのリンクがクリッカブル</li>
+        <li>ターミナルの出力を<strong>検索</strong>できる</li>
+      </ul>
+      <div class="tip-box" style="margin-top:16px;">
+        <div class="tip-label green">Pro Tip</div>
+        Python のエラー行番号を <kbd>Cmd+Click</kbd> すると該当箇所にジャンプ
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 22 — Git 連携
+     ============================================================ -->
+<div class="slide" data-slide="22">
+  <h2 class="text-center w-full">Git 連携 — GUI でバージョン管理</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">Source Control パネル</h3>
+      <ul class="bullets" style="font-size:0.95rem;">
+        <li>変更ファイルの一覧表示</li>
+        <li>ファイルごとの <strong>diff 表示</strong></li>
+        <li><strong>Stage / Unstage</strong> をクリックで操作</li>
+        <li>コミットメッセージ入力 → <kbd>Cmd + Enter</kbd></li>
+        <li>ブランチ切替はステータスバーから</li>
+      </ul>
+      <div class="tip-box" style="margin-top:12px;">
+        <div class="tip-label green">Gutter Indicators</div>
+        <span style="color:var(--vscode-green);">&#x2588; 緑</span> = 追加 &nbsp;
+        <span style="color:var(--ts-accent);">&#x2588; 青</span> = 変更 &nbsp;
+        <span style="color:var(--vscode-red);">&#x25BC; 赤</span> = 削除
+      </div>
+    </div>
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">Git でよく使う操作</h3>
+      <table style="width:100%; font-size:0.95rem;">
+        <tr><th>操作</th><th>方法</th></tr>
+        <tr><td>Stage</td><td>ファイル横の <code>+</code> ボタン</td></tr>
+        <tr><td>Commit</td><td>メッセージ入力 → <kbd>Cmd+Enter</kbd></td></tr>
+        <tr><td>Push</td><td><code>...</code> メニュー → Push</td></tr>
+        <tr><td>Pull</td><td><code>...</code> メニュー → Pull</td></tr>
+        <tr><td>Branch</td><td>ステータスバー左下のブランチ名をクリック</td></tr>
+        <tr><td>Merge Conflict</td><td>Accept Current / Incoming ボタン</td></tr>
+      </table>
+    </div>
+  </div>
+  <div style="margin-top:16px; padding:12px 24px; background:var(--ts-card-bg); border-radius:8px; border:1px solid var(--ts-card-border); width:100%; text-align:center;">
+    <p style="font-size:1rem;"><strong>GitLens</strong> を追加すると: 行ごとの blame、コミット検索、ファイルヒストリーの比較が可能に</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 23 — Git ワークフロー実践
+     ============================================================ -->
+<div class="slide" data-slide="23">
+  <h2 class="text-center w-full">Git ワークフロー実践</h2>
+  <div style="display:flex; gap:20px; width:100%; align-items:stretch;">
+    <div class="card" style="flex:1; text-align:center; border-top:3px solid var(--ts-accent);">
+      <div style="font-size:1.8rem; margin-bottom:8px;">1</div>
+      <h3>ブランチ作成</h3>
+      <p class="mt-1" style="font-size:0.9rem;">ステータスバーのブランチ名をクリック → 「Create new branch」</p>
+      <pre class="code-block mt-1" style="font-size:0.8rem; padding:8px 12px;">feature/add-login</pre>
+    </div>
+    <div style="display:flex; align-items:center; color:var(--ts-muted); font-size:1.5rem;">&#x2192;</div>
+    <div class="card" style="flex:1; text-align:center; border-top:3px solid var(--vscode-green);">
+      <div style="font-size:1.8rem; margin-bottom:8px;">2</div>
+      <h3>コード編集</h3>
+      <p class="mt-1" style="font-size:0.9rem;">変更するとサイドバーに数字バッジが表示される</p>
+    </div>
+    <div style="display:flex; align-items:center; color:var(--ts-muted); font-size:1.5rem;">&#x2192;</div>
+    <div class="card" style="flex:1; text-align:center; border-top:3px solid var(--vscode-orange);">
+      <div style="font-size:1.8rem; margin-bottom:8px;">3</div>
+      <h3>Stage &amp; Commit</h3>
+      <p class="mt-1" style="font-size:0.9rem;">Source Control → <code>+</code> → メッセージ入力 → <kbd>Cmd+Enter</kbd></p>
+    </div>
+    <div style="display:flex; align-items:center; color:var(--ts-muted); font-size:1.5rem;">&#x2192;</div>
+    <div class="card" style="flex:1; text-align:center; border-top:3px solid var(--ts-accent2);">
+      <div style="font-size:1.8rem; margin-bottom:8px;">4</div>
+      <h3>Push</h3>
+      <p class="mt-1" style="font-size:0.9rem;">ステータスバーの &#x2191; アイコンか <code>...</code> メニューから Push</p>
+    </div>
+  </div>
+  <div class="tip-box warning" style="margin-top:20px; width:100%;">
+    <div class="tip-label orange">コミットメッセージのコツ</div>
+    「何を変えたか」ではなく「なぜ変えたか」を書く。例: <code>Fix login timeout by increasing session duration to 30min</code>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 24 — セクション: Remote & デバッグ
+     ============================================================ -->
+<div class="slide" data-slide="24">
+  <h1 style="font-size:3.6rem;" class="text-center">Remote SSH &amp; デバッグ</h1>
+  <div class="section-bar"></div>
+  <p style="margin-top:24px; font-size:1.3rem; color:var(--ts-muted);">サーバー開発 &amp; print文からの卒業</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 25 — Remote SSH
+     ============================================================ -->
+<div class="slide" data-slide="25">
+  <h2 class="text-center w-full">Remote - SSH で研究室サーバーに接続</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div style="flex:1;">
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">SSH config 設定</h3>
+        <pre class="code-block" style="font-size:0.85rem; padding:14px;"><span class="cm"># ~/.ssh/config</span>
+<span class="kw">Host</span> pws-160core
+    <span class="fn">HostName</span> <span class="num">100.104.225.55</span>
+    <span class="fn">User</span> pws-ubuntu-server
+    <span class="fn">IdentityFile</span> <span class="str">~/.ssh/id_ed25519</span>
+
+<span class="kw">Host</span> pws-gpu
+    <span class="fn">HostName</span> <span class="num">100.126.144.110</span>
+    <span class="fn">User</span> root
+    <span class="fn">IdentityFile</span> <span class="str">~/.ssh/id_ed25519</span></pre>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="step-circle">1</div>
+          <span>Remote - SSH 拡張機能をインストール</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="step-circle">2</div>
+          <span><kbd>Cmd+Shift+P</kbd> → "Remote-SSH: Connect"</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="step-circle">3</div>
+          <span>ホスト選択 → 接続完了</span>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">Remote 開発のメリット</h3>
+      <ul class="bullets" style="font-size:0.95rem;">
+        <li>ローカルと<strong>同じ操作感</strong></li>
+        <li>サーバーの高性能 CPU/GPU を活用</li>
+        <li>ファイル編集・ターミナル・デバッグが全て</li>
+        <li>拡張機能もサーバー側で動作</li>
+        <li>ファイル転送が不要（直接編集）</li>
+      </ul>
+      <div class="tip-box warning" style="margin-top:16px;">
+        <div class="tip-label orange">研究室サーバー</div>
+        <strong>pws-160core</strong>: Xeon 160T / 252GB RAM<br>
+        <strong>pws-gpu</strong>: RTX 4090 / 503GB RAM<br>
+        Tailscale VPN 経由でどこからでも接続可能
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 26 — デバッグ (GIF付き)
+     ============================================================ -->
+<div class="slide" data-slide="26">
+  <h2 class="text-center w-full">ビジュアルデバッグ</h2>
+  <div style="display:flex; gap:32px; width:100%; align-items:center;">
+    <div class="gif-area" style="flex:1;">
+      <img src="assets/debugger.gif" alt="Debugger Demo">
+    </div>
+    <div style="flex:1;">
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">基本操作</h3>
+        <table style="font-size:0.9rem; width:100%;">
+          <tr><td>行番号の左をクリック</td><td>ブレークポイント設定</td></tr>
+          <tr><td><kbd>F5</kbd></td><td>デバッグ開始</td></tr>
+          <tr><td><kbd>F10</kbd></td><td>ステップオーバー</td></tr>
+          <tr><td><kbd>F11</kbd></td><td>ステップイン</td></tr>
+          <tr><td><kbd>Shift+F11</kbd></td><td>ステップアウト</td></tr>
+          <tr><td><kbd>F9</kbd></td><td>ブレークポイント切替</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:8px;">できること</h3>
+        <ul class="bullets" style="font-size:0.9rem;">
+          <li>変数の値をリアルタイム確認</li>
+          <li>Watch 式で複雑な式を監視</li>
+          <li>条件付きブレークポイント</li>
+          <li>コールスタックの確認</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 27 — print vs デバッガ
+     ============================================================ -->
+<div class="slide" data-slide="27">
+  <h2 class="text-center w-full" style="margin-bottom:32px;">print() デバッグ vs ビジュアルデバッグ</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div class="card" style="flex:1; border-top:3px solid var(--vscode-red);">
+      <h3 style="color:var(--vscode-red);">print() デバッグ</h3>
+      <ul class="bullets mt-1" style="font-size:0.95rem;">
+        <li>コードの書き換えが必要</li>
+        <li>後で消し忘れるリスク</li>
+        <li>実行するまで値がわからない</li>
+        <li>条件付き確認が面倒</li>
+        <li>途中で止められない</li>
+        <li>再実行のたびに時間がかかる</li>
+      </ul>
+    </div>
+    <div class="card" style="flex:1; border-top:3px solid var(--vscode-green);">
+      <h3 style="color:var(--vscode-green);">VS Code デバッガ</h3>
+      <ul class="bullets mt-1" style="font-size:0.95rem;">
+        <li>コードを変更せずに変数を確認</li>
+        <li>実行中に値を変更して再開</li>
+        <li>条件付きブレークポイント</li>
+        <li>コールスタックの確認</li>
+        <li>Watch 式で複雑な式を監視</li>
+        <li>Debug Console で式を評価</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box" style="margin-top:24px; width:100%;">
+    <div class="tip-label green">実践的なアドバイス</div>
+    簡単な確認は <code>print()</code> でOK。ループのバグや複雑なロジックの追跡にはデバッガが圧倒的に効率的。
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 28 — デバッグ設定
+     ============================================================ -->
+<div class="slide" data-slide="28">
+  <h2 class="text-center w-full">Python デバッグ設定</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div style="flex:1;">
+      <pre class="code-block" style="font-size:0.85rem;"><span class="cm">// .vscode/launch.json</span>
+{
+  <span class="str">"version"</span>: <span class="str">"0.2.0"</span>,
+  <span class="str">"configurations"</span>: [
+    {
+      <span class="str">"name"</span>: <span class="str">"Python: Current File"</span>,
+      <span class="str">"type"</span>: <span class="str">"debugpy"</span>,
+      <span class="str">"request"</span>: <span class="str">"launch"</span>,
+      <span class="str">"program"</span>: <span class="str">"${file}"</span>,
+      <span class="str">"console"</span>: <span class="str">"integratedTerminal"</span>,
+      <span class="str">"justMyCode"</span>: <span class="kw">true</span>
+    },
+    {
+      <span class="str">"name"</span>: <span class="str">"Python: Flask"</span>,
+      <span class="str">"type"</span>: <span class="str">"debugpy"</span>,
+      <span class="str">"request"</span>: <span class="str">"launch"</span>,
+      <span class="str">"module"</span>: <span class="str">"flask"</span>,
+      <span class="str">"env"</span>: { <span class="str">"FLASK_APP"</span>: <span class="str">"app.py"</span> },
+      <span class="str">"args"</span>: [<span class="str">"run"</span>, <span class="str">"--debug"</span>]
+    }
+  ]
+}</pre>
+    </div>
+    <div style="flex:1;">
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">条件付きブレークポイント</h3>
+        <p style="font-size:0.95rem;">ブレークポイントを右クリック →「Edit Condition」</p>
+        <pre class="code-block mt-1" style="font-size:0.85rem; padding:10px 14px;"><span class="cm"># 例: i が 100 の時だけ止まる</span>
+i == <span class="num">100</span>
+
+<span class="cm"># 例: name が特定の値の時</span>
+name == <span class="str">"admin"</span></pre>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px;">Log Point</h3>
+        <p style="font-size:0.95rem;">ブレークポイントの代わりに<strong>ログメッセージ</strong>を出力。コードを変更せずに print デバッグ風の出力が可能。</p>
+        <pre class="code-block mt-1" style="font-size:0.85rem; padding:10px 14px;"><span class="cm"># Log message 例:</span>
+value of x: {x}, total: {total}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 29 — セクション: 設定
+     ============================================================ -->
+<div class="slide" data-slide="29">
+  <h1 style="font-size:3.6rem;" class="text-center">設定 &amp; カスタマイズ</h1>
+  <div class="section-bar"></div>
+  <p style="margin-top:24px; font-size:1.3rem; color:var(--ts-muted);">自分だけの開発環境を作る</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 30 — おすすめ設定
+     ============================================================ -->
+<div class="slide" data-slide="30">
+  <h2 class="text-center w-full">おすすめの設定</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div style="flex:1;">
+      <pre class="code-block" style="font-size:0.82rem;"><span class="cm">// settings.json</span>
+<span class="cm">// Cmd+Shift+P → "Open User Settings (JSON)"</span>
+{
+  <span class="cm">// 自動保存（フォーカスが外れたら保存）</span>
+  <span class="str">"files.autoSave"</span>: <span class="str">"onFocusChange"</span>,
+
+  <span class="cm">// 保存時にフォーマット</span>
+  <span class="str">"editor.formatOnSave"</span>: <span class="kw">true</span>,
+
+  <span class="cm">// フォントサイズ</span>
+  <span class="str">"editor.fontSize"</span>: <span class="num">14</span>,
+
+  <span class="cm">// ミニマップ非表示（画面を広く）</span>
+  <span class="str">"editor.minimap.enabled"</span>: <span class="kw">false</span>,
+
+  <span class="cm">// 括弧のペアを色分け</span>
+  <span class="str">"editor.bracketPairColorization.enabled"</span>: <span class="kw">true</span>,
+
+  <span class="cm">// 末尾の空白を自動削除</span>
+  <span class="str">"files.trimTrailingWhitespace"</span>: <span class="kw">true</span>,
+
+  <span class="cm">// 最終行に改行を自動追加</span>
+  <span class="str">"files.insertFinalNewline"</span>: <span class="kw">true</span>,
+
+  <span class="cm">// Python のデフォルトインタープリタ</span>
+  <span class="str">"python.defaultInterpreterPath"</span>: <span class="str">"python3"</span>
+}</pre>
+    </div>
+    <div style="flex:1;">
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">設定の2つのレベル</h3>
+        <ul class="bullets" style="font-size:0.95rem;">
+          <li><strong>User 設定</strong>: 全プロジェクトに適用</li>
+          <li><strong>Workspace 設定</strong>: プロジェクトごと<br><code>.vscode/settings.json</code></li>
+        </ul>
+        <p class="mt-1" style="font-size:0.9rem; color:var(--ts-muted);">Workspace 設定が User 設定より優先される</p>
+      </div>
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">テーマ変更</h3>
+        <p style="font-size:0.95rem;"><kbd>Cmd + K</kbd> → <kbd>Cmd + T</kbd> でテーマ一覧</p>
+        <ul class="bullets mt-1" style="font-size:0.9rem;">
+          <li><strong>One Dark Pro</strong> — 人気No.1</li>
+          <li><strong>Dracula</strong> — ダークで見やすい</li>
+          <li><strong>GitHub Theme</strong> — GitHub風</li>
+          <li><strong>Catppuccin</strong> — パステル系</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:8px;">おすすめフォント</h3>
+        <p style="font-size:0.9rem;"><strong>Fira Code</strong> — リガチャ対応<br><code>!=</code> → &#x2260;, <code>=></code> → &#x21D2; のように表示</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 31 — セクション: 上級テクニック
+     ============================================================ -->
+<div class="slide" data-slide="31">
+  <h1 style="font-size:3.6rem;" class="text-center">上級テクニック</h1>
+  <div class="section-bar"></div>
+  <p style="margin-top:24px; font-size:1.3rem; color:var(--ts-muted);">さらに効率を上げる</p>
+</div>
+
+<!-- ============================================================
+     SLIDE 32 — Workspace
+     ============================================================ -->
+<div class="slide" data-slide="32">
+  <h2 class="text-center w-full">ワークスペースの活用</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">.vscode/ ディレクトリ</h3>
+      <pre class="code-block" style="font-size:0.9rem; padding:14px; margin:0;">my-project/
+  .vscode/
+    settings.json    <span class="cm"># プロジェクト設定</span>
+    launch.json      <span class="cm"># デバッグ設定</span>
+    tasks.json       <span class="cm"># タスク定義</span>
+    extensions.json  <span class="cm"># 推奨拡張機能</span>
+  src/
+  tests/
+  README.md</pre>
+      <p class="mt-2" style="font-size:0.95rem; color:var(--ts-muted);">Git にコミットしてチームで開発環境を統一</p>
+    </div>
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px;">マルチルートワークスペース</h3>
+      <p style="font-size:0.95rem;">複数のプロジェクトフォルダを1つのウィンドウで開ける。</p>
+      <pre class="code-block mt-1" style="font-size:0.85rem; padding:12px;"><span class="cm">// my-work.code-workspace</span>
+{
+  <span class="str">"folders"</span>: [
+    { <span class="str">"path"</span>: <span class="str">"./backend"</span> },
+    { <span class="str">"path"</span>: <span class="str">"./frontend"</span> },
+    { <span class="str">"path"</span>: <span class="str">"./docs"</span> }
+  ],
+  <span class="str">"settings"</span>: {
+    <span class="str">"editor.fontSize"</span>: <span class="num">14</span>
+  }
+}</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 33 — Snippets
+     ============================================================ -->
+<div class="slide" data-slide="33">
+  <h2 class="text-center w-full">ユーザースニペット</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div style="flex:1;">
+      <p style="font-size:1.1rem; margin-bottom:16px;">よく使うコードパターンを登録して、数文字のプレフィックスで展開。</p>
+      <pre class="code-block" style="font-size:0.82rem;"><span class="cm">// Cmd+Shift+P → "Snippets: Configure Snippets"</span>
+<span class="cm">// → python.json</span>
+{
+  <span class="str">"Main Guard"</span>: {
+    <span class="str">"prefix"</span>: <span class="str">"ifmain"</span>,
+    <span class="str">"body"</span>: [
+      <span class="str">"if __name__ == \"__main__\":"</span>,
+      <span class="str">"    ${1:main()}"</span>
+    ],
+    <span class="str">"description"</span>: <span class="str">"if __name__ == __main__"</span>
+  },
+  <span class="str">"Docstring"</span>: {
+    <span class="str">"prefix"</span>: <span class="str">"doc"</span>,
+    <span class="str">"body"</span>: [
+      <span class="str">"\"\"\"${1:Summary}"</span>,
+      <span class="str">""</span>,
+      <span class="str">"Args:"</span>,
+      <span class="str">"    ${2:param}: ${3:description}"</span>,
+      <span class="str">""</span>,
+      <span class="str">"Returns:"</span>,
+      <span class="str">"    ${4:description}"</span>,
+      <span class="str">"\"\"\" "</span>
+    ]
+  }
+}</pre>
+    </div>
+    <div style="flex:1;">
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">スニペットの変数</h3>
+        <table style="font-size:0.9rem; width:100%;">
+          <tr><td><code>${1:placeholder}</code></td><td>Tab ストップ</td></tr>
+          <tr><td><code>$0</code></td><td>最終カーソル位置</td></tr>
+          <tr><td><code>${TM_FILENAME}</code></td><td>ファイル名</td></tr>
+          <tr><td><code>${CURRENT_YEAR}</code></td><td>現在の年</td></tr>
+          <tr><td><code>${1|one,two|}</code></td><td>選択肢</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:8px;">Emmet (HTML)</h3>
+        <p style="font-size:0.9rem;">HTML ファイルで Emmet 記法が標準搭載:</p>
+        <pre class="code-block mt-1" style="font-size:0.85rem; padding:10px 14px;"><span class="cm">入力:</span> div.container>ul>li*3
+<span class="cm">展開 (Tab):</span>
+&lt;div class="container"&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 34 — Task Runner
+     ============================================================ -->
+<div class="slide" data-slide="34">
+  <h2 class="text-center w-full">Task Runner &amp; タスクの自動化</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div style="flex:1;">
+      <pre class="code-block" style="font-size:0.82rem;"><span class="cm">// .vscode/tasks.json</span>
+{
+  <span class="str">"version"</span>: <span class="str">"2.0.0"</span>,
+  <span class="str">"tasks"</span>: [
+    {
+      <span class="str">"label"</span>: <span class="str">"Run Tests"</span>,
+      <span class="str">"type"</span>: <span class="str">"shell"</span>,
+      <span class="str">"command"</span>: <span class="str">"pytest -v"</span>,
+      <span class="str">"group"</span>: {
+        <span class="str">"kind"</span>: <span class="str">"test"</span>,
+        <span class="str">"isDefault"</span>: <span class="kw">true</span>
+      },
+      <span class="str">"problemMatcher"</span>: [<span class="str">"$pytest"</span>]
+    },
+    {
+      <span class="str">"label"</span>: <span class="str">"Lint"</span>,
+      <span class="str">"type"</span>: <span class="str">"shell"</span>,
+      <span class="str">"command"</span>: <span class="str">"ruff check ."</span>,
+      <span class="str">"problemMatcher"</span>: []
+    },
+    {
+      <span class="str">"label"</span>: <span class="str">"Format"</span>,
+      <span class="str">"type"</span>: <span class="str">"shell"</span>,
+      <span class="str">"command"</span>: <span class="str">"ruff format ."</span>
+    }
+  ]
+}</pre>
+    </div>
+    <div style="flex:1;">
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">タスクの実行方法</h3>
+        <table style="font-size:0.95rem; width:100%;">
+          <tr><td><kbd>Cmd + Shift + B</kbd></td><td>ビルドタスク</td></tr>
+          <tr><td><kbd>Cmd + Shift + P</kbd></td><td>→ "Run Task"</td></tr>
+        </table>
+      </div>
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">Problem Matcher</h3>
+        <p style="font-size:0.9rem;">タスクの出力からエラーを解析し、<strong>Problems パネル</strong> に表示。エラー箇所に直接ジャンプ可能。</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px;">Compound Task</h3>
+        <p style="font-size:0.9rem;">複数のタスクを組み合わせて実行:</p>
+        <pre class="code-block mt-1" style="font-size:0.8rem; padding:10px;">{
+  <span class="str">"label"</span>: <span class="str">"Lint & Test"</span>,
+  <span class="str">"dependsOn"</span>: [<span class="str">"Lint"</span>, <span class="str">"Run Tests"</span>],
+  <span class="str">"dependsOrder"</span>: <span class="str">"sequence"</span>
+}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 35 — AI 支援
+     ============================================================ -->
+<div class="slide" data-slide="35">
+  <h2 class="text-center w-full">AI コーディング支援</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div class="card" style="flex:1; border-top:3px solid var(--ts-accent);">
+      <h3 style="margin-bottom:16px;">GitHub Copilot</h3>
+      <ul class="bullets" style="font-size:0.95rem;">
+        <li>コード補完（行単位・関数単位）</li>
+        <li>コメントからコード生成</li>
+        <li>テストコードの自動生成</li>
+        <li>チャットでの質問・リファクタリング</li>
+        <li>学生は <strong>無料</strong>（GitHub Education）</li>
+      </ul>
+      <div class="tip-box" style="margin-top:12px;">
+        <div class="tip-label green">学生向け</div>
+        <code>education.github.com</code> で申請すると Copilot Pro が無料
+      </div>
+    </div>
+    <div class="card" style="flex:1; border-top:3px solid var(--ts-accent2);">
+      <h3 style="margin-bottom:16px;">その他の AI ツール</h3>
+      <ul class="bullets" style="font-size:0.95rem;">
+        <li><strong>Continue</strong> — オープンソースの AI アシスタント。ローカル LLM も使える</li>
+        <li><strong>Cline</strong> — Claude を VS Code 内で使える拡張機能</li>
+        <li><strong>Cursor</strong> — VS Code ベースの AI エディタ (VS Code fork)</li>
+      </ul>
+      <div class="tip-box warning" style="margin-top:12px;">
+        <div class="tip-label orange">注意</div>
+        AI の出力は必ず自分で検証すること。特にセキュリティに関わるコードは要確認。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 36 — Zen Mode & 生産性
+     ============================================================ -->
+<div class="slide" data-slide="36">
+  <h2 class="text-center w-full">生産性を高めるテクニック</h2>
+  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; width:100%;">
+    <div class="card">
+      <h3>Zen Mode</h3>
+      <p class="mt-1" style="font-size:0.9rem;"><kbd>Cmd+K</kbd> <kbd>Z</kbd> でフルスクリーン集中モード。UI が全て消えてコードだけに。<kbd>Esc</kbd>&#xD7;2 で戻る。</p>
+    </div>
+    <div class="card">
+      <h3>Sticky Scroll</h3>
+      <p class="mt-1" style="font-size:0.9rem;">スクロール時にスコープ（関数名・クラス名）がエディタ上部に固定表示。今どこにいるか一目瞭然。</p>
+    </div>
+    <div class="card">
+      <h3>Timeline View</h3>
+      <p class="mt-1" style="font-size:0.9rem;">Explorer の下部にファイルの変更履歴を時系列で表示。Git コミットやローカルの保存履歴を確認。</p>
+    </div>
+    <div class="card">
+      <h3>Breadcrumbs</h3>
+      <p class="mt-1" style="font-size:0.9rem;">エディタ上部にファイルパスとシンボルを表示。クリックで素早くナビゲーション。</p>
+    </div>
+    <div class="card">
+      <h3>Outline View</h3>
+      <p class="mt-1" style="font-size:0.9rem;">サイドバーにファイル内の関数・クラス一覧を表示。大きなファイルの構造把握に便利。</p>
+    </div>
+    <div class="card">
+      <h3>Quick Fix</h3>
+      <p class="mt-1" style="font-size:0.9rem;"><kbd>Cmd + .</kbd> で自動修正提案。インポート追加、変数リネーム、コード修正など。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 37 — キーバインドのカスタマイズ
+     ============================================================ -->
+<div class="slide" data-slide="37">
+  <h2 class="text-center w-full">キーバインドのカスタマイズ</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div style="flex:1;">
+      <p style="font-size:1.1rem; margin-bottom:16px;"><kbd>Cmd + K</kbd> <kbd>Cmd + S</kbd> でキーバインド設定画面を開く</p>
+      <div class="card">
+        <h3 style="margin-bottom:12px;">カスタマイズ例</h3>
+        <pre class="code-block" style="font-size:0.82rem; padding:12px;"><span class="cm">// keybindings.json</span>
+[
+  {
+    <span class="str">"key"</span>: <span class="str">"cmd+shift+t"</span>,
+    <span class="str">"command"</span>: <span class="str">"workbench.action.terminal.new"</span>
+  },
+  {
+    <span class="str">"key"</span>: <span class="str">"cmd+shift+r"</span>,
+    <span class="str">"command"</span>: <span class="str">"workbench.action.tasks.runTask"</span>,
+    <span class="str">"args"</span>: <span class="str">"Run Tests"</span>
+  }
+]</pre>
+      </div>
+    </div>
+    <div style="flex:1;">
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">キーマップ拡張機能</h3>
+        <p style="font-size:0.95rem;">他のエディタから移行する場合:</p>
+        <ul class="bullets mt-1" style="font-size:0.9rem;">
+          <li><strong>Vim</strong> — VSCodeVim 拡張</li>
+          <li><strong>Emacs</strong> — Awesome Emacs Keymap</li>
+          <li><strong>Sublime Text</strong> — Sublime Text Keymap</li>
+          <li><strong>Atom</strong> — Atom Keymap</li>
+        </ul>
+      </div>
+      <div class="tip-box" style="margin-top:16px;">
+        <div class="tip-label green">Tip</div>
+        キーバインド設定画面で検索ボックスに操作名を入力すると、現在のキーバインドが確認できる。「Record Keys」モードで実際にキーを押して検索も可能。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 38 — まとめ
+     ============================================================ -->
+<div class="slide" data-slide="38">
+  <h2 class="text-center w-full" style="margin-bottom:32px;">今日のまとめ</h2>
+  <div style="display:flex; gap:40px; justify-content:center; width:100%; flex-wrap:wrap;">
+    <div class="stat">
+      <div class="number" style="font-size:2.5rem;">&#x2318;&#x21E7;P</div>
+      <div class="label">コマンドパレット<br>で全てにアクセス</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="font-size:2.5rem;">&#x2318;D</div>
+      <div class="label">マルチカーソルで<br>一括編集</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="font-size:2.5rem;">&#x1F9E9;</div>
+      <div class="label">拡張機能で<br>機能を追加</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="font-size:2.5rem;">&#x1F41E;</div>
+      <div class="label">デバッガを<br>積極的に活用</div>
+    </div>
+    <div class="stat">
+      <div class="number" style="font-size:2.5rem;">&#x1F310;</div>
+      <div class="label">Remote SSH で<br>サーバー開発</div>
+    </div>
+  </div>
+  <div style="margin-top:40px; padding:20px 40px; background:var(--ts-card-bg); border-radius:12px; border:1px solid var(--ts-card-border); text-align:center; width:100%;">
+    <p style="font-size:1.3rem; color:#fff;">まずは <strong>コマンドパレット</strong> と <strong>ショートカット5つ</strong> を覚えるところから始めよう</p>
+    <p style="font-size:1rem; color:var(--ts-muted); margin-top:8px;">毎日1つずつ新しい機能を試していけば、1ヶ月で劇的に変わる</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 39 — 今日から始めるチェックリスト
+     ============================================================ -->
+<div class="slide" data-slide="39">
+  <h2 class="text-center w-full">今日から始めるチェックリスト</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px; color:var(--vscode-green);">&#x2705; 今日やること</h3>
+      <ol class="numbered">
+        <li>VS Code をインストール</li>
+        <li>Python 拡張機能をインストール</li>
+        <li>テーマを好みに変更</li>
+        <li><kbd>Cmd+Shift+P</kbd> を10回使ってみる</li>
+        <li><kbd>Cmd+P</kbd> でファイルを開いてみる</li>
+      </ol>
+    </div>
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px; color:var(--vscode-orange);">&#x1F4C5; 今週やること</h3>
+      <ol class="numbered">
+        <li>統合ターミナルで作業する</li>
+        <li><kbd>Cmd+D</kbd> でマルチカーソルを使う</li>
+        <li>Git の Stage &amp; Commit を GUI でやる</li>
+        <li>デバッガでブレークポイントを使う</li>
+        <li>Remote SSH でサーバーに接続する</li>
+      </ol>
+    </div>
+    <div class="card" style="flex:1;">
+      <h3 style="margin-bottom:16px; color:var(--ts-accent2);">&#x1F680; 慣れたらやること</h3>
+      <ol class="numbered">
+        <li>settings.json をカスタマイズ</li>
+        <li>ユーザースニペットを作成</li>
+        <li>tasks.json でタスクを自動化</li>
+        <li>GitHub Copilot を試す</li>
+        <li>.vscode/ をチームで共有</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 40 — 参考リソース
+     ============================================================ -->
+<div class="slide" data-slide="40">
+  <h2 class="text-center w-full">参考リソース</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; max-width:800px;">
+    <div class="card">
+      <h3>&#x1F4D6; 公式ドキュメント</h3>
+      <p class="mt-1" style="font-size:0.95rem;"><code>code.visualstudio.com/docs</code><br>最も網羅的で正確な情報源</p>
+    </div>
+    <div class="card">
+      <h3>&#x1F3AC; 公式 YouTube</h3>
+      <p class="mt-1" style="font-size:0.95rem;">Visual Studio Code チャンネル<br>Tips &amp; Tricks シリーズが特におすすめ</p>
+    </div>
+    <div class="card">
+      <h3>&#x2328; ショートカット一覧</h3>
+      <p class="mt-1" style="font-size:0.95rem;"><kbd>Cmd+K</kbd> <kbd>Cmd+S</kbd> でキーバインド一覧<br>PDF版もダウンロード可能</p>
+    </div>
+    <div class="card">
+      <h3>&#x1F4AC; コミュニティ</h3>
+      <p class="mt-1" style="font-size:0.95rem;">Stack Overflow <code>[vscode]</code> タグ<br>GitHub Issues で機能リクエスト</p>
+    </div>
+  </div>
+  <div style="margin-top:32px; text-align:center;">
+    <p style="font-size:1.1rem; color:var(--ts-muted);">困ったら <kbd>Cmd+Shift+P</kbd> → キーワード検索。大抵の機能はここから辿り着ける。</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 41 — Q&A
+     ============================================================ -->
+<div class="slide" data-slide="41">
+  <blockquote style="border-left-color:var(--ts-accent); margin-bottom:32px;">
+    "The best editor is the one you know well."
+    <cite>&mdash; 使い慣れたエディタが最強</cite>
+  </blockquote>
+  <h2 style="margin-top:40px;">Q &amp; A</h2>
+  <p style="margin-top:16px; color:var(--ts-muted);">質問・相談はいつでもどうぞ</p>
+</div>
+
+<!-- Progress indicator -->
+<div id="progress"></div>
+
+<!-- ── Keyboard Navigation ── -->
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const progress = document.getElementById('progress');
+  let current = 0, animating = false;
+
+  function go(i, dir) {
+    if (animating || i === current) return;
+    const next = Math.max(0, Math.min(i, slides.length - 1));
+    if (next === current) return;
+    animating = true;
+    const old = slides[current], nu = slides[next];
+    const fwd = dir === 'fwd';
+    old.classList.remove('active');
+    old.classList.add(fwd ? 'out-left' : 'out-right');
+    nu.style.animation = 'none'; nu.offsetHeight; nu.style.animation = '';
+    nu.classList.add('active');
+    nu.style.animationName = fwd ? 'slideIn' : 'slideInReverse';
+    setTimeout(() => {
+      old.classList.remove('out-left', 'out-right');
+      nu.style.animationName = '';
+      animating = false;
+    }, 300);
+    current = next;
+    progress.textContent = (current + 1) + ' / ' + slides.length;
+  }
+
+  progress.textContent = '1 / ' + slides.length;
+
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight','l','j','n',' '].includes(e.key)) { e.preventDefault(); go(current + 1, 'fwd'); }
+    else if (['ArrowLeft','h','k','p'].includes(e.key)) { e.preventDefault(); go(current - 1, 'bwd'); }
+    else if (e.key === 'g') go(0, 'bwd');
+    else if (e.key === 'G') go(slides.length - 1, 'fwd');
+    else if (e.key === 'Home') { e.preventDefault(); go(0, 'bwd'); }
+    else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1, 'fwd'); }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(dx) > 50) {
+      if (dx < 0) go(current + 1, 'fwd');
+      else go(current - 1, 'bwd');
+    }
+  });
+})();
+</script>
+</body>
+</html>
