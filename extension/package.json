@@ -1,0 +1,43 @@
+{
+  "name": "pws-lab-python-pack",
+  "displayName": "PWS Lab Python Pack",
+  "description": "PWS Lab 推奨の Python 開発環境拡張パック。VS Code 入門講座で紹介する必須拡張機能をワンクリックでインストール。",
+  "version": "1.0.0",
+  "publisher": "lutelute",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Extension Packs"
+  ],
+  "keywords": [
+    "python",
+    "extension-pack",
+    "pws-lab",
+    "beginner",
+    "japanese"
+  ],
+  "extensionPack": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.debugpy",
+    "charliermarsh.ruff",
+    "ms-toolsai.jupyter",
+    "njpwerner.autodocstring",
+    "eamodio.gitlens",
+    "ms-vscode-remote.remote-ssh",
+    "usernamehw.errorlens",
+    "oderwat.indent-rainbow",
+    "christian-kohler.path-intellisense",
+    "MS-CEINTL.vscode-language-pack-ja"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lutelute/pre-vscode"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@vscode/vsce": "^3.7.1"
+  }
+}

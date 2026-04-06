@@ -480,7 +480,145 @@ winget install Microsoft.VisualStudioCode
 </div>
 
 <!-- ============================================================
-     SLIDE 10 — ファイル操作
+     SLIDE 10 — Open Folder の重要性
+     ============================================================ -->
+<div class="slide" data-slide="10">
+  <h2 class="text-center w-full" style="margin-bottom:28px;">Open Folder が全ての基本</h2>
+  <div style="display:flex; gap:32px; width:100%;">
+    <div class="card" style="flex:1; border-top:3px solid var(--vscode-red);">
+      <h3 style="color:var(--vscode-red);">File > Open File</h3>
+      <p class="mt-1" style="font-size:0.95rem;">ファイル1つだけを開く。</p>
+      <ul class="bullets mt-1" style="font-size:0.9rem;">
+        <li>サイドバーにファイルツリーが出ない</li>
+        <li>プロジェクト全体の検索ができない</li>
+        <li>Git 連携が効かない</li>
+        <li><code>.vscode/settings.json</code> が読まれない</li>
+        <li>拡張機能がプロジェクトを認識しない</li>
+      </ul>
+      <div class="tip-box danger" style="margin-top:12px;">
+        <div class="tip-label red">NG</div>
+        ファイルをダブルクリックで開くとこの状態になりがち
+      </div>
+    </div>
+    <div class="card" style="flex:1; border-top:3px solid var(--vscode-green);">
+      <h3 style="color:var(--vscode-green);">File > Open Folder</h3>
+      <p class="mt-1" style="font-size:0.95rem;"><strong>プロジェクトのルートフォルダ</strong>を開く。</p>
+      <ul class="bullets mt-1" style="font-size:0.9rem;">
+        <li>Explorer にファイルツリーが表示</li>
+        <li><kbd>Cmd+Shift+F</kbd> で全体検索</li>
+        <li>Git 連携が自動で有効に</li>
+        <li><code>.vscode/</code> の設定が適用される</li>
+        <li>拡張機能がプロジェクト構造を認識</li>
+      </ul>
+      <div class="tip-box" style="margin-top:12px;">
+        <div class="tip-label green">Best Practice</div>
+        ターミナルで <code>code .</code> が最も確実
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:20px; padding:12px 24px; background:var(--ts-card-bg); border-radius:8px; border:1px solid var(--ts-card-border); width:100%; text-align:center;">
+    <p style="font-size:1.05rem;"><strong>Workspace (.code-workspace)</strong> は複数フォルダを1つのウィンドウで開きたい時に使う上級機能。まずは Open Folder で十分。</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 11 — サイドバーの活用
+     ============================================================ -->
+<div class="slide" data-slide="11">
+  <h2 class="text-center w-full">サイドバーを使いこなす</h2>
+  <div style="display:flex; gap:24px; width:100%;">
+    <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
+      <div class="card">
+        <h3 style="margin-bottom:8px;">Explorer (ファイルツリー)</h3>
+        <ul class="bullets" style="font-size:0.9rem;">
+          <li>ファイルの作成・削除・リネーム（右クリック）</li>
+          <li>ドラッグ&ドロップでファイル移動</li>
+          <li><strong>Open Editors</strong>: 開いているファイル一覧</li>
+          <li><strong>Outline</strong>: 関数・クラスの構造表示</li>
+          <li><strong>Timeline</strong>: ファイルの変更履歴</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:8px;">表示の切り替え</h3>
+        <table style="font-size:0.9rem; width:100%;">
+          <tr><td><kbd>Cmd + B</kbd></td><td>サイドバー表示/非表示</td></tr>
+          <tr><td><kbd>Cmd + Shift + E</kbd></td><td>Explorer に切替</td></tr>
+          <tr><td><kbd>Cmd + Shift + F</kbd></td><td>検索に切替</td></tr>
+          <tr><td><kbd>Cmd + Shift + G</kbd></td><td>Git に切替</td></tr>
+          <tr><td><kbd>Cmd + Shift + D</kbd></td><td>デバッグに切替</td></tr>
+          <tr><td><kbd>Cmd + Shift + X</kbd></td><td>拡張機能に切替</td></tr>
+        </table>
+      </div>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; gap:16px;">
+      <div class="card">
+        <h3 style="margin-bottom:8px;">Explorer の便利設定</h3>
+        <pre class="code-block" style="font-size:0.8rem; padding:12px;"><span class="cm">// settings.json</span>
+{
+  <span class="cm">// .git, __pycache__ 等を非表示</span>
+  <span class="str">"files.exclude"</span>: {
+    <span class="str">"**/__pycache__"</span>: <span class="kw">true</span>,
+    <span class="str">"**/.pytest_cache"</span>: <span class="kw">true</span>,
+    <span class="str">"**/*.pyc"</span>: <span class="kw">true</span>
+  },
+
+  <span class="cm">// 検索時に除外するフォルダ</span>
+  <span class="str">"search.exclude"</span>: {
+    <span class="str">"**/node_modules"</span>: <span class="kw">true</span>,
+    <span class="str">"**/.venv"</span>: <span class="kw">true</span>
+  },
+
+  <span class="cm">// ファイルのネスト表示</span>
+  <span class="str">"explorer.fileNesting.enabled"</span>: <span class="kw">true</span>
+}</pre>
+      </div>
+      <div class="tip-box" style="margin-top:0;">
+        <div class="tip-label green">Tip</div>
+        <code>__pycache__</code> や <code>.pyc</code> はサイドバーに表示する意味がない。<code>files.exclude</code> で消すとスッキリする。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 12 — やってはいけないこと
+     ============================================================ -->
+<div class="slide" data-slide="12">
+  <h2 class="text-center w-full" style="color:var(--vscode-red);">VS Code でやってはいけないこと</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%;">
+    <div class="card" style="border-left:3px solid var(--vscode-red);">
+      <h3 style="color:var(--vscode-red);">ファイル単体で開く</h3>
+      <p style="font-size:0.9rem;">必ず <strong>Open Folder</strong> でプロジェクトルートを開く。<code>code .</code> を習慣にする。</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--vscode-red);">
+      <h3 style="color:var(--vscode-red);">拡張機能を入れすぎる</h3>
+      <p style="font-size:0.9rem;">使わない拡張機能は<strong>アンインストール</strong>。無効化だけではメモリを消費し続ける。</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--vscode-red);">
+      <h3 style="color:var(--vscode-red);">設定を GUI だけで変更</h3>
+      <p style="font-size:0.9rem;"><code>settings.json</code> を直接編集する習慣をつける。GUI だと設定が見つけにくい場合がある。</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--vscode-red);">
+      <h3 style="color:var(--vscode-red);">保存を手動だけに頼る</h3>
+      <p style="font-size:0.9rem;"><code>"files.autoSave": "onFocusChange"</code> を設定。保存忘れによるバグを防ぐ。</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--vscode-red);">
+      <h3 style="color:var(--vscode-red);">デバッガを使わない</h3>
+      <p style="font-size:0.9rem;"><code>print()</code> だけでデバッグし続けるのは非効率。ブレークポイントを使おう。</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--vscode-red);">
+      <h3 style="color:var(--vscode-red);">.vscode/ を .gitignore する</h3>
+      <p style="font-size:0.9rem;">チームの開発環境を統一するために <code>.vscode/</code> は Git に含める。<em>ただし個人設定は User Settings に。</em></p>
+    </div>
+  </div>
+  <div class="tip-box warning" style="margin-top:16px; width:100%;">
+    <div class="tip-label orange">特に注意</div>
+    研究室サーバーに Remote SSH で接続する時、<strong>ホームディレクトリ直下</strong>を Open Folder すると数万ファイルをスキャンして重くなる。必ず<strong>プロジェクトフォルダ</strong>を指定すること。
+  </div>
+</div>
+
+<!-- ============================================================
+     SLIDE 13 — ファイル操作
      ============================================================ -->
 <div class="slide" data-slide="10">
   <h2 class="text-center w-full">ファイル操作を高速化</h2>
@@ -1815,16 +1953,16 @@ body._ts-animations-paused *{animation-play-state:paused!important;transition-du
     {range:[0,0],tab:'presentation.md',section:'title'},
     {range:[1,1],tab:'README.md',section:'toc'},
     {range:[2,5],tab:'01-intro.md',section:'intro'},
-    {range:[6,9],tab:'02-basics.md',section:'basics'},
-    {range:[10,14],tab:'03-editing.md',section:'editing'},
-    {range:[15,18],tab:'04-extensions.md',section:'extensions'},
-    {range:[19,22],tab:'05-terminal-git.md',section:'terminal'},
-    {range:[23,27],tab:'06-remote-debug.md',section:'debug'},
-    {range:[28,29],tab:'07-settings.md',section:'settings'},
-    {range:[30,36],tab:'08-advanced.md',section:'advanced'},
-    {range:[37,38],tab:'09-summary.md',section:'summary'},
-    {range:[39,39],tab:'REFERENCES.md',section:'refs'},
-    {range:[40,40],tab:'Q&A.md',section:'qa'},
+    {range:[6,12],tab:'02-basics.md',section:'basics'},
+    {range:[13,17],tab:'03-editing.md',section:'editing'},
+    {range:[18,21],tab:'04-extensions.md',section:'extensions'},
+    {range:[22,25],tab:'05-terminal-git.md',section:'terminal'},
+    {range:[26,30],tab:'06-remote-debug.md',section:'debug'},
+    {range:[31,32],tab:'07-settings.md',section:'settings'},
+    {range:[33,39],tab:'08-advanced.md',section:'advanced'},
+    {range:[40,41],tab:'09-summary.md',section:'summary'},
+    {range:[42,42],tab:'REFERENCES.md',section:'refs'},
+    {range:[43,43],tab:'Q&A.md',section:'qa'},
   ];
   function getSectionForSlide(idx){
     for(var i=0;i<sectionMap.length;i++){
