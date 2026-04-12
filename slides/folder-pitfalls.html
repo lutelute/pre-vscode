@@ -1,441 +1,609 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>フォルダ管理あるある — 初心者も玄人もハマる落とし穴</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}p{font-size:1.05rem;line-height:1.7;color:#bbb}code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}.label.green{background:#7fdbca22;color:#7fdbca}.label.purple{background:#c792ea22;color:#c792ea}.label.orange{background:#f78c6c22;color:#f78c6c}.label.red{background:#ff537022;color:#ff5370}.label.yellow{background:#ffcb6b22;color:#ffcb6b}.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}.cols{display:flex;gap:2rem;width:100%;max-width:1100px}.cols>*{flex:1}.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}.terminal-bar .dot{width:10px;height:10px;border-radius:50%}.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}.terminal-body .prompt{color:#7fdbca}.terminal-body .cmd{color:#e0e0e0}.terminal-body .output{color:#888}.terminal-body .success{color:#27c93f}.terminal-body .error{color:#ff5370}.terminal-body .info{color:#00d2ff}.terminal-body .warn{color:#ffcb6b}.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}ul.feature-list{list-style:none;max-width:700px}ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}ul.feature-list li::before{content:'▸ ';color:#00d2ff}.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}table{border-collapse:collapse;width:100%;max-width:900px}th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}th{color:#00d2ff;font-weight:600;background:#1a1a2e}td{color:#bbb}tr:hover td{background:#1a1a2e55}.gif-container{border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;max-width:700px;width:100%}.gif-container img{width:100%;display:block}.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}.step-progress .sp-item{display:flex;align-items:center;gap:0}.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}.step-progress .sp-arrow.sp-done{color:#00d2ff55}.danger-card{background:#1a1a2e;border:1px solid #ff5370;border-radius:12px;padding:1.5rem;border-left:4px solid #ff5370}
-.ok-card{background:#1a1a2e;border:1px solid #7fdbca;border-radius:12px;padding:1.5rem;border-left:4px solid #7fdbca}
-.warn-card{background:#1a1a2e;border:1px solid #ffcb6b;border-radius:12px;padding:1.5rem;border-left:4px solid #ffcb6b}
-.vs{display:flex;gap:1.5rem;width:100%;max-width:1000px}.vs>*{flex:1}
-.scenario{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:1rem}
-.scenario-label{font-size:.8rem;font-weight:600;margin-bottom:.5rem;display:inline-block;padding:.2em .6em;border-radius:4px}
-.scenario-label.bad{background:#ff537022;color:#ff5370}
-.scenario-label.good{background:#7fdbca22;color:#7fdbca}
-.scenario-label.caution{background:#ffcb6b22;color:#ffcb6b}
-.tree{font-family:'Fira Code','SF Mono',monospace;font-size:.9rem;line-height:1.8;color:#888}
-.tree .highlight{color:#00d2ff;font-weight:600}
-.tree .warn-text{color:#ffcb6b}
-.tree .error-text{color:#ff5370}
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}
+.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}
+.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}
+h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}
+h3{font-size:1.3rem;color:#7fdbca;margin-bottom:.6rem}
+p{font-size:1.05rem;line-height:1.7;color:#bbb}
+code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}
+.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}
+.label.green{background:#7fdbca22;color:#7fdbca}
+.label.red{background:#ff537022;color:#ff5370}
+.label.yellow{background:#ffcb6b22;color:#ffcb6b}
+.label.purple{background:#c792ea22;color:#c792ea}
+.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}
+.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}
+.cols{display:flex;gap:2rem;width:100%;max-width:1100px}
+.cols>*{flex:1}
+table{border-collapse:collapse;width:100%;max-width:900px}
+th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}
+th{color:#00d2ff;font-weight:600;background:#1a1a2e}
+td{color:#bbb}
+.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px}
+.flow-box.hi{border-color:#00d2ff;box-shadow:0 0 15px rgba(0,210,255,.25)}
+.flow-box.warn{border-color:#ffcb6b;box-shadow:0 0 15px rgba(255,203,107,.15)}
+.flow-box.bad{border-color:#ff5370;box-shadow:0 0 15px rgba(255,83,112,.15)}
+.flow-box.ok{border-color:#7fdbca;box-shadow:0 0 15px rgba(127,219,202,.15)}
+.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}
+
+/* VS Code UI mock */
+.vsc-mock{background:#1e1e1e;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%}
+.vsc-titlebar{background:#323233;padding:6px 12px;display:flex;align-items:center;gap:6px;font-size:.75rem;color:#999}
+.vsc-titlebar .dots{display:flex;gap:5px}
+.vsc-titlebar .dot{width:10px;height:10px;border-radius:50%}
+.vsc-titlebar .dot.r{background:#ff5f56}.vsc-titlebar .dot.y{background:#ffbd2e}.vsc-titlebar .dot.g{background:#27c93f}
+.vsc-titlebar .title{flex:1;text-align:center}
+.vsc-body{display:flex;min-height:250px}
+.vsc-activity{width:40px;background:#333;display:flex;flex-direction:column;align-items:center;padding-top:8px;gap:4px}
+.vsc-activity .ico{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#888;border-radius:4px}
+.vsc-activity .ico.active{color:#fff;position:relative}
+.vsc-activity .ico.active::after{content:'';position:absolute;left:0;top:2px;bottom:2px;width:2px;background:#fff;border-radius:0 2px 2px 0}
+.vsc-sidebar{width:180px;background:#252526;border-right:1px solid #1e1e1e;padding:8px 0;font-size:.75rem;overflow:hidden}
+.vsc-sidebar .section{color:#ccc;padding:4px 12px;font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.03em}
+.vsc-sidebar .file{padding:2px 12px 2px 24px;color:#bbb;cursor:default;white-space:nowrap;overflow:hidden}
+.vsc-sidebar .file:hover{background:#2a2d2e}
+.vsc-sidebar .file.active{background:#37373d;color:#fff}
+.vsc-sidebar .folder{padding:2px 12px 2px 12px;color:#ccc;cursor:default}
+.vsc-sidebar .folder::before{content:'▸ ';color:#888;font-size:.65rem}
+.vsc-sidebar .folder.open::before{content:'▾ '}
+.vsc-editor{flex:1;background:#1e1e1e;padding:12px;font-family:'Fira Code','SF Mono',monospace;font-size:.75rem;line-height:1.7;color:#d4d4d4}
+.vsc-editor .ln{color:#858585;display:inline-block;width:2em;text-align:right;margin-right:1em;user-select:none}
+.vsc-editor .kw{color:#c586c0}.vsc-editor .fn{color:#dcdcaa}.vsc-editor .str{color:#ce9178}.vsc-editor .cm{color:#6a9955}.vsc-editor .var{color:#9cdcfe}
+.vsc-statusbar{background:#007acc;padding:2px 10px;font-size:.7rem;color:#fff;display:flex;justify-content:space-between}
+.vsc-statusbar.remote{background:#16825d}
+.vsc-statusbar .left,.vsc-statusbar .right{display:flex;gap:10px}
+
+/* Terminal mock */
+.term{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%}
+.term-bar{background:#1a1a2e;padding:6px 10px;display:flex;align-items:center;gap:5px}
+.term-bar .dot{width:9px;height:9px;border-radius:50%}
+.term-bar .dot.r{background:#ff5f56}.term-bar .dot.y{background:#ffbd2e}.term-bar .dot.g{background:#27c93f}
+.term-bar span{color:#666;font-size:.75rem;margin-left:6px}
+.term-body{padding:1rem 1.2rem;font-family:'Fira Code','SF Mono',monospace;font-size:.85rem;line-height:1.7;min-height:100px}
+.term-body .p{color:#7fdbca}.term-body .c{color:#e0e0e0}.term-body .o{color:#888}.term-body .s{color:#27c93f}.term-body .e{color:#ff5370}.term-body .w{color:#ffcb6b}.term-body .i{color:#00d2ff}
+
+/* Comparison layout */
+.vs{display:flex;gap:1.5rem;width:100%;max-width:1050px}.vs>*{flex:1}
+.badge-ng{display:inline-block;background:#ff537022;color:#ff5370;padding:.15em .6em;border-radius:4px;font-size:.8rem;font-weight:700}
+.badge-ok{display:inline-block;background:#7fdbca22;color:#7fdbca;padding:.15em .6em;border-radius:4px;font-size:.8rem;font-weight:700}
+.badge-warn{display:inline-block;background:#ffcb6b22;color:#ffcb6b;padding:.15em .6em;border-radius:4px;font-size:.8rem;font-weight:700}
+
+/* Severity indicator */
+.severity{display:flex;gap:6px;margin-bottom:.8rem}
+.sev-dot{width:10px;height:10px;border-radius:50%}
+.sev-dot.on{background:#ff5370;box-shadow:0 0 6px #ff5370}
+.sev-dot.off{background:#2a2a4a}
+
+/* Numbered points */
+.num-point{display:flex;align-items:flex-start;gap:14px;margin-bottom:1rem}
+.num-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+.num-circle.blue{background:#00d2ff22;color:#00d2ff;border:1.5px solid #00d2ff55}
+.num-circle.red{background:#ff537022;color:#ff5370;border:1.5px solid #ff537055}
+.num-circle.yellow{background:#ffcb6b22;color:#ffcb6b;border:1.5px solid #ffcb6b55}
+.num-circle.green{background:#7fdbca22;color:#7fdbca;border:1.5px solid #7fdbca55}
 </style></head><body>
 
 
 <!-- ===== SLIDE 1: TITLE ===== -->
 <div class="slide active"><div style="text-align:center">
-<p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p>
-<p class="label red">TIPS</p>
-<h1 style="font-size:2.6rem;margin-bottom:.5rem">フォルダ管理あるある</h1>
-<p style="font-size:1.4rem;color:#888;margin-bottom:.5rem">初心者も玄人もハマる落とし穴</p>
-<p style="font-size:1rem;color:#555;margin-top:2rem">→ / Space で次へ</p>
+<p style="margin-bottom:1.5rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p>
+<p class="label red" style="font-size:1rem;letter-spacing:.05em">TIPS &amp; PITFALLS</p>
+<h1 style="font-size:2.8rem;margin-bottom:.8rem">フォルダ管理の落とし穴</h1>
+<p style="font-size:1.15rem;color:#888;max-width:600px;margin:0 auto 1.5rem">VS Code でプロジェクトを安全に扱うための<br>初心者 &amp; 上級者向けガイド</p>
+<div style="display:flex;gap:2rem;justify-content:center">
+<div style="text-align:center"><div style="font-size:2rem;margin-bottom:.3rem">6</div><div style="font-size:.8rem;color:#ff5370">初心者あるある</div></div>
+<div style="text-align:center"><div style="font-size:2rem;margin-bottom:.3rem">5</div><div style="font-size:.8rem;color:#ffcb6b">玄人あるある</div></div>
+<div style="text-align:center"><div style="font-size:2rem;margin-bottom:.3rem">1</div><div style="font-size:.8rem;color:#7fdbca">判断フロー</div></div>
+</div>
+<p style="margin-top:2rem;color:#555;font-size:.85rem">PWS Lab — VS Code 入門 補足資料</p>
 </div></div>
 
 
-<!-- ===== SLIDE 2: この資料の目的 ===== -->
-<div class="slide"><h2>この資料で学ぶこと</h2>
-<div style="max-width:700px;width:100%">
-<div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
-  <h3 style="color:#00d2ff">1. フォルダの開き方・閉じ方・切り替え方</h3>
-  <p style="font-size:.95rem">「このフォルダどうすればいいの？」をなくす</p>
-</div>
-<div class="card" style="margin-bottom:1rem;border-left:3px solid #ff5370">
-  <h3 style="color:#ff5370">2. 初心者あるある 6選</h3>
-  <p style="font-size:.95rem">誰もがやる失敗とその対処法</p>
-</div>
-<div class="card" style="border-left:3px solid #ffcb6b">
-  <h3 style="color:#ffcb6b">3. 玄人あるある 5選</h3>
-  <p style="font-size:.95rem">慣れた人でもやらかす危険パターン</p>
-</div>
-</div></div>
-
-
-<!-- ===== SLIDE 3: フォルダを開く3つの方法 ===== -->
+<!-- ===== SLIDE 2: 3つの開き方（図解） ===== -->
 <div class="slide"><h2>フォルダを開く 3つの方法</h2>
 <div class="vs">
-<div class="card">
-  <h3 style="color:#7fdbca">A. Open Folder（基本）</h3>
-  <p style="font-size:.9rem;margin-bottom:.5rem"><code>Cmd+O</code> or <code>code .</code></p>
-  <p style="font-size:.9rem;color:#888">1つのプロジェクト = 1つのウィンドウ。<br><strong style="color:#7fdbca">これが基本。迷ったらこれ。</strong></p>
+<!-- Method A -->
+<div style="text-align:center">
+<div class="vsc-mock" style="max-width:280px;margin:0 auto .8rem">
+  <div class="vsc-titlebar"><div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span class="title">my-app — VS Code</span></div>
+  <div style="display:flex;height:140px">
+    <div style="width:30px;background:#333"></div>
+    <div style="width:100px;background:#252526;padding:6px;font-size:.6rem;color:#bbb"><div style="color:#ccc;font-size:.55rem;font-weight:600;margin-bottom:4px">MY-APP</div><div style="padding:1px 0">app.py</div><div style="padding:1px 0">config.py</div><div style="padding:1px 0">tests/</div></div>
+    <div style="flex:1;background:#1e1e1e"></div>
+  </div>
+  <div class="vsc-statusbar"><div class="left">main</div><div class="right">Python</div></div>
 </div>
-<div class="card">
-  <h3 style="color:#00d2ff">B. Add Folder to Workspace</h3>
-  <p style="font-size:.9rem;margin-bottom:.5rem">File → Add Folder to Workspace</p>
-  <p style="font-size:.9rem;color:#888">1つのウィンドウに複数フォルダ。<br><strong style="color:#ffcb6b">上級者向け。事故の元。</strong></p>
+<div class="badge-ok">A. Open Folder（基本）</div>
+<p style="font-size:.85rem;margin-top:.4rem"><code>code .</code> or <code>Cmd+O</code></p>
+<p style="font-size:.8rem;color:#7fdbca;margin-top:.3rem">1プロジェクト = 1ウィンドウ<br><strong>迷ったらこれ</strong></p>
 </div>
-<div class="card">
-  <h3 style="color:#c792ea">C. 新しいウィンドウで開く</h3>
-  <p style="font-size:.9rem;margin-bottom:.5rem"><code>code -n /path/to/project</code></p>
-  <p style="font-size:.9rem;color:#888">完全に独立したウィンドウ。<br>複数プロジェクト並行開発に安全。</p>
+<!-- Method B -->
+<div style="text-align:center">
+<div class="vsc-mock" style="max-width:280px;margin:0 auto .8rem">
+  <div class="vsc-titlebar"><div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span class="title">Workspace — VS Code</span></div>
+  <div style="display:flex;height:140px">
+    <div style="width:30px;background:#333"></div>
+    <div style="width:100px;background:#252526;padding:6px;font-size:.6rem;color:#bbb"><div style="color:#ffcb6b;font-size:.55rem;font-weight:600;margin-bottom:2px">FRONTEND</div><div style="padding:1px 0">src/</div><div style="color:#ffcb6b;font-size:.55rem;font-weight:600;margin:4px 0 2px">BACKEND</div><div style="padding:1px 0">api/</div></div>
+    <div style="flex:1;background:#1e1e1e"></div>
+  </div>
+  <div class="vsc-statusbar"><div class="left">main</div><div class="right">TS</div></div>
+</div>
+<div class="badge-warn">B. Add Folder to Workspace</div>
+<p style="font-size:.85rem;margin-top:.4rem">File → Add Folder…</p>
+<p style="font-size:.8rem;color:#ffcb6b;margin-top:.3rem">複数フォルダを1画面に<br><strong>事故の元。上級者向け</strong></p>
+</div>
+<!-- Method C -->
+<div style="text-align:center">
+<div style="display:flex;gap:6px;justify-content:center;margin-bottom:.8rem">
+<div class="vsc-mock" style="width:135px">
+  <div class="vsc-titlebar" style="padding:4px 8px"><span style="font-size:.6rem">my-app</span></div>
+  <div style="height:120px;background:#1e1e1e"></div>
+  <div class="vsc-statusbar" style="font-size:.6rem"><span>main</span></div>
+</div>
+<div class="vsc-mock" style="width:135px">
+  <div class="vsc-titlebar" style="padding:4px 8px"><span style="font-size:.6rem">analysis</span></div>
+  <div style="height:120px;background:#1e1e1e"></div>
+  <div class="vsc-statusbar" style="font-size:.6rem"><span>dev</span></div>
+</div>
+</div>
+<div class="badge-ok">C. 別ウィンドウで開く</div>
+<p style="font-size:.85rem;margin-top:.4rem"><code>code -n /path</code></p>
+<p style="font-size:.8rem;color:#7fdbca;margin-top:.3rem">完全に独立。並行開発に最適<br><strong>安全で推奨</strong></p>
 </div>
 </div></div>
 
 
-<!-- ===== SLIDE 4: フォルダの閉じ方 ===== -->
-<div class="slide"><h2>プロジェクトが終わったら</h2>
-<div style="max-width:800px;width:100%">
-<div class="scenario">
-  <span class="scenario-label good">OK: そのまま閉じる</span>
-  <p style="font-size:.95rem;margin-top:.5rem"><code>Cmd+W</code> でウィンドウを閉じるだけ。VS Code は最後の状態を記憶している。次に同じフォルダを開けば、タブやカーソル位置も復元される。</p>
-</div>
-<div class="scenario">
-  <span class="scenario-label good">OK: Remove Folder from Workspace</span>
-  <p style="font-size:.95rem;margin-top:.5rem">マルチルートワークスペースの場合、不要になったフォルダを右クリック → <strong>Remove Folder from Workspace</strong>。プロジェクト自体は消えない（サイドバーから外れるだけ）。</p>
-</div>
-<div class="scenario">
-  <span class="scenario-label caution">注意: 「最近使ったフォルダ」のクリア</span>
-  <p style="font-size:.95rem;margin-top:.5rem"><code>Cmd+Shift+P</code> → <code>Clear Recently Opened</code> で履歴をリセットできる。溜まりすぎたら掃除。</p>
-</div>
-</div></div>
-
-
-<!-- ===== SLIDE 5: フォルダの切り替え ===== -->
-<div class="slide"><h2>フォルダの切り替えフロー</h2>
-<div class="flow" style="margin-bottom:2rem">
-  <div class="flow-box active-box" style="min-width:160px"><strong style="color:#00d2ff">今のプロジェクト</strong><br><span style="font-size:.8rem;color:#888">作業中</span></div>
+<!-- ===== SLIDE 3: プロジェクトのライフサイクル ===== -->
+<div class="slide"><h2>プロジェクトのライフサイクル</h2>
+<div style="max-width:900px;width:100%">
+<div class="flow" style="margin-bottom:2rem;gap:.5rem">
+  <div class="flow-box hi" style="padding:1rem 1.5rem"><div style="font-size:1.5rem;margin-bottom:.3rem">1</div><strong>開く</strong><br><span style="font-size:.75rem;color:#888"><code>code .</code></span></div>
   <span class="flow-arrow">→</span>
-  <div class="flow-box"><strong>別プロジェクトに移動</strong><br><span style="font-size:.8rem;color:#888">どうする？</span></div>
+  <div class="flow-box ok" style="padding:1rem 1.5rem"><div style="font-size:1.5rem;margin-bottom:.3rem">2</div><strong>作業</strong><br><span style="font-size:.75rem;color:#888">編集・Git・実行</span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box" style="padding:1rem 1.5rem;border-color:#c792ea"><div style="font-size:1.5rem;margin-bottom:.3rem">3</div><strong>閉じる</strong><br><span style="font-size:.75rem;color:#888"><code>Cmd+W</code></span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box" style="padding:1rem 1.5rem"><div style="font-size:1.5rem;margin-bottom:.3rem">4</div><strong>再開</strong><br><span style="font-size:.75rem;color:#888">状態が復元される</span></div>
 </div>
-<div class="vs">
+<div class="cols" style="max-width:900px">
 <div class="card">
-  <h3 style="color:#7fdbca">同じウィンドウで開き直す</h3>
-  <p style="font-size:.9rem"><code>Cmd+O</code> → 別フォルダを選択<br>or <code>code /path/to/other</code></p>
-  <p style="font-size:.85rem;color:#888;margin-top:.5rem">前のプロジェクトは閉じられる。<br>シンプルだが頻繁な切り替えには不向き。</p>
-</div>
-<div class="card">
-  <h3 style="color:#00d2ff">新しいウィンドウで開く</h3>
-  <p style="font-size:.9rem"><code>code -n /path/to/other</code><br>or <code>Cmd+Shift+N</code> → Open Folder</p>
-  <p style="font-size:.85rem;color:#888;margin-top:.5rem">両方のプロジェクトを並行で見れる。<br><strong style="color:#7fdbca">推奨。</strong></p>
+  <h3>閉じても大丈夫</h3>
+  <p style="font-size:.9rem">ウィンドウを閉じても<strong style="color:#7fdbca">ファイルは消えない</strong>。VS Code はビューア。ファイルの実体はディスク上にある。次回同じフォルダを開けばタブ・カーソル位置も復元。</p>
 </div>
 <div class="card">
-  <h3 style="color:#ffcb6b">ウィンドウ間の切り替え</h3>
-  <p style="font-size:.9rem"><code>Cmd+\`</code> (macOS アプリ切替)<br>or <code>Ctrl+W</code> → ウィンドウ一覧</p>
-  <p style="font-size:.85rem;color:#888;margin-top:.5rem"><code>Cmd+Shift+P</code> → <code>Switch Window</code> も便利。</p>
+  <h3>Remove Folder ≠ 削除</h3>
+  <p style="font-size:.9rem">マルチルートワークスペースで「Remove Folder from Workspace」しても<strong style="color:#7fdbca">サイドバーから外れるだけ</strong>。ファイル自体は一切消えない。</p>
+</div>
+<div class="card">
+  <h3>履歴の管理</h3>
+  <p style="font-size:.9rem"><code>Cmd+Shift+P</code> → <code>Clear Recently Opened</code> で最近開いたフォルダの履歴をクリアできる。</p>
+</div>
 </div>
 </div></div>
 
 
-<!-- ===== SLIDE 6: 初心者あるある タイトル ===== -->
+<!-- ===== SLIDE 4: 初心者あるある Section ===== -->
 <div class="slide"><div style="text-align:center">
-<p class="label red" style="font-size:1.1rem">BEGINNER PITFALLS</p>
+<div style="font-size:4rem;margin-bottom:1rem">🔰</div>
+<p class="label red" style="font-size:1.1rem;letter-spacing:.08em">BEGINNER PITFALLS</p>
 <h1 style="font-size:2.8rem">初心者あるある 6選</h1>
-<p style="font-size:1.2rem;color:#888;margin-top:1rem">誰もが一度はやる失敗</p>
+<p style="font-size:1.1rem;color:#888;margin-top:1rem">誰もが通る道 — 知っていれば防げる</p>
 </div></div>
 
 
-<!-- ===== SLIDE 7: 初心者1 — ファイル単体で開く ===== -->
-<div class="slide"><h2>初心者あるある #1</h2>
+<!-- ===== SLIDE 5: #1 ファイル単体 ===== -->
+<div class="slide"><h2><span class="badge-ng">NG #1</span> ファイルをダブルクリックで開く</h2>
 <div class="vs">
-<div class="danger-card">
-  <h3 style="color:#ff5370">ファイルをダブルクリックで開く</h3>
-  <p style="font-size:.95rem;margin-top:.5rem">Finderで <code>main.py</code> をダブルクリック → VS Code が起動するが…</p>
-  <ul class="feature-list" style="margin-top:.5rem">
-    <li>サイドバーにファイルツリーが<strong style="color:#ff5370">出ない</strong></li>
-    <li>プロジェクト全体の検索が<strong style="color:#ff5370">できない</strong></li>
-    <li>Git連携が<strong style="color:#ff5370">効かない</strong></li>
-    <li><code>.vscode/settings.json</code> が<strong style="color:#ff5370">読まれない</strong></li>
-    <li>拡張機能がプロジェクトを<strong style="color:#ff5370">認識しない</strong></li>
-  </ul>
-</div>
-<div class="ok-card">
-  <h3 style="color:#7fdbca">正解: フォルダごと開く</h3>
-  <div class="terminal" style="margin-top:.5rem;max-width:100%">
-    <div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>Terminal</span></div>
-    <div class="terminal-body" style="min-height:auto;padding:.8rem 1rem">
-      <span class="prompt">$</span> <span class="cmd">cd ~/projects/my-app</span><br>
-      <span class="prompt">$</span> <span class="cmd">code .</span><br>
-      <span class="success"># フォルダ全体が開く</span>
+<div>
+<div class="vsc-mock" style="margin-bottom:.8rem">
+  <div class="vsc-titlebar"><div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span class="title" style="color:#ff5370">main.py — VS Code</span></div>
+  <div style="display:flex;height:180px">
+    <div style="width:30px;background:#333"></div>
+    <div style="width:100px;background:#252526;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#555;text-align:center;padding:8px">ファイルツリー<br>なし</div>
+    <div class="vsc-editor" style="font-size:.7rem">
+      <span class="ln">1</span><span class="kw">def</span> <span class="fn">main</span>():<br>
+      <span class="ln">2</span>    <span class="fn">print</span>(<span class="str">"hello"</span>)<br>
+      <span class="ln">3</span><br>
+      <span class="ln">4</span><span class="cm"># Git? 検索? 設定? 全部使えない</span>
     </div>
   </div>
-  <p style="font-size:.9rem;margin-top:.5rem;color:#888"><code>code .</code> を習慣にするだけで全て解決。</p>
+  <div class="vsc-statusbar" style="background:#6c6c6c"><div class="left" style="color:#ddd">No Folder Opened</div></div>
 </div>
-</div></div>
-
-
-<!-- ===== SLIDE 8: 初心者2 — ホームディレクトリ ===== -->
-<div class="slide"><h2>初心者あるある #2</h2>
-<div style="max-width:800px;width:100%">
-<div class="danger-card" style="margin-bottom:1rem">
-  <h3 style="color:#ff5370">ホームディレクトリを Open Folder する</h3>
-  <p style="font-size:.95rem;margin-top:.5rem"><code>code ~</code> や <code>code /home/username</code> で開いてしまう</p>
-  <ul class="feature-list" style="margin-top:.5rem">
-    <li>数万ファイルをスキャンして<strong style="color:#ff5370">VS Code が激重</strong>に</li>
-    <li>Git が意図しないリポジトリを検出</li>
-    <li>検索結果が<strong style="color:#ff5370">関係ないファイルだらけ</strong></li>
-    <li>Remote SSH で特に深刻（サーバーのリソースを浪費）</li>
-  </ul>
+<p style="font-size:.85rem;color:#ff5370;text-align:center">Git連携 ✗ ・全体検索 ✗ ・.vscode設定 ✗ ・拡張機能の認識 ✗</p>
 </div>
-<div class="ok-card">
-  <h3 style="color:#7fdbca">正解: プロジェクトフォルダを指定</h3>
-  <div class="tree" style="margin-top:.5rem">
-    ~/<br>
-    ├── <span class="error-text">× ここを開く → 全部スキャン</span><br>
-    ├── projects/<br>
-    │   ├── <span class="highlight">my-app/    ← ここを開く</span><br>
-    │   ├── <span class="highlight">analysis/  ← ここを開く</span><br>
-    │   └── experiment/<br>
-    └── Documents/
-  </div>
-</div>
-</div></div>
-
-
-<!-- ===== SLIDE 9: 初心者3 — 開きすぎ ===== -->
-<div class="slide"><h2>初心者あるある #3</h2>
-<div style="max-width:800px;width:100%">
-<div class="danger-card" style="margin-bottom:1rem">
-  <h3 style="color:#ff5370">ウィンドウを開きすぎて迷子になる</h3>
-  <p style="font-size:.95rem;margin-top:.5rem">いろいろ開いているうちに、どのウィンドウがどのプロジェクトか分からなくなる。ターミナルで <code>git push</code> したら<strong style="color:#ff5370">違うリポジトリ</strong>だった…</p>
-</div>
-<div class="ok-card">
-  <h3 style="color:#7fdbca">対策</h3>
-  <ul class="feature-list">
-    <li><strong>ステータスバー左下</strong>を見る習慣 — ブランチ名 = 今いるリポジトリ</li>
-    <li><strong>タイトルバー</strong>にフォルダ名が表示されている</li>
-    <li><code>Cmd+Shift+P</code> → <code>Switch Window</code> でウィンドウ一覧を確認</li>
-    <li>不要なウィンドウはこまめに <code>Cmd+W</code> で閉じる</li>
-    <li>テーマ色を<strong>プロジェクトごとに変える</strong>（Peacock 拡張機能）</li>
-  </ul>
-</div>
-</div></div>
-
-
-<!-- ===== SLIDE 10: 初心者4 — 保存場所不明 ===== -->
-<div class="slide"><h2>初心者あるある #4</h2>
-<div style="max-width:800px;width:100%">
-<div class="danger-card" style="margin-bottom:1rem">
-  <h3 style="color:#ff5370">「このファイルどこに保存した？」</h3>
-  <p style="font-size:.95rem;margin-top:.5rem"><code>Cmd+N</code> で新規ファイルを作って保存するとき、意図しない場所に保存してしまう。Explorer に出てこなくて混乱。</p>
-</div>
-<div class="ok-card">
-  <h3 style="color:#7fdbca">対策</h3>
-  <ul class="feature-list">
-    <li>新規ファイルは<strong>Explorer上で右クリック → New File</strong>が確実</li>
-    <li>保存時のダイアログで<strong>パスを必ず確認</strong></li>
-    <li>ターミナルで <code>pwd</code> を叩けば今いるディレクトリが分かる</li>
-    <li><code>Cmd+P</code> でファイル名検索 — 見つからなければ開いているフォルダ外にある</li>
-  </ul>
-</div>
-</div></div>
-
-
-<!-- ===== SLIDE 11: 初心者5 — 閉じるのが怖い ===== -->
-<div class="slide"><h2>初心者あるある #5</h2>
-<div style="max-width:800px;width:100%">
-<div class="warn-card" style="margin-bottom:1rem">
-  <h3 style="color:#ffcb6b">「フォルダを閉じたらファイルが消える？」</h3>
-  <p style="font-size:.95rem;margin-top:.5rem">VS Code のウィンドウを閉じたり、サイドバーからフォルダを Remove しても、<strong style="color:#7fdbca">ファイルは絶対に消えない</strong>。VS Code はビューアであって、ファイルの実体はディスク上にある。</p>
-</div>
-<div class="ok-card">
-  <h3 style="color:#7fdbca">安心ポイント</h3>
-  <ul class="feature-list">
-    <li><strong>ウィンドウを閉じる</strong> → ファイルはそのまま。次回開けば元通り</li>
-    <li><strong>Remove Folder from Workspace</strong> → サイドバーから消えるだけ</li>
-    <li><strong>未保存のファイルがあれば</strong>保存するか聞かれる</li>
-    <li>怖かったら <code>git status</code> で状態を確認してから閉じる</li>
-  </ul>
-</div>
-</div></div>
-
-
-<!-- ===== SLIDE 12: 初心者6 — プロジェクトの追加 ===== -->
-<div class="slide"><h2>初心者あるある #6</h2>
-<div style="max-width:800px;width:100%">
-<div class="warn-card" style="margin-bottom:1rem">
-  <h3 style="color:#ffcb6b">「新しいプロジェクトをどう始める？」</h3>
-  <p style="font-size:.95rem;margin-top:.5rem">既存のウィンドウに <strong>Add Folder to Workspace</strong> で追加するべき？新しいウィンドウで開くべき？</p>
-</div>
-<div style="display:flex;gap:1.5rem;width:100%">
-<div class="ok-card" style="flex:1">
-  <h3 style="color:#7fdbca">新しいウィンドウで開く（推奨）</h3>
-  <div class="terminal" style="margin-top:.5rem;max-width:100%">
-    <div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
-    <div class="terminal-body" style="min-height:auto;padding:.8rem 1rem">
-      <span class="prompt">$</span> <span class="cmd">code -n ~/projects/new-app</span>
+<div>
+<div class="vsc-mock" style="margin-bottom:.8rem">
+  <div class="vsc-titlebar"><div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span class="title">my-app — VS Code</span></div>
+  <div style="display:flex;height:180px">
+    <div style="width:30px;background:#333"></div>
+    <div style="width:100px;background:#252526;padding:6px;font-size:.6rem;color:#bbb"><div style="color:#ccc;font-size:.55rem;font-weight:600;margin-bottom:3px">MY-APP</div><div style="background:#37373d;padding:1px 4px;color:#fff">main.py</div><div style="padding:1px 4px">config.py</div><div style="padding:1px 4px">tests/</div><div style="padding:1px 4px">.vscode/</div></div>
+    <div class="vsc-editor" style="font-size:.7rem">
+      <span class="ln">1</span><span class="kw">def</span> <span class="fn">main</span>():<br>
+      <span class="ln">2</span>    <span class="fn">print</span>(<span class="str">"hello"</span>)<br>
+      <span class="ln">3</span><br>
+      <span class="ln">4</span><span class="cm"># 全機能が使える！</span>
     </div>
   </div>
-  <p style="font-size:.85rem;color:#888;margin-top:.5rem">設定・Git・ターミナルが完全に独立。事故が起きない。</p>
+  <div class="vsc-statusbar"><div class="left">main ✓</div><div class="right">Python 3.11</div></div>
 </div>
-<div class="card" style="flex:1;border-left:3px solid #ffcb6b">
-  <h3 style="color:#ffcb6b">Add Folder（上級者向け）</h3>
-  <p style="font-size:.85rem;color:#888;margin-top:.5rem">frontend + backend を1画面で見たい時だけ。<br>Git操作やターミナルのカレントディレクトリに注意が必要。</p>
-</div>
-</div>
-</div></div>
-
-
-<!-- ===== SLIDE 13: 玄人あるある タイトル ===== -->
-<div class="slide"><div style="text-align:center">
-<p class="label yellow" style="font-size:1.1rem">ADVANCED PITFALLS</p>
-<h1 style="font-size:2.8rem">玄人あるある 5選</h1>
-<p style="font-size:1.2rem;color:#888;margin-top:1rem">慣れた人ほどやらかす危険パターン</p>
-</div></div>
-
-
-<!-- ===== SLIDE 14: 玄人1 — マルチルートの罠 ===== -->
-<div class="slide"><h2>玄人あるある #1</h2>
-<div style="max-width:900px;width:100%">
-<div class="danger-card" style="margin-bottom:1rem">
-  <h3 style="color:#ff5370">マルチルートワークスペースの Git 事故</h3>
-  <p style="font-size:.95rem;margin-top:.5rem">frontend/ と backend/ を1つのウィンドウに追加。Source Control パネルに<strong style="color:#ff5370">両方のリポジトリ</strong>が表示される。うっかり backend の変更を frontend にコミット…</p>
-</div>
-<div class="vs">
-<div class="card">
-  <h3 style="color:#7fdbca">対策</h3>
-  <ul class="feature-list">
-    <li>Source Control の<strong>リポジトリ名</strong>を必ず確認</li>
-    <li>コミット前に <code>git status</code> をターミナルで実行</li>
-    <li><code>git diff --staged</code> で何をコミットするか確認</li>
-    <li>迷ったら別ウィンドウで開く方が安全</li>
-  </ul>
-</div>
-<div class="card">
-  <h3 style="color:#ffcb6b">ターミナルの罠</h3>
-  <p style="font-size:.9rem;margin-top:.5rem">ターミナルの <code>pwd</code> が指すディレクトリに注意。マルチルートでは、ターミナルを開いたタイミングで<strong style="color:#ffcb6b">カレントディレクトリがどちらか</strong>が決まる。</p>
+<div class="term" style="max-width:100%">
+  <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>Terminal</span></div>
+  <div class="term-body" style="min-height:auto;padding:.6rem .8rem;font-size:.8rem"><span class="p">$</span> <span class="c">cd ~/projects/my-app && code .</span><br><span class="s">✓ フォルダ全体が開く</span></div>
 </div>
 </div>
 </div></div>
 
 
-<!-- ===== SLIDE 15: 玄人2 — settings.json 汚染 ===== -->
-<div class="slide"><h2>玄人あるある #2</h2>
-<div style="max-width:800px;width:100%">
-<div class="danger-card" style="margin-bottom:1rem">
-  <h3 style="color:#ff5370">Workspace 設定が知らないうちに汚染</h3>
-  <p style="font-size:.95rem;margin-top:.5rem">GUI で設定を変えたつもりが <code>.vscode/settings.json</code> に書き込まれ、<strong style="color:#ff5370">git push でチームメンバーの環境を壊す</strong>。</p>
-</div>
-<div class="ok-card">
-  <h3 style="color:#7fdbca">対策</h3>
-  <ul class="feature-list">
-    <li>設定画面のタブ <strong>User / Workspace</strong> を意識する</li>
-    <li>個人の好みは<strong>必ず User Settings</strong> に</li>
-    <li>チーム共通設定（formatter, linter）だけ Workspace に</li>
-    <li><code>git diff</code> で <code>.vscode/settings.json</code> の意図しない変更がないか確認</li>
-    <li><code>.gitignore</code> に入れるべき設定と入れるべきでない設定を整理</li>
-  </ul>
-</div>
-</div></div>
-
-
-<!-- ===== SLIDE 16: 玄人3 — 間違ったターミナル ===== -->
-<div class="slide"><h2>玄人あるある #3</h2>
-<div style="max-width:900px;width:100%">
-<div class="danger-card" style="margin-bottom:1rem">
-  <h3 style="color:#ff5370">ターミナルが違うフォルダを指している</h3>
-  <p style="font-size:.95rem;margin-top:.5rem">VS Code のターミナルは起動時のカレントディレクトリを維持する。フォルダを開き直しても、<strong style="color:#ff5370">古いターミナルは前のディレクトリのまま</strong>。</p>
-</div>
-<div class="vs">
-<div class="card">
-  <h3>危険な例</h3>
-  <div class="tree" style="margin-top:.5rem">
-    1. project-A/ で作業開始 → ターミナル開く<br>
-    2. project-B/ に Open Folder で切り替え<br>
-    3. <span class="error-text">ターミナルはまだ project-A/ にいる</span><br>
-    4. <span class="error-text">pip install → 違う venv に入る</span><br>
-    5. <span class="error-text">git push → 違うリポジトリに push</span>
+<!-- ===== SLIDE 6: #2 ホームディレクトリ ===== -->
+<div class="slide"><h2><span class="badge-ng">NG #2</span> ホームディレクトリを Open Folder</h2>
+<div class="cols" style="max-width:1000px">
+<div>
+<div class="vsc-mock" style="margin-bottom:.8rem">
+  <div class="vsc-titlebar"><div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span class="title" style="color:#ff5370">~ — VS Code</span></div>
+  <div style="display:flex;height:200px">
+    <div style="width:30px;background:#333"></div>
+    <div style="width:130px;background:#252526;padding:6px;font-size:.55rem;color:#888;overflow:hidden">
+      <div style="color:#ff5370;font-size:.5rem;font-weight:600;margin-bottom:3px">HOME (58,342 files)</div>
+      <div style="padding:1px 0">.bash_history</div>
+      <div style="padding:1px 0">.cache/</div>
+      <div style="padding:1px 0">.config/</div>
+      <div style="padding:1px 0">.ssh/ ⚠️</div>
+      <div style="padding:1px 0">Documents/</div>
+      <div style="padding:1px 0">Downloads/</div>
+      <div style="padding:1px 0">projects/</div>
+      <div style="padding:1px 0;color:#555">...</div>
+      <div style="padding:1px 0;color:#555">(数万ファイル)</div>
+    </div>
+    <div style="flex:1;background:#1e1e1e;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#ff5370">
+      ⚠ Loading...<br>CPU 100%
+    </div>
   </div>
+  <div class="vsc-statusbar" style="background:#6c6c6c"><div class="left">?? (Git confusion)</div></div>
 </div>
-<div class="ok-card">
-  <h3 style="color:#7fdbca">対策</h3>
-  <ul class="feature-list">
-    <li>フォルダ切替後は<strong>ターミナルを新しく開く</strong></li>
-    <li>コマンド実行前に <code>pwd</code> を叩く習慣</li>
-    <li><code>git remote -v</code> でリポジトリを確認</li>
-    <li>古いターミナルはゴミ箱アイコンで閉じる</li>
-  </ul>
+<div class="severity"><span class="sev-dot on"></span><span class="sev-dot on"></span><span class="sev-dot on"></span><span style="font-size:.75rem;color:#ff5370;margin-left:6px">深刻度: 高</span></div>
 </div>
+<div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #ff5370">
+<h3 style="color:#ff5370;font-size:1.1rem">なぜ危険か</h3>
+<div style="font-size:.9rem;color:#bbb;line-height:1.8">
+<div class="num-point"><div class="num-circle red">1</div><div>VS Code が<strong style="color:#ff5370">数万ファイルをスキャン</strong> → 激重</div></div>
+<div class="num-point"><div class="num-circle red">2</div><div>検索結果が<strong style="color:#ff5370">関係ないファイルだらけ</strong></div></div>
+<div class="num-point"><div class="num-circle red">3</div><div>意図しない Git リポジトリを検出</div></div>
+<div class="num-point"><div class="num-circle red">4</div><div>Remote SSH で特に深刻（サーバーのリソース浪費）</div></div>
 </div>
-</div></div>
-
-
-<!-- ===== SLIDE 17: 玄人4 — Remote SSH の罠 ===== -->
-<div class="slide"><h2>玄人あるある #4</h2>
-<div style="max-width:800px;width:100%">
-<div class="danger-card" style="margin-bottom:1rem">
-  <h3 style="color:#ff5370">Remote SSH でローカルのつもりがサーバー側</h3>
-  <p style="font-size:.95rem;margin-top:.5rem">SSH接続中にファイルを削除 → <strong style="color:#ff5370">サーバー上のファイルが消える</strong>。<br>ローカルのゴミ箱に入るわけではないので復元不可（Gitがなければ）。</p>
-</div>
-<div class="ok-card">
-  <h3 style="color:#7fdbca">対策</h3>
-  <ul class="feature-list">
-    <li>ステータスバー左下の <strong style="color:#00d2ff">SSH: hostname</strong> を常に確認</li>
-    <li>リモートファイルの削除は慎重に（ゴミ箱がない）</li>
-    <li>重要なファイルは必ず <strong>Git 管理</strong> 下に</li>
-    <li>拡張機能はローカル/リモートで別管理 — 入れ忘れに注意</li>
-    <li>ネットワーク切断時にファイルが壊れることもある → <strong>autoSave</strong> 推奨</li>
-  </ul>
-</div>
-</div></div>
-
-
-<!-- ===== SLIDE 18: 玄人5 — .vscode/ の同期問題 ===== -->
-<div class="slide"><h2>玄人あるある #5</h2>
-<div style="max-width:900px;width:100%">
-<div class="danger-card" style="margin-bottom:1rem">
-  <h3 style="color:#ff5370">チーム間で .vscode/ の設定が衝突</h3>
-  <p style="font-size:.95rem;margin-top:.5rem">A さんの <code>launch.json</code> は Docker 環境前提、B さんの <code>launch.json</code> はローカル直接実行。互いにコミットして<strong style="color:#ff5370">マージのたびに壊れる</strong>。</p>
-</div>
-<div class="ok-card">
-  <h3 style="color:#7fdbca">.vscode/ の管理方針</h3>
-  <table style="max-width:100%">
-    <tr><th>ファイル</th><th>Git に入れる？</th><th>理由</th></tr>
-    <tr><td><code>extensions.json</code></td><td><strong style="color:#7fdbca">入れる</strong></td><td>推奨拡張はチーム共通</td></tr>
-    <tr><td><code>settings.json</code></td><td><strong style="color:#ffcb6b">チーム共通部分だけ</strong></td><td>個人設定は User Settings へ</td></tr>
-    <tr><td><code>launch.json</code></td><td><strong style="color:#ffcb6b">議論が必要</strong></td><td>環境依存が大きい</td></tr>
-    <tr><td><code>tasks.json</code></td><td><strong style="color:#7fdbca">入れる</strong></td><td>ビルド手順は共通化すべき</td></tr>
-    <tr><td><code>*.code-workspace</code></td><td><strong style="color:#ff5370">入れない</strong></td><td>ローカルパスが含まれる</td></tr>
-  </table>
-</div>
-</div></div>
-
-
-<!-- ===== SLIDE 19: 判断フローチャート ===== -->
-<div class="slide"><h2>迷ったときの判断フロー</h2>
-<div style="max-width:700px;width:100%">
-<div class="scenario" style="text-align:center">
-  <p style="font-size:1.1rem;color:#00d2ff;font-weight:600;margin-bottom:1rem">プロジェクトをどう開く？</p>
-  <div class="flow" style="margin-bottom:1rem">
-    <div class="flow-box"><strong>単独プロジェクト？</strong></div>
-    <span class="flow-arrow">→ Yes →</span>
-    <div class="flow-box active-box"><code>code .</code></div>
-  </div>
-  <div class="flow" style="margin-bottom:1rem">
-    <div class="flow-box"><strong>2つ同時に見たい？</strong></div>
-    <span class="flow-arrow">→ Yes →</span>
-    <div class="flow-box" style="border-color:#c792ea"><code>code -n</code><br><span style="font-size:.75rem">別ウィンドウ</span></div>
-  </div>
-  <div class="flow">
-    <div class="flow-box"><strong>密結合（frontend+backend）？</strong></div>
-    <span class="flow-arrow">→ Yes →</span>
-    <div class="flow-box" style="border-color:#ffcb6b">Workspace<br><span style="font-size:.75rem">上級者のみ</span></div>
-  </div>
-</div>
-<p style="text-align:center;color:#888;margin-top:1rem;font-size:.9rem">結論: <strong style="color:#00d2ff">迷ったら <code>code .</code> + 別ウィンドウ</strong>。それが一番安全。</p>
-</div></div>
-
-
-<!-- ===== SLIDE 20: まとめ ===== -->
-<div class="slide"><h2>まとめ</h2>
-<div style="max-width:800px;width:100%">
-<div class="vs">
-<div class="card" style="border-left:3px solid #ff5370">
-  <h3 style="color:#ff5370">絶対やめること</h3>
-  <ul class="feature-list">
-    <li>ファイル単体をダブルクリックで開く</li>
-    <li>ホームディレクトリを Open Folder</li>
-    <li>どのウィンドウか確認せず git push</li>
-    <li>ローカル/リモートを混同して削除</li>
-  </ul>
 </div>
 <div class="card" style="border-left:3px solid #7fdbca">
-  <h3 style="color:#7fdbca">常に意識すること</h3>
-  <ul class="feature-list">
-    <li><code>code .</code> でフォルダごと開く</li>
-    <li>ステータスバーでブランチ/接続先を確認</li>
-    <li>ターミナルの <code>pwd</code> を信頼する</li>
-    <li>.vscode/ のチーム管理方針を決める</li>
-  </ul>
+<h3 style="color:#7fdbca;font-size:1.1rem">正解</h3>
+<p style="font-size:.9rem">常に<strong style="color:#7fdbca">プロジェクトフォルダ</strong>を指定する<br><code>code ~/projects/my-app</code></p>
 </div>
 </div>
 </div></div>
 
+
+<!-- ===== SLIDE 7: #3 迷子 ===== -->
+<div class="slide"><h2><span class="badge-ng">NG #3</span> どのウィンドウがどのプロジェクトか分からない</h2>
+<div style="max-width:900px;width:100%">
+<div style="display:flex;gap:8px;justify-content:center;margin-bottom:1.5rem">
+<div class="vsc-mock" style="width:200px;opacity:.9">
+  <div class="vsc-titlebar" style="padding:3px 6px"><span style="font-size:.55rem">app-A</span></div>
+  <div style="height:60px;background:#1e1e1e"></div>
+  <div class="vsc-statusbar" style="font-size:.55rem"><span>main</span></div>
+</div>
+<div class="vsc-mock" style="width:200px;opacity:.9">
+  <div class="vsc-titlebar" style="padding:3px 6px"><span style="font-size:.55rem">app-B</span></div>
+  <div style="height:60px;background:#1e1e1e"></div>
+  <div class="vsc-statusbar" style="font-size:.55rem"><span>dev</span></div>
+</div>
+<div class="vsc-mock" style="width:200px;opacity:.9">
+  <div class="vsc-titlebar" style="padding:3px 6px"><span style="font-size:.55rem;color:#ff5370">??? どっち？</span></div>
+  <div style="height:60px;background:#1e1e1e"></div>
+  <div class="vsc-statusbar" style="font-size:.55rem"><span>feature/x</span></div>
+</div>
+</div>
+<div class="cols">
+<div class="card">
+  <h3 style="color:#7fdbca">確認する場所</h3>
+  <div style="font-size:.9rem;line-height:2;color:#bbb">
+  <div class="num-point"><div class="num-circle blue">1</div><div><strong>タイトルバー</strong>にフォルダ名が表示</div></div>
+  <div class="num-point"><div class="num-circle blue">2</div><div><strong>ステータスバー左下</strong>のブランチ名 = リポジトリ</div></div>
+  <div class="num-point"><div class="num-circle blue">3</div><div><code>Cmd+Shift+P</code> → <code>Switch Window</code> で一覧</div></div>
+  </div>
+</div>
+<div class="card" style="border-left:3px solid #c792ea">
+  <h3 style="color:#c792ea">Pro Tip: Peacock 拡張機能</h3>
+  <div style="display:flex;gap:8px;margin:.5rem 0">
+    <div style="width:40px;height:30px;background:#00d2ff33;border:1px solid #00d2ff;border-radius:4px"></div>
+    <div style="width:40px;height:30px;background:#7fdbca33;border:1px solid #7fdbca;border-radius:4px"></div>
+    <div style="width:40px;height:30px;background:#f78c6c33;border:1px solid #f78c6c;border-radius:4px"></div>
+  </div>
+  <p style="font-size:.85rem">プロジェクトごとにステータスバーの色を変えられる。一目でどのウィンドウか判別可能。</p>
+</div>
+</div>
+</div></div>
+
+
+<!-- ===== SLIDE 8: #4 保存場所 ===== -->
+<div class="slide"><h2><span class="badge-ng">NG #4</span> 「このファイルどこに保存した？」</h2>
+<div class="cols" style="max-width:950px">
+<div class="card" style="border-left:3px solid #ff5370">
+  <h3 style="color:#ff5370">よくある状況</h3>
+  <p style="font-size:.9rem;margin-bottom:.8rem"><code>Cmd+N</code> → 新規ファイル → <code>Cmd+S</code> → 保存先ダイアログで適当に保存 → Explorer に出てこない → パニック</p>
+  <p style="font-size:.85rem;color:#888">原因: 今開いているフォルダの<strong>外</strong>に保存してしまった</p>
+</div>
+<div class="card" style="border-left:3px solid #7fdbca">
+  <h3 style="color:#7fdbca">正解: Explorer上で作成</h3>
+  <div style="font-size:.9rem;color:#bbb;line-height:2">
+  <div class="num-point"><div class="num-circle green">1</div><div>Explorer のフォルダ名を<strong>右クリック</strong></div></div>
+  <div class="num-point"><div class="num-circle green">2</div><div><strong>New File</strong> を選択</div></div>
+  <div class="num-point"><div class="num-circle green">3</div><div>ファイル名を入力 → <strong>自動的にそのフォルダ内</strong></div></div>
+  </div>
+  <p style="font-size:.85rem;color:#888;margin-top:.5rem">迷ったら <code>Cmd+P</code> でファイル名検索。見つからなければフォルダ外にある。</p>
+</div>
+</div></div>
+
+
+<!-- ===== SLIDE 9: #5 閉じるのが怖い / #6 新プロジェクト ===== -->
+<div class="slide"><h2>初心者あるある #5 &amp; #6</h2>
+<div class="cols" style="max-width:950px">
+<div class="card" style="border-top:3px solid #ffcb6b">
+  <div class="badge-warn" style="margin-bottom:.8rem">#5 閉じたらファイルが消える？</div>
+  <div style="font-size:2.5rem;text-align:center;margin:.5rem 0">🙅‍♂️</div>
+  <p style="font-size:.95rem;text-align:center;color:#7fdbca;font-weight:600">消えません。絶対に。</p>
+  <p style="font-size:.85rem;color:#888;margin-top:.5rem;text-align:center">VS Code はエディタ（表示器）。閉じてもディスク上のファイルはそのまま。未保存があれば保存するか聞かれる。</p>
+</div>
+<div class="card" style="border-top:3px solid #00d2ff">
+  <div class="badge-ok" style="margin-bottom:.8rem;background:#00d2ff22;color:#00d2ff">#6 新プロジェクトの始め方</div>
+  <div class="term" style="margin:.8rem 0;max-width:100%">
+    <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+    <div class="term-body" style="min-height:auto;padding:.5rem .8rem;font-size:.8rem">
+      <span class="p">$</span> <span class="c">mkdir ~/projects/new-app</span><br>
+      <span class="p">$</span> <span class="c">cd ~/projects/new-app</span><br>
+      <span class="p">$</span> <span class="c">code .</span><br>
+      <span class="s">✓ 独立した新しいウィンドウ</span>
+    </div>
+  </div>
+  <p style="font-size:.85rem;color:#888">既存ウィンドウに「Add Folder」するのではなく、<strong style="color:#00d2ff">別ウィンドウで開く</strong>のが安全。</p>
+</div>
+</div></div>
+
+
+<!-- ===== SLIDE 10: 玄人あるある Section ===== -->
+<div class="slide"><div style="text-align:center">
+<div style="font-size:4rem;margin-bottom:1rem">⚡</div>
+<p class="label yellow" style="font-size:1.1rem;letter-spacing:.08em">ADVANCED PITFALLS</p>
+<h1 style="font-size:2.8rem">玄人あるある 5選</h1>
+<p style="font-size:1.1rem;color:#888;margin-top:1rem">慣れた人ほど油断する危険パターン</p>
+</div></div>
+
+
+<!-- ===== SLIDE 11: 玄人#1 マルチルート Git ===== -->
+<div class="slide"><h2><span class="badge-warn">ADV #1</span> マルチルートの Git 事故</h2>
+<div class="cols" style="max-width:1000px">
+<div>
+<div class="vsc-mock" style="margin-bottom:.8rem">
+  <div class="vsc-titlebar"><div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span class="title">Workspace (2 folders)</span></div>
+  <div style="display:flex;height:180px">
+    <div style="width:30px;background:#333"></div>
+    <div style="width:130px;background:#252526;padding:6px;font-size:.55rem;color:#bbb">
+      <div style="color:#00d2ff;font-size:.5rem;font-weight:600;margin-bottom:2px">FRONTEND (Git: main)</div>
+      <div style="padding:1px 0">src/App.tsx</div>
+      <div style="padding:1px 0">package.json</div>
+      <div style="color:#f78c6c;font-size:.5rem;font-weight:600;margin:6px 0 2px">BACKEND (Git: dev)</div>
+      <div style="padding:1px 0;background:#37373d;color:#fff">api/routes.py</div>
+      <div style="padding:1px 0">requirements.txt</div>
+    </div>
+    <div class="vsc-editor" style="font-size:.65rem">
+      <span class="ln">1</span><span class="cm"># backend のファイルを編集中…</span><br>
+      <span class="ln">2</span><span class="cm"># でも Source Control は</span><br>
+      <span class="ln">3</span><span class="cm"># <span style="color:#ff5370">どっちのリポジトリ？</span></span>
+    </div>
+  </div>
+  <div class="vsc-statusbar"><div class="left">main <span style="color:#ffcb6b">← どっちの main?</span></div></div>
+</div>
+</div>
+<div>
+<div class="card" style="border-left:3px solid #ff5370;margin-bottom:.8rem">
+  <h3 style="color:#ff5370;font-size:1rem">何が起きるか</h3>
+  <p style="font-size:.85rem">Source Control に<strong>両方のリポジトリ</strong>が表示。選択を間違えると backend の変更を frontend にコミット。</p>
+</div>
+<div class="card" style="border-left:3px solid #7fdbca">
+  <h3 style="color:#7fdbca;font-size:1rem">対策</h3>
+  <div style="font-size:.85rem;color:#bbb;line-height:2">
+  <div class="num-point"><div class="num-circle green">1</div><div>Source Control の<strong>リポジトリ名</strong>を毎回確認</div></div>
+  <div class="num-point"><div class="num-circle green">2</div><div>コミット前に <code>git diff --staged</code></div></div>
+  <div class="num-point"><div class="num-circle green">3</div><div><strong style="color:#7fdbca">そもそも別ウィンドウで開く方が安全</strong></div></div>
+  </div>
+</div>
+</div>
+</div></div>
+
+
+<!-- ===== SLIDE 12: 玄人#2 settings.json 汚染 ===== -->
+<div class="slide"><h2><span class="badge-warn">ADV #2</span> Workspace 設定の意図しない汚染</h2>
+<div class="cols" style="max-width:1000px">
+<div>
+<div style="background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;padding:1rem;font-family:'Fira Code',monospace;font-size:.8rem;line-height:1.8;margin-bottom:.8rem">
+  <div style="color:#888;margin-bottom:.5rem">// .vscode/settings.json に意図せず書き込まれた</div>
+  <div>{</div>
+  <div style="padding-left:1.5em"><span style="color:#9cdcfe">"editor.fontSize"</span>: <span style="color:#b5cea8">18</span>,  <span style="color:#ff5370">// ← 個人の好み</span></div>
+  <div style="padding-left:1.5em"><span style="color:#9cdcfe">"editor.tabSize"</span>: <span style="color:#b5cea8">4</span>,</div>
+  <div style="padding-left:1.5em"><span style="color:#9cdcfe">"python.defaultInterpreterPath"</span>:</div>
+  <div style="padding-left:2.5em"><span style="color:#ce9178">"/Users/tanaka/.venv/bin/python"</span> <span style="color:#ff5370">// ← 田中さんのパス！</span></div>
+  <div>}</div>
+</div>
+<p style="font-size:.85rem;color:#ff5370;text-align:center"><code>git push</code> → チーム全員の環境が壊れる</p>
+</div>
+<div>
+<div class="card" style="border-left:3px solid #7fdbca;margin-bottom:.8rem">
+  <h3 style="color:#7fdbca;font-size:1rem">User 設定 vs Workspace 設定</h3>
+  <table style="max-width:100%;font-size:.8rem">
+    <tr><th style="width:40%">設定内容</th><th>どこに書く？</th></tr>
+    <tr><td>フォントサイズ・テーマ</td><td><strong style="color:#00d2ff">User</strong>（個人の好み）</td></tr>
+    <tr><td>Formatter・Linter</td><td><strong style="color:#7fdbca">Workspace</strong>（チーム共通）</td></tr>
+    <tr><td>Python パス</td><td><strong style="color:#00d2ff">User</strong>（環境依存）</td></tr>
+  </table>
+</div>
+<div class="card" style="border-left:3px solid #ffcb6b">
+  <h3 style="color:#ffcb6b;font-size:1rem">防止策</h3>
+  <p style="font-size:.85rem">設定GUIの上部タブで <strong>User / Workspace</strong> を常に確認。<code>git diff</code> で <code>.vscode/</code> の意図しない変更を検出。</p>
+</div>
+</div>
+</div></div>
+
+
+<!-- ===== SLIDE 13: 玄人#3 ターミナルの罠 ===== -->
+<div class="slide"><h2><span class="badge-warn">ADV #3</span> ターミナルが前のフォルダを指している</h2>
+<div style="max-width:950px;width:100%">
+<div style="display:flex;gap:1rem;margin-bottom:1.5rem">
+<div class="flow-box" style="padding:.8rem 1rem"><span style="font-size:.8rem;color:#888">Step 1</span><br><strong style="font-size:.85rem">project-A/</strong> で<br>ターミナル開く</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="padding:.8rem 1rem"><span style="font-size:.8rem;color:#888">Step 2</span><br>Open Folder で<br><strong style="font-size:.85rem">project-B/</strong> に切替</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box bad" style="padding:.8rem 1rem"><span style="font-size:.8rem;color:#ff5370">Step 3</span><br>ターミナルは<br><strong style="font-size:.85rem;color:#ff5370">project-A/ のまま!</strong></div>
+<span class="flow-arrow">→</span>
+<div class="flow-box bad" style="padding:.8rem 1rem"><span style="font-size:.8rem;color:#ff5370">事故</span><br><code style="font-size:.8rem">git push</code> =<br><strong style="font-size:.85rem;color:#ff5370">違うリポジトリ</strong></div>
+</div>
+<div class="cols">
+<div class="term" style="max-width:100%">
+  <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>Terminal (stale!)</span></div>
+  <div class="term-body" style="min-height:auto;padding:.6rem .8rem;font-size:.8rem">
+    <span class="p">$</span> <span class="c">pwd</span><br>
+    <span class="e">/Users/you/projects/project-A</span>  <span class="w">← 古い！</span><br>
+    <span class="p">$</span> <span class="c">git push</span><br>
+    <span class="e">→ project-A に push してしまう</span>
+  </div>
+</div>
+<div class="card" style="border-left:3px solid #7fdbca">
+  <h3 style="color:#7fdbca;font-size:1rem">対策</h3>
+  <div style="font-size:.85rem;color:#bbb;line-height:2">
+  <div class="num-point"><div class="num-circle green">1</div><div>フォルダ切替後は<strong>新しいターミナル</strong>を開く</div></div>
+  <div class="num-point"><div class="num-circle green">2</div><div>コマンド実行前に <code>pwd</code> を叩く</div></div>
+  <div class="num-point"><div class="num-circle green">3</div><div>古いターミナルは🗑で閉じる</div></div>
+  </div>
+</div>
+</div>
+</div></div>
+
+
+<!-- ===== SLIDE 14: 玄人#4 Remote SSH ===== -->
+<div class="slide"><h2><span class="badge-warn">ADV #4</span> Remote SSH でローカルと混同</h2>
+<div class="cols" style="max-width:1000px">
+<div>
+<div style="display:flex;gap:8px;margin-bottom:.8rem">
+<div class="vsc-mock" style="width:48%">
+  <div class="vsc-titlebar" style="padding:3px 6px"><span style="font-size:.55rem">ローカル</span></div>
+  <div style="height:80px;background:#1e1e1e"></div>
+  <div class="vsc-statusbar" style="font-size:.55rem"><span>main</span><span style="margin-left:auto">UTF-8</span></div>
+</div>
+<div class="vsc-mock" style="width:48%">
+  <div class="vsc-titlebar" style="padding:3px 6px"><span style="font-size:.55rem">サーバー</span></div>
+  <div style="height:80px;background:#1e1e1e"></div>
+  <div class="vsc-statusbar remote" style="font-size:.55rem"><span>SSH: pws-160core</span><span style="margin-left:auto">UTF-8</span></div>
+</div>
+</div>
+<div class="card" style="border-left:3px solid #ff5370">
+  <h3 style="color:#ff5370;font-size:1rem">危険シナリオ</h3>
+  <p style="font-size:.85rem">SSH接続中にファイルを削除 → <strong style="color:#ff5370">サーバー上のファイルが消える</strong>。ローカルのゴミ箱には入らない。Git管理外なら復元不可。</p>
+</div>
+</div>
+<div class="card" style="border-left:3px solid #7fdbca">
+  <h3 style="color:#7fdbca;font-size:1rem">確認ポイント</h3>
+  <div style="font-size:.85rem;color:#bbb;line-height:2">
+  <div class="num-point"><div class="num-circle green">1</div><div>ステータスバー左下の <strong style="color:#16825d">SSH: hostname</strong> を常に確認</div></div>
+  <div class="num-point"><div class="num-circle green">2</div><div>リモートでの削除は慎重に（ゴミ箱がない）</div></div>
+  <div class="num-point"><div class="num-circle green">3</div><div>重要ファイルは必ず <strong>Git管理下</strong> に</div></div>
+  <div class="num-point"><div class="num-circle green">4</div><div>ネットワーク切断→ファイル破損もありうる → <code>autoSave</code> 推奨</div></div>
+  </div>
+</div>
+</div></div>
+
+
+<!-- ===== SLIDE 15: 玄人#5 .vscode/ チーム管理 ===== -->
+<div class="slide"><h2><span class="badge-warn">ADV #5</span> .vscode/ のチーム管理指針</h2>
+<div style="max-width:900px;width:100%">
+<table>
+  <tr><th style="width:30%">ファイル</th><th style="width:15%">Git に含める？</th><th>理由</th></tr>
+  <tr><td><code>extensions.json</code></td><td><strong style="color:#7fdbca">✓ 含める</strong></td><td>推奨拡張機能はチーム共通にすべき</td></tr>
+  <tr><td><code>settings.json</code></td><td><strong style="color:#ffcb6b">△ 共通部分のみ</strong></td><td>Formatter/Linter = 共通、Font/Theme = 個人</td></tr>
+  <tr><td><code>tasks.json</code></td><td><strong style="color:#7fdbca">✓ 含める</strong></td><td>ビルド・テスト手順は統一すべき</td></tr>
+  <tr><td><code>launch.json</code></td><td><strong style="color:#ffcb6b">△ 要議論</strong></td><td>実行環境（Docker/ローカル）が人により異なる</td></tr>
+  <tr><td><code>*.code-workspace</code></td><td><strong style="color:#ff5370">✗ 含めない</strong></td><td>ローカルの絶対パスが含まれるため</td></tr>
+</table>
+<div class="card" style="margin-top:1rem;border-left:3px solid #00d2ff">
+  <h3 style="color:#00d2ff;font-size:1rem">ベストプラクティス</h3>
+  <p style="font-size:.9rem">チームで最初に <code>.vscode/</code> の管理方針を決める。<code>.gitignore</code> に入れるファイルを明文化。PR レビューで <code>.vscode/</code> の差分に注意。</p>
+</div>
+</div></div>
+
+
+<!-- ===== SLIDE 16: 判断フローチャート ===== -->
+<div class="slide"><h2>迷ったときの判断フロー</h2>
+<div style="max-width:800px;width:100%">
+<div style="background:#0a0a15;border:1px solid #2a2a4a;border-radius:12px;padding:2rem">
+
+<div style="text-align:center;margin-bottom:1.5rem">
+  <div class="flow-box hi" style="display:inline-block;padding:.6rem 1.5rem"><strong>プロジェクトを開きたい</strong></div>
+</div>
+
+<div style="display:flex;gap:2rem;justify-content:center;margin-bottom:1.5rem">
+<div style="text-align:center">
+  <div style="font-size:.8rem;color:#888;margin-bottom:.5rem">単独プロジェクト？</div>
+  <div style="font-size:1rem;color:#ffcb6b;margin-bottom:.5rem">↓ Yes</div>
+  <div class="flow-box ok" style="display:inline-block;padding:.5rem 1rem"><code>code .</code></div>
+  <div style="font-size:.75rem;color:#7fdbca;margin-top:.3rem">最もシンプルで安全</div>
+</div>
+<div style="text-align:center">
+  <div style="font-size:.8rem;color:#888;margin-bottom:.5rem">2つ同時に見たい？</div>
+  <div style="font-size:1rem;color:#ffcb6b;margin-bottom:.5rem">↓ Yes</div>
+  <div class="flow-box ok" style="display:inline-block;padding:.5rem 1rem"><code>code -n</code></div>
+  <div style="font-size:.75rem;color:#7fdbca;margin-top:.3rem">別ウィンドウ（推奨）</div>
+</div>
+<div style="text-align:center">
+  <div style="font-size:.8rem;color:#888;margin-bottom:.5rem">密結合 (frontend+backend)?</div>
+  <div style="font-size:1rem;color:#ffcb6b;margin-bottom:.5rem">↓ Yes</div>
+  <div class="flow-box warn" style="display:inline-block;padding:.5rem 1rem">Workspace</div>
+  <div style="font-size:.75rem;color:#ffcb6b;margin-top:.3rem">上級者のみ・注意が必要</div>
+</div>
+</div>
+
+<p style="text-align:center;font-size:1rem;color:#00d2ff;font-weight:600">結論: 迷ったら <code>code .</code> + 別ウィンドウ。それが一番安全。</p>
+</div>
+</div></div>
+
+
+<!-- ===== SLIDE 17: まとめ ===== -->
+<div class="slide"><h2>まとめ</h2>
+<div class="cols" style="max-width:950px">
+<div class="card" style="border-top:3px solid #ff5370">
+  <h3 style="color:#ff5370;font-size:1.1rem;text-align:center;margin-bottom:1rem">やめること</h3>
+  <div style="font-size:.9rem;color:#bbb;line-height:2">
+  <div class="num-point"><div class="num-circle red">✗</div><div>ファイル単体をダブルクリックで開く</div></div>
+  <div class="num-point"><div class="num-circle red">✗</div><div>ホームディレクトリを Open Folder</div></div>
+  <div class="num-point"><div class="num-circle red">✗</div><div>ウィンドウ確認せず <code>git push</code></div></div>
+  <div class="num-point"><div class="num-circle red">✗</div><div>Remote SSH で無意識にファイル削除</div></div>
+  </div>
+</div>
+<div class="card" style="border-top:3px solid #7fdbca">
+  <h3 style="color:#7fdbca;font-size:1.1rem;text-align:center;margin-bottom:1rem">習慣にすること</h3>
+  <div style="font-size:.9rem;color:#bbb;line-height:2">
+  <div class="num-point"><div class="num-circle green">✓</div><div><code>code .</code> でフォルダごと開く</div></div>
+  <div class="num-point"><div class="num-circle green">✓</div><div>ステータスバーでブランチ/接続先を確認</div></div>
+  <div class="num-point"><div class="num-circle green">✓</div><div>ターミナルの <code>pwd</code> を信頼する</div></div>
+  <div class="num-point"><div class="num-circle green">✓</div><div>.vscode/ の管理方針をチームで決める</div></div>
+  </div>
+</div>
+</div></div>
 
 
 <div class="progress"></div><div class="nav-hint">← → / j k / Space</div>
+
 <script>const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');let cur=0,busy=false;function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}prog.textContent='1 / '+slides.length;document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});</script>
 <style>._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}._ts-gallery-info{padding:.8rem 1rem}._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}</style>
 <script>(function(){var _slides=document.querySelectorAll('.slide');if(_slides.length<2)return;function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}var oldHint=document.querySelector('.nav-hint');if(oldHint)oldHint.style.display='none';function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}var toolbar=document.createElement('div');toolbar.className='_ts-toolbar';toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';document.body.appendChild(toolbar);var counterBtn=toolbar.querySelector('._ts-counter-btn');var gridBtn=toolbar.querySelector('._ts-grid-btn');var jumpEl=document.createElement('div');jumpEl.className='_ts-jump';var jumpGrid=document.createElement('div');jumpGrid.className='_ts-jump-grid';for(var i=0;i<_slides.length;i++){var item=document.createElement('div');item.className='_ts-jump-item';item.textContent=i+1;item.dataset.idx=i;item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});jumpGrid.appendChild(item)}jumpEl.appendChild(jumpGrid);document.body.appendChild(jumpEl);var jumpOpen=false;function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});var gallery=document.createElement('div');gallery.className='_ts-gallery-overlay';var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';for(var i=0;i<_slides.length;i++){var title=_getTitle(_slides[i])||'Slide '+(i+1);galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>'}galleryHTML+='</div>';gallery.innerHTML=galleryHTML;document.body.appendChild(gallery);var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');for(var i=0;i<previews.length;i++){var idx=parseInt(previews[i].dataset.slideIdx);var clone=_slides[idx].cloneNode(true);clone.style.display='flex';clone.style.position='static';clone.style.animation='none';clone.classList.remove('out-left','out-right');clone.classList.add('active');previews[i].appendChild(clone)}var cards=gallery.querySelectorAll('._ts-gallery-card');for(var i=0;i<cards.length;i++){cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()})}var galleryOpen=false;function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}}},true);document.addEventListener('click',function(e){if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump()});function _tsUpdateUI(){var c=_tsCurIdx();counterBtn.textContent=(c+1)+' / '+_slides.length;if(jumpOpen)highlightJumpCurrent();if(galleryOpen)highlightGalleryCard()}var _lastIdx=_tsCurIdx();setInterval(function(){var c=_tsCurIdx();if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}},200);_tsUpdateUI()})();</script>
