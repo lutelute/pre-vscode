@@ -107,21 +107,23 @@
 
 | 回 | テーマ | 内容 | スライド |
 |:--:|--------|------|:--------:|
-| 1 | VS Code とは | 特徴・他エディタ比較・インストール | [1–6](#slide-1) |
-| 2 | 画面構成 | UI 5領域・Open Folder・サイドバー | [7–12](#slide-7) |
-| 3 | コマンドパレット | `⌘⇧P`・プレフィックス・ファイル検索 | [9–13](#slide-9) |
-| 4 | ショートカット | 必須12選・行操作・ファイル操作 | [13–15](#slide-13) |
-| 5 | マルチカーソル | `⌘D`・`Alt+Click`・一括編集の実践 | [16](#slide-16) |
-| 6 | 検索・置換 | ファイル内/全体検索・正規表現 | [17–18](#slide-17) |
-| 7 | 拡張機能 | Python必須6選・汎用6選・extensions.json | [19–22](#slide-19) |
-| 8 | 統合ターミナル | 表示・分割・エラージャンプ | [23–24](#slide-23) |
-| 9 | Git 連携 | Source Control・diff・ブランチ・GitLens | [25–26](#slide-25) |
-| 10 | Remote SSH | SSH config・研究室サーバー接続 | [27–28](#slide-27) |
-| 11 | デバッグ | ブレークポイント・ステップ実行・launch.json | [29–31](#slide-29) |
-| 12 | 設定・カスタマイズ | User/Workspace Settings・テーマ・フォント | [32–33](#slide-32) |
-| 13 | Workspace 活用 | .vscode/・スニペット・タスク自動化 | [34–37](#slide-34) |
-| 14 | AI 支援 & 生産性 | Copilot・Zen Mode・Quick Fix | [38–39](#slide-38) |
-| 15 | 総合演習 & Tips | キーバインド・まとめ・実践課題・Q&A | [40–44](#slide-40) |
+| 1 | [VS Code とは](slides/01-what-is-vscode.html) | 特徴・他エディタ比較・インストール | 23枚 |
+| 2 | [画面構成](slides/02-ui-layout.html) | UI 5領域・Open Folder・サイドバー | 21枚 |
+| 3 | [コマンドパレット](slides/03-command-palette.html) | `⌘⇧P`・プレフィックス・ファイル検索 | 19枚 |
+| 4 | [ショートカット](slides/04-shortcuts.html) | 必須12選・行操作・ファイル操作 | 18枚 |
+| 5 | [マルチカーソル](slides/05-multi-cursor.html) | `⌘D`・`Alt+Click`・一括編集の実践 | 15枚 |
+| 6 | [検索・置換](slides/06-search-replace.html) | ファイル内/全体検索・正規表現 | 12枚 |
+| 7 | [拡張機能](slides/07-extensions.html) | Python必須6選・汎用6選・extensions.json | 11枚 |
+| 8 | [統合ターミナル](slides/08-terminal.html) | 表示・分割・エラージャンプ | 11枚 |
+| 9 | [Git 連携](slides/09-git.html) | Source Control・diff・ブランチ・GitLens | 11枚 |
+| 10 | [Remote SSH](slides/10-remote-ssh.html) | SSH config・研究室サーバー接続 | 11枚 |
+| 11 | [デバッグ](slides/11-debug.html) | ブレークポイント・ステップ実行・launch.json | 12枚 |
+| 12 | [設定・カスタマイズ](slides/12-settings.html) | User/Workspace Settings・テーマ・フォント | 10枚 |
+| 13 | [Workspace 活用](slides/13-workspace.html) | .vscode/・スニペット・タスク自動化 | 10枚 |
+| 14 | [AI 支援 & 生産性](slides/14-ai-productivity.html) | Copilot・Zen Mode・Quick Fix | 10枚 |
+| 15 | [総合演習 & Tips](slides/15-exercises.html) | キーバインド・まとめ・実践課題・Q&A | 12枚 |
+
+> **補足資料**: [フォルダ管理あるある](slides/folder-pitfalls.html) — 初心者6選 + 玄人5選（17枚）
 
 ---
 
