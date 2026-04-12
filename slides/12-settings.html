@@ -1,30 +1,601 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Session 12 — 設定・カスタマイズ：自分だけの環境を作る</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}p{font-size:1.05rem;line-height:1.7;color:#bbb}code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}.label.green{background:#7fdbca22;color:#7fdbca}.label.purple{background:#c792ea22;color:#c792ea}.label.orange{background:#f78c6c22;color:#f78c6c}.label.red{background:#ff537022;color:#ff5370}.label.yellow{background:#ffcb6b22;color:#ffcb6b}.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}.cols{display:flex;gap:2rem;width:100%;max-width:1100px}.cols>*{flex:1}.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}.terminal-bar .dot{width:10px;height:10px;border-radius:50%}.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}.terminal-body .prompt{color:#7fdbca}.terminal-body .cmd{color:#e0e0e0}.terminal-body .output{color:#888}.terminal-body .success{color:#27c93f}.terminal-body .error{color:#ff5370}.terminal-body .info{color:#00d2ff}.terminal-body .warn{color:#ffcb6b}.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}ul.feature-list{list-style:none;max-width:700px}ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}ul.feature-list li::before{content:'▸ ';color:#00d2ff}.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}table{border-collapse:collapse;width:100%;max-width:900px}th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}th{color:#00d2ff;font-weight:600;background:#1a1a2e}td{color:#bbb}tr:hover td{background:#1a1a2e55}.gif-container{border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;max-width:700px;width:100%}.gif-container img{width:100%;display:block}.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}.step-progress .sp-item{display:flex;align-items:center;gap:0}.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}.step-progress .sp-arrow.sp-done{color:#00d2ff55}</style></head><body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}
+.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}
+.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}
+h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}
+h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}
+p{font-size:1.05rem;line-height:1.7;color:#bbb}
+code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}
+.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}
+.label.green{background:#7fdbca22;color:#7fdbca}
+.label.purple{background:#c792ea22;color:#c792ea}
+.label.orange{background:#f78c6c22;color:#f78c6c}
+.label.red{background:#ff537022;color:#ff5370}
+.label.yellow{background:#ffcb6b22;color:#ffcb6b}
+.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}
+.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}
+.cols{display:flex;gap:2rem;width:100%;max-width:1100px}
+.cols>*{flex:1}
+.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}
+.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.terminal-bar .dot{width:10px;height:10px;border-radius:50%}
+.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}
+.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}
+.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}
+.terminal-body .prompt{color:#7fdbca}
+.terminal-body .cmd{color:#e0e0e0}
+.terminal-body .output{color:#888}
+.terminal-body .success{color:#27c93f}
+.terminal-body .error{color:#ff5370}
+.terminal-body .info{color:#00d2ff}
+.terminal-body .warn{color:#ffcb6b}
+.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}
+.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}
+.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}
+ul.feature-list{list-style:none;max-width:700px}
+ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}
+ul.feature-list li::before{content:'▸ ';color:#00d2ff}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}
+table{border-collapse:collapse;width:100%;max-width:900px}
+th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}
+th{color:#00d2ff;font-weight:600;background:#1a1a2e}
+td{color:#bbb}
+tr:hover td{background:#1a1a2e55}
+.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}
+.step-progress .sp-item{display:flex;align-items:center;gap:0}
+.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}
+.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}
+.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}
+.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}
+.step-progress .sp-arrow.sp-done{color:#00d2ff55}
+.color-swatch{display:inline-block;width:24px;height:24px;border-radius:4px;vertical-align:middle;margin-right:.5rem;border:1px solid #2a2a4a}
+</style></head><body>
 
+<!-- Slide 1: Title -->
+<div class="slide active"><div style="text-align:center">
+<p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">&larr; トップに戻る</a></p>
+<p class="label">SESSION 12</p>
+<h1 style="font-size:2.8rem;margin-bottom:1rem">設定・カスタマイズ</h1>
+<p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">自分だけの VS Code 環境を作る</p>
+<span class="ai-badge">90分 / 全15回の第12回</span>
+<p style="margin-top:3rem;color:#555;font-size:.9rem">&rarr; / Space で次へ</p>
+</div></div>
 
-<div class="slide active"><div style="text-align:center"><p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p><p class="label">SESSION 12</p><h1 style="font-size:2.8rem;margin-bottom:1rem">設定・カスタマイズ</h1><p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">自分だけの環境を作る</p><span class="ai-badge">90分 / 全15回の第12回</span><p style="margin-top:3rem;color:#555;font-size:.9rem">→ / Space で次へ</p></div></div>
+<!-- Slide 2: Objectives -->
+<div class="slide"><h2>今日のゴール</h2>
+<div style="max-width:700px;width:100%">
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. 設定の3層構造を理解する</h3><p style="font-size:.95rem">User / Workspace / Folder の優先順位</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. settings.json を自在に編集できる</h3><p style="font-size:.95rem">GUI設定とJSON設定の使い分け</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. テーマ・フォント・アイコンをカスタマイズ</h3><p style="font-size:.95rem">見た目を自分好みに調整</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b"><h3 style="color:#ffcb6b">4. キーバインドと Settings Sync</h3><p style="font-size:.95rem">ショートカットのカスタマイズと複数マシン同期</p></div>
+</div></div>
 
-<div class="slide"><h2>今日のゴール</h2><div style="max-width:700px;width:100%"><div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. User vs Workspace Settings</h3><p style="font-size:.95rem">設定の優先順位を理解する</p></div><div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. 推奨 settings.json を設定</h3><p style="font-size:.95rem">autoSave, formatOnSave, フォントなど</p></div><div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. テーマ・フォント・キーバインドを最適化</h3><p style="font-size:.95rem">見た目と操作感を自分好みに</p></div></div></div>
+<!-- Slide 3: Settings Architecture -->
+<div class="slide"><h2>設定の3層アーキテクチャ</h2>
+<div class="flow" style="margin-bottom:1.5rem">
+<div class="flow-box" style="border-color:#00d2ff;min-width:180px"><span style="color:#00d2ff;font-weight:600">User Settings</span><br><span style="font-size:.8rem;color:#888">全プロジェクト共通</span></div>
+<div class="flow-arrow" style="font-size:2rem;color:#ffcb6b">&larr;</div>
+<div class="flow-box" style="border-color:#7fdbca;min-width:180px"><span style="color:#7fdbca;font-weight:600">Workspace Settings</span><br><span style="font-size:.8rem;color:#888">プロジェクト固有</span></div>
+<div class="flow-arrow" style="font-size:2rem;color:#ffcb6b">&larr;</div>
+<div class="flow-box" style="border-color:#c792ea;min-width:180px"><span style="color:#c792ea;font-weight:600">Folder Settings</span><br><span style="font-size:.8rem;color:#888">フォルダ固有</span></div>
+</div>
+<div class="card" style="max-width:800px;text-align:center;margin-bottom:1rem">
+<p style="color:#ffcb6b;font-size:1.05rem;font-weight:600">右ほど優先度が高い（上書きする）</p>
+</div>
+<table style="max-width:800px">
+<tr><th>レベル</th><th>保存場所</th><th>適用範囲</th></tr>
+<tr><td style="color:#00d2ff">User</td><td><code>~/Library/Application Support/Code/User/settings.json</code></td><td>全プロジェクト</td></tr>
+<tr><td style="color:#7fdbca">Workspace</td><td><code>.vscode/settings.json</code></td><td>そのプロジェクトのみ</td></tr>
+<tr><td style="color:#c792ea">Folder</td><td>マルチルートワークスペース内の各フォルダ</td><td>そのフォルダのみ</td></tr>
+</table></div>
 
-<div class="slide"><h2>User Settings vs Workspace Settings</h2><div class="cols" style="max-width:900px"><div class="card"><p class="label">User Settings（全体）</p><ul class="feature-list"><li>全プロジェクトに適用</li><li><code>Cmd+,</code> で開く</li><li>ファイル: <code>~/Library/Application Support/Code/User/settings.json</code></li></ul></div><div class="card" style="border-color:#7fdbca44"><p class="label green">Workspace Settings（プロジェクト）</p><ul class="feature-list"><li>そのフォルダだけに適用</li><li>User Settings より優先</li><li>ファイル: <code>.vscode/settings.json</code></li><li>Gitに含めてチームで共有可能</li></ul></div></div><p style="margin-top:1rem;color:#888;font-size:.9rem;text-align:center">優先順位: Workspace > User > Default</p></div>
+<!-- Slide 4: GUI vs JSON -->
+<div class="slide"><h2>GUI Settings vs settings.json</h2>
+<div class="cols" style="max-width:950px">
+<div class="card" style="border-top:3px solid #00d2ff">
+<h3 style="color:#00d2ff">GUI Settings</h3>
+<p style="font-size:.85rem;margin-bottom:.5rem"><code>Cmd+,</code>（Mac）/ <code>Ctrl+,</code>（Win/Linux）</p>
+<ul class="feature-list">
+<li>検索バーで設定を探せる</li>
+<li>説明付きで直感的</li>
+<li>チェックボックス・ドロップダウン</li>
+<li>変更されたものにマーク表示</li>
+<li>初心者におすすめ</li>
+</ul>
+</div>
+<div class="card" style="border-top:3px solid #7fdbca">
+<h3 style="color:#7fdbca">settings.json</h3>
+<p style="font-size:.85rem;margin-bottom:.5rem"><code>Cmd+Shift+P</code> &rarr; "Preferences: Open Settings (JSON)"</p>
+<ul class="feature-list">
+<li>全設定を一覧で確認</li>
+<li>コピペで設定を共有できる</li>
+<li>一括編集・バックアップが楽</li>
+<li>GUIにない設定もある</li>
+<li>慣れると圧倒的に速い</li>
+</ul>
+</div></div>
+<div class="card" style="max-width:950px;margin-top:1rem;text-align:center">
+<p style="font-size:.95rem">GUIで変更 = settings.json に自動反映。どちらで変えても同じ結果。</p>
+</div></div>
 
-<div class="slide"><h2>推奨 settings.json</h2><div style="max-width:800px;width:100%"><div class="terminal"><div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>settings.json</span></div><div class="terminal-body" style="min-height:auto"><div><span class="cmd">{</span></div><div><span class="info">&nbsp;&nbsp;// 自動保存</span></div><div><span class="cmd">&nbsp;&nbsp;"files.autoSave": "afterDelay",</span></div><div><span class="cmd">&nbsp;&nbsp;"files.autoSaveDelay": 1000,</span></div><div><span class="info">&nbsp;&nbsp;// 保存時フォーマット</span></div><div><span class="cmd">&nbsp;&nbsp;"editor.formatOnSave": true,</span></div><div><span class="cmd">&nbsp;&nbsp;"editor.defaultFormatter": "charliermarsh.ruff",</span></div><div><span class="info">&nbsp;&nbsp;// フォント</span></div><div><span class="cmd">&nbsp;&nbsp;"editor.fontSize": 14,</span></div><div><span class="cmd">&nbsp;&nbsp;"editor.fontFamily": "'Fira Code', Menlo, monospace",</span></div><div><span class="cmd">&nbsp;&nbsp;"editor.fontLigatures": true,</span></div><div><span class="info">&nbsp;&nbsp;// エディタ</span></div><div><span class="cmd">&nbsp;&nbsp;"editor.guides.bracketPairs": true,</span></div><div><span class="cmd">&nbsp;&nbsp;"editor.bracketPairColorization.enabled": true,</span></div><div><span class="cmd">&nbsp;&nbsp;"files.trimTrailingWhitespace": true,</span></div><div><span class="cmd">&nbsp;&nbsp;"files.insertFinalNewline": true</span></div><div><span class="cmd">}</span></div></div></div></div></div>
+<!-- Slide 5: Recommended Settings -->
+<div class="slide"><h2>おすすめ設定 (settings.json)</h2>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>settings.json</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"files.autoSave"</span>: <span style="color:#c792ea">"afterDelay"</span>,</span><span class="output"> // 自動保存</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"files.autoSaveDelay"</span>: <span style="color:#ffcb6b">1000</span>,</span><span class="output"> // 1秒後</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"editor.formatOnSave"</span>: <span style="color:#ffcb6b">true</span>,</span><span class="output"> // 保存時フォーマット</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"editor.fontSize"</span>: <span style="color:#ffcb6b">14</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"editor.tabSize"</span>: <span style="color:#ffcb6b">4</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"editor.wordWrap"</span>: <span style="color:#c792ea">"on"</span>,</span><span class="output"> // 折り返し</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"editor.minimap.enabled"</span>: <span style="color:#ffcb6b">false</span>,</span><span class="output"> // ミニマップ非表示</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"editor.bracketPairColorization.enabled"</span>: <span style="color:#ffcb6b">true</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"editor.guides.bracketPairs"</span>: <span style="color:#ffcb6b">true</span>,</span><span class="output"> // 括弧ガイド</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"files.trimTrailingWhitespace"</span>: <span style="color:#ffcb6b">true</span>,</span><span class="output"> // 末尾空白削除</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"files.insertFinalNewline"</span>: <span style="color:#ffcb6b">true</span>,</span><span class="output"> // 最終行に改行</span></div>
+<div><span class="cmd">}</span></div>
+</div></div></div>
 
-<div class="slide"><h2>テーマ</h2><div style="max-width:900px;width:100%"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem"><div class="card" style="text-align:center;background:#282c34;border-color:#333"><p style="color:#e06c75;font-weight:600">One Dark Pro</p><p style="font-size:.8rem;color:#888">Atom由来の人気テーマ<br>温かみのある配色</p></div><div class="card" style="text-align:center;background:#282a36;border-color:#333"><p style="color:#bd93f9;font-weight:600">Dracula</p><p style="font-size:.8rem;color:#888">鮮やかな紫系<br>コントラスト強め</p></div><div class="card" style="text-align:center;background:#1e1e2e;border-color:#333"><p style="color:#cba6f7;font-weight:600">Catppuccin</p><p style="font-size:.8rem;color:#888">パステル系モダン<br>目に優しい</p></div></div><p style="color:#888;text-align:center">変更: <code>Cmd+K Cmd+T</code> で即切替。好みで選べばOK。</p></div></div>
+<!-- Slide 6: Python-specific settings -->
+<div class="slide"><h2>Python 開発者向け設定</h2>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>settings.json (Python)</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"python.defaultInterpreterPath"</span>: <span style="color:#c792ea">"./venv/bin/python"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"[python]"</span>: {</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"editor.defaultFormatter"</span>: <span style="color:#c792ea">"charliermarsh.ruff"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"editor.formatOnSave"</span>: <span style="color:#ffcb6b">true</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"editor.codeActionsOnSave"</span>: {</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"source.organizeImports"</span>: <span style="color:#c792ea">"explicit"</span></span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;}</span></div>
+<div><span class="cmd">&nbsp;&nbsp;},</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"python.analysis.typeCheckingMode"</span>: <span style="color:#c792ea">"basic"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"python.testing.pytestEnabled"</span>: <span style="color:#ffcb6b">true</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"python.testing.pytestArgs"</span>: [<span style="color:#c792ea">"tests"</span>]</span></div>
+<div><span class="cmd">}</span></div>
+</div></div>
+<div class="card" style="max-width:850px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#00d2ff">[python]</strong> ブロック内の設定はPythonファイルにのみ適用される（言語固有設定）</p>
+</div></div>
 
-<div class="slide"><h2>フォント設定</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem"><h3>プログラミングフォントのおすすめ</h3><table style="max-width:100%"><tr><th>フォント</th><th>特徴</th><th>リガチャ</th></tr><tr><td style="color:#00d2ff">Fira Code</td><td>最も人気。リガチャが美しい</td><td>あり</td></tr><tr><td style="color:#7fdbca">JetBrains Mono</td><td>読みやすさ重視</td><td>あり</td></tr><tr><td style="color:#c792ea">Cascadia Code</td><td>Microsoft製。モダン</td><td>あり</td></tr><tr><td style="color:#f78c6c">Source Code Pro</td><td>Adobe製。クラシック</td><td>なし</td></tr></table></div><div class="card"><h3>リガチャとは</h3><p style="font-size:.9rem"><code>!=</code> → ≠, <code>=></code> → ⇒, <code>-></code> → → のように記号が結合表示される。<br><code>"editor.fontLigatures": true</code> で有効化。</p></div></div></div>
+<!-- Slide 7: Theme selection -->
+<div class="slide"><h2>テーマを変えよう</h2>
+<div style="max-width:850px;width:100%">
+<div class="card" style="margin-bottom:1rem;text-align:center">
+<p style="font-size:1.1rem;color:#00d2ff;font-weight:600">Cmd+K Cmd+T (Mac) / Ctrl+K Ctrl+T (Win/Linux)</p>
+<p style="font-size:.9rem;color:#888">テーマ選択画面が開く。上下キーでプレビュー、Enterで確定。</p>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+<div class="card" style="border-left:3px solid #e06c75"><h3 style="font-size:1.1rem"><span class="color-swatch" style="background:#282c34"></span>One Dark Pro</h3>
+<p style="font-size:.85rem">Atom由来の人気テーマ。ダーク系の定番。目に優しい配色。</p></div>
+<div class="card" style="border-left:3px solid #bd93f9"><h3 style="font-size:1.1rem"><span class="color-swatch" style="background:#282a36"></span>Dracula</h3>
+<p style="font-size:.85rem">紫系のダークテーマ。コントラストが程よく長時間作業向き。</p></div>
+<div class="card" style="border-left:3px solid #89b4fa"><h3 style="font-size:1.1rem"><span class="color-swatch" style="background:#1e1e2e"></span>Catppuccin Mocha</h3>
+<p style="font-size:.85rem">パステル系ダーク。柔らかい配色で最近人気急上昇。</p></div>
+<div class="card" style="border-left:3px solid #0366d6"><h3 style="font-size:1.1rem"><span class="color-swatch" style="background:#24292e"></span>GitHub Dark</h3>
+<p style="font-size:.85rem">GitHub公式テーマ。GitHubの見た目に慣れている人に。</p></div>
+</div></div></div>
 
-<div class="slide"><h2>キーバインド設定</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem"><h3>変更方法</h3><p style="font-size:.95rem"><code>Cmd+K Cmd+S</code> でキーバインド設定画面<br><code>keybindings.json</code> で直接JSON編集も可能</p></div><div class="card"><h3>キーマップ拡張</h3><ul class="feature-list"><li><strong style="color:#00d2ff">Vim</strong> — Vimキーバインド (vscodevim.vim)</li><li><strong style="color:#7fdbca">Sublime Text Keymap</strong> — Sublime風</li><li><strong style="color:#c792ea">IntelliJ IDEA Keybindings</strong> — JetBrains風</li></ul><p style="font-size:.85rem;color:#888;margin-top:.5rem">他エディタからの移行者はキーマップ拡張で慣れたキーをそのまま使える</p></div></div></div>
+<!-- Slide 8: Font Configuration -->
+<div class="slide"><h2>フォント設定: Fira Code とリガチャ</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="flex:1.2">
+<h3 style="color:#00d2ff">Fira Code のリガチャ</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.8rem;font-family:'Fira Code',monospace;font-size:1.1rem">
+<div style="text-align:center"><span style="color:#888">!=</span> <span style="color:#555">&rarr;</span> <span style="color:#7fdbca">&#8800;</span></div>
+<div style="text-align:center"><span style="color:#888">=></span> <span style="color:#555">&rarr;</span> <span style="color:#7fdbca">&#8658;</span></div>
+<div style="text-align:center"><span style="color:#888">>=</span> <span style="color:#555">&rarr;</span> <span style="color:#7fdbca">&#8805;</span></div>
+<div style="text-align:center"><span style="color:#888"><=</span> <span style="color:#555">&rarr;</span> <span style="color:#7fdbca">&#8804;</span></div>
+<div style="text-align:center"><span style="color:#888">===</span> <span style="color:#555">&rarr;</span> <span style="color:#7fdbca">&#8801;</span></div>
+<div style="text-align:center"><span style="color:#888">!==</span> <span style="color:#555">&rarr;</span> <span style="color:#7fdbca">&#8802;</span></div>
+</div>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">設定</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.8rem;border-radius:6px;margin-top:.5rem">
+{<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"editor.fontFamily"</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"'Fira Code', Menlo, monospace"</span>,<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"editor.fontLigatures"</span>: <span style="color:#ffcb6b">true</span>,<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"editor.fontSize"</span>: <span style="color:#ffcb6b">14</span>,<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"editor.lineHeight"</span>: <span style="color:#ffcb6b">1.6</span><br>
+}
+</div>
+<p style="font-size:.8rem;margin-top:.5rem;color:#888">インストール: github.com/tonsky/FiraCode</p>
+</div></div>
+<div class="card" style="max-width:900px;margin-top:1rem">
+<h3 style="color:#c792ea">その他の人気プログラミングフォント</h3>
+<p style="font-size:.9rem">JetBrains Mono / Cascadia Code (Microsoft) / Source Code Pro (Adobe) / Hack</p>
+</div></div>
 
-<div class="slide"><h2>練習タイム</h2><p class="label green">HANDS-ON</p><div style="max-width:700px;width:100%"><div class="card"><h3>設定カスタマイズ演習（15分）</h3><ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem"><li><code>Cmd+Shift+P</code> → "Open Settings (JSON)" で settings.json を開く</li><li>推奨設定（autoSave, formatOnSave, fontSize等）を追加</li><li>Fira Code フォントをインストールして設定</li><li>テーマを3つ試して好みのものに決定</li><li><code>Cmd+K Cmd+S</code> でキーバインド画面を確認</li></ol></div></div></div>
+<!-- Slide 9: Icon Themes -->
+<div class="slide"><h2>ファイルアイコンテーマ</h2>
+<div style="max-width:800px;width:100%">
+<div class="card" style="margin-bottom:1rem;text-align:center">
+<p style="font-size:1rem;color:#00d2ff">Cmd+Shift+P &rarr; "Preferences: File Icon Theme"</p>
+</div>
+<div class="cols">
+<div class="card" style="text-align:center;border-top:3px solid #00d2ff">
+<h3 style="color:#00d2ff;font-size:1.1rem">Material Icon Theme</h3>
+<p style="font-size:.85rem">最も人気のアイコンテーマ。ファイルタイプ別にカラフルなアイコン。フォルダも言語別で色分け。</p>
+</div>
+<div class="card" style="text-align:center;border-top:3px solid #7fdbca">
+<h3 style="color:#7fdbca;font-size:1.1rem">file-icons</h3>
+<p style="font-size:.85rem">シンプルなアイコンセット。Atom エディタ由来。余計な装飾が少なくクリーン。</p>
+</div>
+<div class="card" style="text-align:center;border-top:3px solid #c792ea">
+<h3 style="color:#c792ea;font-size:1.1rem">Catppuccin Icons</h3>
+<p style="font-size:.85rem">Catppuccin テーマと統一感のあるアイコン。パステル系の色使い。</p>
+</div></div></div></div>
 
-<div class="slide"><h2>まとめ</h2><div style="max-width:700px;width:100%"><div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">settings.json で全てを制御</h3><p style="font-size:.9rem">GUIでもJSONでも設定可能。autoSave と formatOnSave は必須。</p></div><div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">User vs Workspace の使い分け</h3><p style="font-size:.9rem">個人設定は User、プロジェクト設定は .vscode/ に。</p></div><div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">見た目にもこだわる</h3><p style="font-size:.9rem">テーマとフォントで長時間作業の疲れを軽減。</p></div></div></div>
+<!-- Slide 10: Minimap settings -->
+<div class="slide"><h2>ミニマップの設定</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">ミニマップとは</h3>
+<p style="font-size:.9rem">エディタ右端に表示されるコードのプレビュー。長いファイルの全体像が見える。</p>
+<div style="margin-top:.8rem;font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.8rem;border-radius:6px">
+<span style="color:#888">// 非表示にする場合</span><br>
+<span style="color:#ff5370">"editor.minimap.enabled"</span>: <span style="color:#ffcb6b">false</span><br><br>
+<span style="color:#888">// カスタマイズ</span><br>
+<span style="color:#ff5370">"editor.minimap.maxColumn"</span>: <span style="color:#ffcb6b">80</span>,<br>
+<span style="color:#ff5370">"editor.minimap.renderCharacters"</span>: <span style="color:#ffcb6b">false</span>,<br>
+<span style="color:#ff5370">"editor.minimap.scale"</span>: <span style="color:#ffcb6b">2</span>
+</div>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">ミニマップ: ON vs OFF</h3>
+<table style="max-width:100%">
+<tr><th>ON にする理由</th><th>OFF にする理由</th></tr>
+<tr><td>長いファイルで全体把握</td><td>画面が狭くなる</td></tr>
+<tr><td>現在位置がわかる</td><td>ノートPCでは邪魔</td></tr>
+<tr><td>クリックで素早く移動</td><td>使わない人も多い</td></tr>
+</table>
+<p style="font-size:.85rem;margin-top:.5rem;color:#888">個人の好み。迷ったらOFFで画面を広く使おう。</p>
+</div></div></div>
 
-<div class="slide"><h2>次回予告</h2><div style="text-align:center;max-width:600px"><p class="label purple">SESSION 13</p><h1 style="font-size:2rem;margin-bottom:1rem">Workspace活用：チーム開発の基盤</h1><p style="font-size:1.1rem;color:#888;margin-bottom:2rem">.vscode/ ディレクトリ、スニペット、タスクランナー。</p></div></div>
+<!-- Slide 11: Keybinding customization -->
+<div class="slide"><h2>キーバインドのカスタマイズ</h2>
+<div style="max-width:850px;width:100%">
+<div class="card" style="margin-bottom:1rem;text-align:center">
+<p style="font-size:1.1rem;color:#00d2ff;font-weight:600">Cmd+K Cmd+S (Mac) / Ctrl+K Ctrl+S (Win/Linux)</p>
+<p style="font-size:.9rem;color:#888">キーボードショートカット一覧が開く。検索して変更可能。</p>
+</div>
+<div class="terminal" style="max-width:100%">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>keybindings.json</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">[</span></div>
+<div><span class="cmd">&nbsp;&nbsp;{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"key"</span>: <span style="color:#c792ea">"cmd+shift+d"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"command"</span>: <span style="color:#c792ea">"editor.action.duplicateSelection"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"when"</span>: <span style="color:#c792ea">"editorTextFocus"</span></span></div>
+<div><span class="cmd">&nbsp;&nbsp;},</span></div>
+<div><span class="cmd">&nbsp;&nbsp;{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"key"</span>: <span style="color:#c792ea">"cmd+k cmd+c"</span>,</span><span class="output"> // コードキー</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"command"</span>: <span style="color:#c792ea">"workbench.action.terminal.clear"</span></span></div>
+<div><span class="cmd">&nbsp;&nbsp;}</span></div>
+<div><span class="cmd">]</span></div>
+</div></div></div></div>
 
+<!-- Slide 12: "when" clause -->
+<div class="slide"><h2>キーバインドの "when" 条件</h2>
+<div style="max-width:850px;width:100%">
+<table>
+<tr><th>when 条件</th><th>意味</th><th>例</th></tr>
+<tr><td><code>editorTextFocus</code></td><td>エディタにフォーカス中</td><td>テキスト編集時のみ有効</td></tr>
+<tr><td><code>terminalFocus</code></td><td>ターミナルにフォーカス中</td><td>ターミナル操作時のみ</td></tr>
+<tr><td><code>inDebugMode</code></td><td>デバッグ実行中</td><td>デバッグ時の特別なキー</td></tr>
+<tr><td><code>editorLangId == 'python'</code></td><td>Pythonファイル編集中</td><td>言語固有のショートカット</td></tr>
+<tr><td><code>!editorReadonly</code></td><td>読み取り専用でない</td><td>編集可能な時のみ</td></tr>
+<tr><td><code>sideBarVisible</code></td><td>サイドバー表示中</td><td>サイドバー関連操作</td></tr>
+</table>
+<div class="card" style="margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#ffcb6b">組み合わせ:</strong> <code>"when": "editorTextFocus && editorLangId == 'python'"</code><br>
+Python ファイルでエディタにフォーカスがある時のみ有効</p>
+</div></div></div>
 
-<div class="progress"></div><div class="nav-hint">← → / j k / Space</div>
+<!-- Slide 13: Keymap extensions -->
+<div class="slide"><h2>キーマップ拡張</h2>
+<div style="max-width:800px;width:100%">
+<p style="text-align:center;color:#888;margin-bottom:1.5rem">他のエディタのキーバインドをそのまま使える!</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+<div class="card" style="border-left:3px solid #7fdbca">
+<h3 style="color:#7fdbca;font-size:1.1rem">Vim</h3>
+<p style="font-size:.85rem">VSCodeVim 拡張。モーダル編集。<code>h/j/k/l</code> 移動、<code>dd</code> 行削除。Vim力が活かせる。</p>
+</div>
+<div class="card" style="border-left:3px solid #c792ea">
+<h3 style="color:#c792ea;font-size:1.1rem">Emacs</h3>
+<p style="font-size:.85rem">Awesome Emacs Keymap 拡張。<code>Ctrl+A/E</code> 行頭/末、<code>Ctrl+K</code> キルリング。</p>
+</div>
+<div class="card" style="border-left:3px solid #00d2ff">
+<h3 style="color:#00d2ff;font-size:1.1rem">Sublime Text</h3>
+<p style="font-size:.85rem">Sublime Text Keymap 拡張。Sublime から移行する人に。</p>
+</div>
+<div class="card" style="border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b;font-size:1.1rem">IntelliJ / PyCharm</h3>
+<p style="font-size:.85rem">IntelliJ IDEA Keybindings。JetBrains製品から移行する人に。</p>
+</div>
+</div></div></div>
+
+<!-- Slide 14: Color customization -->
+<div class="slide"><h2>色のカスタマイズ (workbench.colorCustomizations)</h2>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>settings.json</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd"><span style="color:#ff5370">"workbench.colorCustomizations"</span>: {</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"titleBar.activeBackground"</span>: <span style="color:#c792ea">"#1a1a2e"</span>,</span><span class="output"> // タイトルバー</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"statusBar.background"</span>: <span style="color:#c792ea">"#0a3d62"</span>,</span><span class="output"> // ステータスバー</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"statusBar.debuggingBackground"</span>: <span style="color:#c792ea">"#8B0000"</span>,</span><span class="output"> // デバッグ中</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"tab.activeBackground"</span>: <span style="color:#c792ea">"#1a1a2e"</span>,</span><span class="output"> // アクティブタブ</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"editor.selectionBackground"</span>: <span style="color:#c792ea">"#264f78"</span></span><span class="output"> // 選択範囲</span></div>
+<div><span class="cmd">}</span></div>
+</div></div>
+<div class="card" style="max-width:850px;margin-top:1rem">
+<h3 style="color:#ffcb6b">プロジェクト別にステータスバーの色を変える</h3>
+<p style="font-size:.9rem">Workspace settings に設定すれば、プロジェクトごとにステータスバーの色を変えられる。「今どのプロジェクトを開いているか」一目瞭然。</p>
+</div></div>
+
+<!-- Slide 15: Token color customization -->
+<div class="slide"><h2>シンタックスハイライトのカスタマイズ</h2>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>settings.json</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd"><span style="color:#ff5370">"editor.tokenColorCustomizations"</span>: {</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"textMateRules"</span>: [</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"scope"</span>: <span style="color:#c792ea">"comment"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"settings"</span>: {</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"foreground"</span>: <span style="color:#c792ea">"#6A9955"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"fontStyle"</span>: <span style="color:#c792ea">"italic"</span></span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;}</span></div>
+<div><span class="cmd">&nbsp;&nbsp;]</span></div>
+<div><span class="cmd">}</span></div>
+</div></div>
+<div class="card" style="max-width:850px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#00d2ff">scope の確認方法:</strong> <code>Cmd+Shift+P</code> &rarr; "Developer: Inspect Editor Tokens and Scopes" で任意のトークンのスコープ名を確認できる。</p>
+</div></div>
+
+<!-- Slide 16: Settings Sync -->
+<div class="slide"><h2>Settings Sync — 複数マシンで同期</h2>
+<div class="flow" style="margin-bottom:2rem">
+<div class="flow-box active-box"><span style="font-size:.85rem">MacBook<br><span style="font-size:.75rem;color:#888">自宅</span></span></div>
+<div class="flow-arrow">&larr;&rarr;</div>
+<div class="flow-box" style="border-color:#7fdbca55"><span style="font-size:.85rem;color:#7fdbca">GitHub / Microsoft<br>アカウント</span></div>
+<div class="flow-arrow">&larr;&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">研究室PC<br><span style="font-size:.75rem;color:#888">大学</span></span></div>
+</div>
+<div class="cols" style="max-width:900px">
+<div class="card"><h3 style="color:#00d2ff">同期される内容</h3>
+<ul class="feature-list">
+<li>Settings (settings.json)</li>
+<li>Keyboard Shortcuts</li>
+<li>Extensions</li>
+<li>Snippets</li>
+<li>UI State</li>
+</ul></div>
+<div class="card"><h3 style="color:#7fdbca">設定方法</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li>左下の歯車 &rarr; "Settings Sync is On/Off"</li>
+<li>"Turn On Settings Sync..."</li>
+<li>同期する項目を選択</li>
+<li>GitHub or Microsoft アカウントでサインイン</li>
+<li>完了! 自動的に同期開始</li>
+</ol></div></div></div>
+
+<!-- Slide 17: Profiles -->
+<div class="slide"><h2>Profiles — 設定プロファイル</h2>
+<div style="max-width:850px;width:100%">
+<div class="card" style="margin-bottom:1rem">
+<h3 style="color:#c792ea">用途ごとに設定を切り替える</h3>
+<p style="font-size:.95rem">Python 開発用、Web開発用、プレゼン用... それぞれ別の設定・拡張・テーマを保存。</p>
+</div>
+<div class="cols">
+<div class="card" style="text-align:center;border-top:3px solid #00d2ff">
+<h3 style="color:#00d2ff;font-size:1rem">Python Dev</h3>
+<p style="font-size:.8rem">Ruff + Pylance<br>One Dark Pro<br>Fira Code 14px</p>
+</div>
+<div class="card" style="text-align:center;border-top:3px solid #7fdbca">
+<h3 style="color:#7fdbca;font-size:1rem">Web Dev</h3>
+<p style="font-size:.8rem">ESLint + Prettier<br>Dracula<br>JetBrains Mono 13px</p>
+</div>
+<div class="card" style="text-align:center;border-top:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b;font-size:1rem">Presentation</h3>
+<p style="font-size:.8rem">最小限の拡張<br>Light Theme<br>Cascadia Code 20px</p>
+</div></div>
+<div class="card" style="margin-top:1rem;text-align:center">
+<p style="font-size:.9rem"><code>Cmd+Shift+P</code> &rarr; "Profiles: Create Profile" / "Profiles: Switch Profile"</p>
+</div></div></div>
+
+<!-- Slide 18: autoSave modes -->
+<div class="slide"><h2>autoSave の4つのモード</h2>
+<table style="max-width:850px">
+<tr><th>モード</th><th>動作</th><th>設定値</th></tr>
+<tr><td style="color:#ff5370">off</td><td>手動保存のみ（Cmd+S）</td><td><code>"off"</code></td></tr>
+<tr><td style="color:#ffcb6b">afterDelay</td><td>指定ミリ秒後に自動保存</td><td><code>"afterDelay"</code> + <code>autoSaveDelay: 1000</code></td></tr>
+<tr><td style="color:#7fdbca">onFocusChange</td><td>他のファイルに切り替えた時</td><td><code>"onFocusChange"</code></td></tr>
+<tr><td style="color:#00d2ff">onWindowChange</td><td>VS Code からフォーカスが離れた時</td><td><code>"onWindowChange"</code></td></tr>
+</table>
+<div class="card" style="max-width:850px;margin-top:1.5rem">
+<h3 style="color:#ffcb6b">おすすめ</h3>
+<p style="font-size:.9rem"><code>"afterDelay"</code> (1000ms) が一般的。<code>formatOnSave</code> と併用すると、1秒後に自動フォーマット＆保存される。<br><br>
+<span style="color:#ff5370">注意:</span> Git で差分が大量に出る場合は <code>"onFocusChange"</code> に変更を検討。</p>
+</div></div>
+
+<!-- Slide 19: formatOnSave and formatters -->
+<div class="slide"><h2>保存時フォーマット (formatOnSave)</h2>
+<div class="flow" style="margin-bottom:1.5rem">
+<div class="flow-box active-box"><span style="font-size:.85rem">コードを書く</span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">Cmd+S<br><span style="font-size:.75rem;color:#888">保存</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box" style="border-color:#7fdbca55"><span style="font-size:.85rem;color:#7fdbca">自動フォーマット<br><span style="font-size:.75rem;color:#888">Ruff / Prettier</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">保存完了</span></div>
+</div>
+<div class="cols" style="max-width:900px">
+<div class="card"><h3 style="color:#00d2ff">Python (Ruff)</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.6rem;border-radius:6px">
+<span style="color:#ff5370">"editor.formatOnSave"</span>: <span style="color:#ffcb6b">true</span>,<br>
+<span style="color:#ff5370">"[python]"</span>: {<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"editor.defaultFormatter"</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"charliermarsh.ruff"</span><br>
+}
+</div></div>
+<div class="card"><h3 style="color:#7fdbca">JavaScript (Prettier)</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.6rem;border-radius:6px">
+<span style="color:#ff5370">"editor.formatOnSave"</span>: <span style="color:#ffcb6b">true</span>,<br>
+<span style="color:#ff5370">"[javascript]"</span>: {<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"editor.defaultFormatter"</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"esbenp.prettier-vscode"</span><br>
+}
+</div></div></div></div>
+
+<!-- Slide 20: Editor visual settings -->
+<div class="slide"><h2>エディタの視覚設定まとめ</h2>
+<table style="max-width:900px">
+<tr><th>設定</th><th>値</th><th>効果</th></tr>
+<tr><td><code>editor.cursorBlinking</code></td><td><code>"smooth"</code></td><td>カーソルがスムーズに点滅</td></tr>
+<tr><td><code>editor.cursorSmoothCaretAnimation</code></td><td><code>"on"</code></td><td>カーソル移動がスムーズ</td></tr>
+<tr><td><code>editor.smoothScrolling</code></td><td><code>true</code></td><td>スクロールがスムーズ</td></tr>
+<tr><td><code>editor.renderWhitespace</code></td><td><code>"boundary"</code></td><td>空白文字を可視化</td></tr>
+<tr><td><code>editor.rulers</code></td><td><code>[80, 120]</code></td><td>80文字・120文字にガイド線</td></tr>
+<tr><td><code>editor.stickyScroll.enabled</code></td><td><code>true</code></td><td>スコープヘッダーを固定表示</td></tr>
+<tr><td><code>editor.linkedEditing</code></td><td><code>true</code></td><td>HTMLタグの連動編集</td></tr>
+<tr><td><code>workbench.tree.indent</code></td><td><code>16</code></td><td>ツリーのインデント幅</td></tr>
+</table></div>
+
+<!-- Slide 21: Terminal settings -->
+<div class="slide"><h2>ターミナルの設定</h2>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>settings.json (Terminal)</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"terminal.integrated.fontFamily"</span>: <span style="color:#c792ea">"'Fira Code', monospace"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"terminal.integrated.fontSize"</span>: <span style="color:#ffcb6b">13</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"terminal.integrated.defaultProfile.osx"</span>: <span style="color:#c792ea">"zsh"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"terminal.integrated.scrollback"</span>: <span style="color:#ffcb6b">5000</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"terminal.integrated.cursorStyle"</span>: <span style="color:#c792ea">"line"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"terminal.integrated.copyOnSelection"</span>: <span style="color:#ffcb6b">true</span></span></div>
+<div><span class="cmd">}</span></div>
+</div></div>
+<div class="card" style="max-width:850px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#00d2ff">defaultProfile</strong>: macOS なら <code>zsh</code>、Windows なら <code>PowerShell</code> or <code>Git Bash</code><br>
+<strong style="color:#7fdbca">copyOnSelection</strong>: テキストを選択するだけでクリップボードにコピー</p>
+</div></div>
+
+<!-- Slide 22: Exercise 1 -->
+<div class="slide"><h2>演習1: settings.json をカスタマイズ</h2>
+<p class="label green">HANDS-ON (15分)</p>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">Step 1: settings.json を開く</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>Cmd+Shift+P</code> &rarr; "Open User Settings (JSON)"</li>
+<li>以下を追加:</li>
+</ol>
+<div style="font-family:'Fira Code',monospace;font-size:.75rem;background:#0a0a15;padding:.6rem;border-radius:6px;margin-top:.5rem">
+"files.autoSave": "afterDelay",<br>
+"editor.formatOnSave": true,<br>
+"editor.fontSize": 14,<br>
+"files.trimTrailingWhitespace": true,<br>
+"files.insertFinalNewline": true
+</div>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">Step 2: テーマを変更</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>Cmd+K Cmd+T</code> でテーマ選択</li>
+<li>好みのテーマを選択</li>
+<li>上下キーでプレビュー確認</li>
+<li>Enterで確定</li>
+</ol>
+<h3 style="color:#c792ea;margin-top:1rem">Step 3: フォント</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li>Fira Code をインストール</li>
+<li>settings.json でフォント設定</li>
+<li>リガチャを有効化</li>
+</ol>
+</div></div></div>
+
+<!-- Slide 23: Exercise 2 -->
+<div class="slide"><h2>演習2: Workspace設定とプロファイル</h2>
+<p class="label green">HANDS-ON (10分)</p>
+<div style="max-width:800px;width:100%">
+<div class="card" style="margin-bottom:1rem">
+<h3 style="color:#00d2ff">Workspace 設定を試す</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li>プロジェクトフォルダを開く</li>
+<li><code>Cmd+Shift+P</code> &rarr; "Open Workspace Settings (JSON)"</li>
+<li><code>.vscode/settings.json</code> に Python 設定を追加</li>
+<li>ステータスバーの色を変えてみる:</li>
+</ol>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.6rem;border-radius:6px;margin-top:.5rem">
+"workbench.colorCustomizations": {<br>
+&nbsp;&nbsp;"statusBar.background": "#005f00"<br>
+}
+</div>
+</div>
+<div class="card">
+<h3 style="color:#c792ea">プロファイルを作成</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>Cmd+Shift+P</code> &rarr; "Profiles: Create Profile"</li>
+<li>名前を付ける（例: "Python Dev"）</li>
+<li>現在の設定をベースにする</li>
+<li>"Profiles: Switch Profile" で切替を試す</li>
+</ol>
+</div></div></div>
+
+<!-- Slide 24: Settings gotchas -->
+<div class="slide"><h2>設定でよくあるトラブル</h2>
+<table style="max-width:900px">
+<tr><th style="width:30%">問題</th><th style="width:35%">原因</th><th style="width:35%">解決策</th></tr>
+<tr><td style="color:#ff5370">設定が反映されない</td><td>Workspace設定がUser設定を上書き</td><td>Workspace settings.json を確認</td></tr>
+<tr><td style="color:#ff5370">formatOnSave が動かない</td><td>フォーマッタ未設定</td><td>defaultFormatter を言語別に設定</td></tr>
+<tr><td style="color:#ff5370">テーマが戻る</td><td>Settings Sync の競合</td><td>Sync設定を確認、手動マージ</td></tr>
+<tr><td style="color:#ff5370">JSON構文エラー</td><td>カンマの過不足</td><td>末尾カンマ、閉じ括弧を確認</td></tr>
+<tr><td style="color:#ff5370">フォントが変わらない</td><td>フォント未インストール</td><td>OSにフォントをインストール後に再起動</td></tr>
+</table></div>
+
+<!-- Slide 25: Summary -->
+<div class="slide"><h2>まとめ</h2>
+<div style="max-width:750px;width:100%">
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #00d2ff">
+<h3 style="color:#00d2ff">設定は3層: User &gt; Workspace &gt; Folder</h3>
+<p style="font-size:.9rem">Workspace 設定でプロジェクト固有の環境を作り、Git で共有。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #7fdbca">
+<h3 style="color:#7fdbca">settings.json を直接編集できるようになろう</h3>
+<p style="font-size:.9rem">GUIより速い。コピペで設定共有。他のマシンにもすぐ適用。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #c792ea">
+<h3 style="color:#c792ea">テーマ・フォント・アイコンで見た目を自分好みに</h3>
+<p style="font-size:.9rem">気分が上がる環境は生産性に直結する。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b">キーバインドのカスタマイズと Settings Sync</h3>
+<p style="font-size:.9rem">自分だけのショートカットを作り、複数マシンで同期。</p></div>
+<div class="card" style="border-left:3px solid #f78c6c">
+<h3 style="color:#f78c6c">Profiles で用途ごとに切り替え</h3>
+<p style="font-size:.9rem">Python用、Web用、プレゼン用を一瞬で切り替え。</p></div>
+</div></div>
+
+<!-- Slide 26: Next session -->
+<div class="slide"><h2>次回予告</h2>
+<div style="text-align:center;max-width:600px">
+<p class="label purple">SESSION 13</p>
+<h1 style="font-size:2rem;margin-bottom:1rem">Workspace活用：チーム開発の基盤</h1>
+<p style="font-size:1.1rem;color:#888;margin-bottom:2rem">.vscode/ ディレクトリ、スニペット、タスク、<br>マルチルートワークスペースを使いこなす。</p>
+</div></div>
+
+<div class="progress"></div><div class="nav-hint">&larr; &rarr; / j k / Space</div>
 <script>const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');let cur=0,busy=false;function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}prog.textContent='1 / '+slides.length;document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});</script>
 <style>._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}._ts-gallery-info{padding:.8rem 1rem}._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}</style>
 <script>(function(){var _slides=document.querySelectorAll('.slide');if(_slides.length<2)return;function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}var oldHint=document.querySelector('.nav-hint');if(oldHint)oldHint.style.display='none';function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}var toolbar=document.createElement('div');toolbar.className='_ts-toolbar';toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';document.body.appendChild(toolbar);var counterBtn=toolbar.querySelector('._ts-counter-btn');var gridBtn=toolbar.querySelector('._ts-grid-btn');var jumpEl=document.createElement('div');jumpEl.className='_ts-jump';var jumpGrid=document.createElement('div');jumpGrid.className='_ts-jump-grid';for(var i=0;i<_slides.length;i++){var item=document.createElement('div');item.className='_ts-jump-item';item.textContent=i+1;item.dataset.idx=i;item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});jumpGrid.appendChild(item)}jumpEl.appendChild(jumpGrid);document.body.appendChild(jumpEl);var jumpOpen=false;function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});var gallery=document.createElement('div');gallery.className='_ts-gallery-overlay';var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';for(var i=0;i<_slides.length;i++){var title=_getTitle(_slides[i])||'Slide '+(i+1);galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>'}galleryHTML+='</div>';gallery.innerHTML=galleryHTML;document.body.appendChild(gallery);var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');for(var i=0;i<previews.length;i++){var idx=parseInt(previews[i].dataset.slideIdx);var clone=_slides[idx].cloneNode(true);clone.style.display='flex';clone.style.position='static';clone.style.animation='none';clone.classList.remove('out-left','out-right');clone.classList.add('active');previews[i].appendChild(clone)}var cards=gallery.querySelectorAll('._ts-gallery-card');for(var i=0;i<cards.length;i++){cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()})}var galleryOpen=false;function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}}},true);document.addEventListener('click',function(e){if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump()});function _tsUpdateUI(){var c=_tsCurIdx();counterBtn.textContent=(c+1)+' / '+_slides.length;if(jumpOpen)highlightJumpCurrent();if(galleryOpen)highlightGalleryCard()}var _lastIdx=_tsCurIdx();setInterval(function(){var c=_tsCurIdx();if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}},200);_tsUpdateUI()})();</script>

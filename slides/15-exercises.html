@@ -1,34 +1,533 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Session 15 — 総合演習 & Tips：実践力を鍛える</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}p{font-size:1.05rem;line-height:1.7;color:#bbb}code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}.label.green{background:#7fdbca22;color:#7fdbca}.label.purple{background:#c792ea22;color:#c792ea}.label.orange{background:#f78c6c22;color:#f78c6c}.label.red{background:#ff537022;color:#ff5370}.label.yellow{background:#ffcb6b22;color:#ffcb6b}.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}.cols{display:flex;gap:2rem;width:100%;max-width:1100px}.cols>*{flex:1}.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}.terminal-bar .dot{width:10px;height:10px;border-radius:50%}.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}.terminal-body .prompt{color:#7fdbca}.terminal-body .cmd{color:#e0e0e0}.terminal-body .output{color:#888}.terminal-body .success{color:#27c93f}.terminal-body .error{color:#ff5370}.terminal-body .info{color:#00d2ff}.terminal-body .warn{color:#ffcb6b}.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}ul.feature-list{list-style:none;max-width:700px}ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}ul.feature-list li::before{content:'▸ ';color:#00d2ff}.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}table{border-collapse:collapse;width:100%;max-width:900px}th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}th{color:#00d2ff;font-weight:600;background:#1a1a2e}td{color:#bbb}tr:hover td{background:#1a1a2e55}.gif-container{border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;max-width:700px;width:100%}.gif-container img{width:100%;display:block}.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}.step-progress .sp-item{display:flex;align-items:center;gap:0}.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}.step-progress .sp-arrow.sp-done{color:#00d2ff55}</style></head><body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}
+.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}
+.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}
+h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}
+h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}
+p{font-size:1.05rem;line-height:1.7;color:#bbb}
+code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}
+.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}
+.label.green{background:#7fdbca22;color:#7fdbca}
+.label.purple{background:#c792ea22;color:#c792ea}
+.label.orange{background:#f78c6c22;color:#f78c6c}
+.label.red{background:#ff537022;color:#ff5370}
+.label.yellow{background:#ffcb6b22;color:#ffcb6b}
+.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}
+.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}
+.cols{display:flex;gap:2rem;width:100%;max-width:1100px}
+.cols>*{flex:1}
+.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}
+.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.terminal-bar .dot{width:10px;height:10px;border-radius:50%}
+.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}
+.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}
+.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}
+.terminal-body .prompt{color:#7fdbca}
+.terminal-body .cmd{color:#e0e0e0}
+.terminal-body .output{color:#888}
+.terminal-body .success{color:#27c93f}
+.terminal-body .error{color:#ff5370}
+.terminal-body .info{color:#00d2ff}
+.terminal-body .warn{color:#ffcb6b}
+.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}
+.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}
+.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}
+ul.feature-list{list-style:none;max-width:700px}
+ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}
+ul.feature-list li::before{content:'▸ ';color:#00d2ff}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}
+table{border-collapse:collapse;width:100%;max-width:900px}
+th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}
+th{color:#00d2ff;font-weight:600;background:#1a1a2e}
+td{color:#bbb}
+tr:hover td{background:#1a1a2e55}
+.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}
+.step-progress .sp-item{display:flex;align-items:center;gap:0}
+.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}
+.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}
+.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}
+.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}
+.step-progress .sp-arrow.sp-done{color:#00d2ff55}
+.quiz-q{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:10px;padding:1rem 1.5rem;margin-bottom:.8rem;cursor:pointer;transition:all .2s;max-width:800px;width:100%}
+.quiz-q:hover{border-color:#00d2ff55}
+.quiz-q .q-action{color:#00d2ff;font-size:1rem;font-weight:600}
+.quiz-q .q-answer{color:#7fdbca;font-size:.95rem;margin-top:.3rem;display:none}
+.quiz-q.reveal .q-answer{display:block}
+</style></head><body>
 
+<!-- Slide 1: Title -->
+<div class="slide active"><div style="text-align:center">
+<p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">&larr; トップに戻る</a></p>
+<p class="label">SESSION 15（最終回）</p>
+<h1 style="font-size:2.8rem;margin-bottom:1rem">総合演習 & Tips</h1>
+<p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">実践力を鍛える &mdash; 全15回の総仕上げ</p>
+<span class="ai-badge">90分 / 全15回の第15回</span>
+<p style="margin-top:3rem;color:#555;font-size:.9rem">&rarr; / Space で次へ</p>
+</div></div>
 
-<div class="slide active"><div style="text-align:center"><p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p><p class="label">SESSION 15 — FINAL</p><h1 style="font-size:2.8rem;margin-bottom:1rem">総合演習 & Tips</h1><p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">実践力を鍛える</p><span class="ai-badge">90分 / 全15回の最終回</span><p style="margin-top:3rem;color:#555;font-size:.9rem">→ / Space で次へ</p></div></div>
+<!-- Slide 2: Objectives -->
+<div class="slide"><h2>今日のゴール</h2>
+<div style="max-width:700px;width:100%">
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. ショートカットを体で覚える</h3><p style="font-size:.95rem">クイズ形式で復習</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. プロジェクトをゼロから作る</h3><p style="font-size:.95rem">フォルダ作成 &rarr; コーディング &rarr; デバッグ &rarr; Git</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. トラブルシューティング力を身につける</h3><p style="font-size:.95rem">よくある問題と解決策</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b"><h3 style="color:#ffcb6b">4. 今後の学習ロードマップ</h3><p style="font-size:.95rem">今日・今週・慣れたら</p></div>
+</div></div>
 
-<div class="slide"><h2>今日のゴール</h2><div style="max-width:700px;width:100%"><div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. 14回分のショートカット総復習</h3><p style="font-size:.95rem">重要ショートカットを再確認</p></div><div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. 実践課題をこなす</h3><p style="font-size:.95rem">Pythonプロジェクトを一から作成</p></div><div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. トラブルシューティングを学ぶ</h3><p style="font-size:.95rem">よくある問題と解決法</p></div></div></div>
+<!-- Slide 3: Shortcut Quiz 1 - Navigation -->
+<div class="slide"><h2>ショートカットクイズ: ナビゲーション</h2>
+<p class="label yellow">クリックで答えを表示</p>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">ファイルを素早く開く</span><div class="q-answer"><code>Cmd+P</code> &mdash; Quick Open (ファイル名を入力)</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">コマンドパレットを開く</span><div class="q-answer"><code>Cmd+Shift+P</code> &mdash; 全コマンドにアクセス</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">特定の行番号にジャンプ</span><div class="q-answer"><code>Ctrl+G</code> &mdash; Go to Line</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">ファイル内のシンボル（関数/クラス）にジャンプ</span><div class="q-answer"><code>Cmd+Shift+O</code> &mdash; Go to Symbol</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">定義元にジャンプ</span><div class="q-answer"><code>F12</code> または <code>Cmd+Click</code> &mdash; Go to Definition</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">サイドバーの表示/非表示</span><div class="q-answer"><code>Cmd+B</code> &mdash; Toggle Sidebar</div></div>
+</div>
 
-<div class="slide"><h2>ショートカット総復習</h2><table style="max-width:900px;font-size:.85rem"><tr><th>カテゴリ</th><th>操作</th><th>macOS</th></tr><tr><td rowspan="2" style="color:#00d2ff">基本</td><td>コマンドパレット</td><td><code>Cmd+Shift+P</code></td></tr><tr><td>ファイル検索</td><td><code>Cmd+P</code></td></tr><tr><td rowspan="4" style="color:#7fdbca">行操作</td><td>行移動</td><td><code>Alt+↑↓</code></td></tr><tr><td>行複製</td><td><code>Shift+Alt+↓</code></td></tr><tr><td>行削除</td><td><code>Cmd+Shift+K</code></td></tr><tr><td>コメント</td><td><code>Cmd+/</code></td></tr><tr><td rowspan="2" style="color:#c792ea">マルチカーソル</td><td>同じ単語を選択</td><td><code>Cmd+D</code></td></tr><tr><td>全一致選択</td><td><code>Cmd+Shift+L</code></td></tr><tr><td rowspan="2" style="color:#f78c6c">検索</td><td>ファイル内検索</td><td><code>Cmd+F</code></td></tr><tr><td>全体検索</td><td><code>Cmd+Shift+F</code></td></tr><tr><td style="color:#ffcb6b">ジャンプ</td><td>定義へ</td><td><code>F12</code></td></tr><tr><td style="color:#ff5370">デバッグ</td><td>デバッグ開始</td><td><code>F5</code></td></tr></table></div>
+<!-- Slide 4: Shortcut Quiz 2 - Editing -->
+<div class="slide"><h2>ショートカットクイズ: 編集</h2>
+<p class="label yellow">クリックで答えを表示</p>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">行をコピーして下に複製</span><div class="q-answer"><code>Shift+Alt+Down</code> &mdash; Copy Line Down</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">行を上下に移動</span><div class="q-answer"><code>Alt+Up/Down</code> &mdash; Move Line</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">マルチカーソル（下に追加）</span><div class="q-answer"><code>Cmd+Alt+Down</code> &mdash; Add Cursor Below</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">同じ単語を次々選択</span><div class="q-answer"><code>Cmd+D</code> &mdash; Add Selection to Next Find Match</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">行コメントのトグル</span><div class="q-answer"><code>Cmd+/</code> &mdash; Toggle Line Comment</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">検索と置換</span><div class="q-answer"><code>Cmd+H</code> &mdash; Find and Replace</div></div>
+</div>
 
-<div class="slide"><h2>実践課題: Pythonプロジェクト作成</h2><p class="label orange">CHALLENGE</p><div style="max-width:700px;width:100%"><div class="card"><h3>課題（30分）</h3><p style="font-size:.95rem;margin-bottom:.8rem">以下の手順で Python プロジェクトを一から作成してください。</p><ol style="color:#bbb;font-size:.95rem;line-height:2;padding-left:1.5rem"><li><code>mkdir ~/final-project && cd ~/final-project && code .</code></li><li><code>python -m venv .venv && source .venv/bin/activate</code></li><li><code>.vscode/settings.json</code> を作成（autoSave, formatOnSave）</li><li><code>main.py</code> に簡単な計算プログラムを作成</li><li><code>utils.py</code> にヘルパー関数を作成</li><li><code>git init</code> → Stage → Commit</li><li>ブレークポイントを設定して F5 でデバッグ</li><li>マルチカーソルで変数名を一括変更</li></ol></div></div></div>
+<!-- Slide 5: Shortcut Quiz 3 - Debug & Terminal -->
+<div class="slide"><h2>ショートカットクイズ: デバッグ & ターミナル</h2>
+<p class="label yellow">クリックで答えを表示</p>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">デバッグ開始</span><div class="q-answer"><code>F5</code> &mdash; Start Debugging</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">ステップオーバー</span><div class="q-answer"><code>F10</code> &mdash; Step Over (次の行、関数に入らない)</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">ステップイン</span><div class="q-answer"><code>F11</code> &mdash; Step Into (関数の中に入る)</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">ターミナルの表示/非表示</span><div class="q-answer"><code>Ctrl+`</code> &mdash; Toggle Terminal</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">新しいターミナルを開く</span><div class="q-answer"><code>Ctrl+Shift+`</code> &mdash; Create New Terminal</div></div>
+<div class="quiz-q" onclick="this.classList.toggle('reveal')"><span class="q-action">Quick Fix（自動修正）</span><div class="q-answer"><code>Cmd+.</code> &mdash; Quick Fix (自動インポート、リネーム等)</div></div>
+</div>
 
-<div class="slide"><h2>実践課題: チェックポイント</h2><div style="max-width:700px;width:100%"><div class="card"><h3>確認項目</h3><div style="display:grid;grid-template-columns:auto 1fr;gap:.3rem .8rem;font-size:.95rem;color:#bbb;line-height:2"><span style="color:#7fdbca">☐</span><span>フォルダを <code>code .</code> で開けた</span><span style="color:#7fdbca">☐</span><span>仮想環境が有効化されている（ステータスバー確認）</span><span style="color:#7fdbca">☐</span><span>.vscode/settings.json が作成済み</span><span style="color:#7fdbca">☐</span><span>Pythonスクリプトが実行できる</span><span style="color:#7fdbca">☐</span><span>Git で最初のコミットが完了</span><span style="color:#7fdbca">☐</span><span>デバッガでブレークポイントが動作</span><span style="color:#7fdbca">☐</span><span>マルチカーソルで変数名変更ができた</span><span style="color:#7fdbca">☐</span><span><code>Cmd+P</code> でファイル間ジャンプができた</span></div></div></div></div>
+<!-- Slide 6: Comprehensive Shortcut Reference -->
+<div class="slide"><h2>ショートカットリファレンス (Mac)</h2>
+<div style="max-width:950px;width:100%;overflow-y:auto;max-height:70vh">
+<table style="font-size:.85rem">
+<tr><th colspan="2" style="color:#00d2ff;font-size:1rem">ナビゲーション</th></tr>
+<tr><td><code>Cmd+P</code></td><td>Quick Open (ファイル検索)</td></tr>
+<tr><td><code>Cmd+Shift+P</code></td><td>コマンドパレット</td></tr>
+<tr><td><code>Ctrl+G</code></td><td>行番号ジャンプ</td></tr>
+<tr><td><code>Cmd+Shift+O</code></td><td>シンボルジャンプ</td></tr>
+<tr><td><code>F12</code></td><td>定義元にジャンプ</td></tr>
+<tr><td><code>Cmd+B</code></td><td>サイドバー切替</td></tr>
+<tr><th colspan="2" style="color:#7fdbca;font-size:1rem">編集</th></tr>
+<tr><td><code>Cmd+D</code></td><td>次の同一単語を選択</td></tr>
+<tr><td><code>Cmd+Shift+L</code></td><td>同一単語を全選択</td></tr>
+<tr><td><code>Alt+Up/Down</code></td><td>行の移動</td></tr>
+<tr><td><code>Shift+Alt+Down</code></td><td>行の複製</td></tr>
+<tr><td><code>Cmd+/</code></td><td>コメント切替</td></tr>
+<tr><td><code>Cmd+H</code></td><td>検索と置換</td></tr>
+<tr><th colspan="2" style="color:#c792ea;font-size:1rem">デバッグ & ターミナル</th></tr>
+<tr><td><code>F5</code></td><td>デバッグ開始/続行</td></tr>
+<tr><td><code>F10 / F11</code></td><td>Step Over / Step Into</td></tr>
+<tr><td><code>Ctrl+`</code></td><td>ターミナル切替</td></tr>
+<tr><td><code>Cmd+.</code></td><td>Quick Fix</td></tr>
+</table></div></div>
 
-<div class="slide"><h2>トラブルシューティング</h2><div style="max-width:800px;width:100%;display:grid;gap:1rem"><div class="card" style="border-left:3px solid #ff5370"><h3 style="color:#ff5370;font-size:1rem">Python が認識されない</h3><p style="font-size:.85rem">→ <code>Cmd+Shift+P</code> → "Python: Select Interpreter" でPythonパスを指定</p></div><div class="card" style="border-left:3px solid #ffcb6b"><h3 style="color:#ffcb6b;font-size:1rem">拡張機能が動かない</h3><p style="font-size:.85rem">→ <code>Cmd+Shift+P</code> → "Developer: Reload Window" で再読み込み</p></div><div class="card" style="border-left:3px solid #00d2ff"><h3 style="color:#00d2ff;font-size:1rem">Remote-SSH で接続できない</h3><p style="font-size:.85rem">→ <code>ssh -v host</code> でターミナルから接続テスト。鍵のパーミッション確認 (<code>chmod 600</code>)</p></div><div class="card" style="border-left:3px solid #7fdbca"><h3 style="color:#7fdbca;font-size:1rem">VS Code が重い</h3><p style="font-size:.85rem">→ 不要な拡張を無効化。<code>Cmd+Shift+P</code> → "Developer: Open Process Explorer" でCPU使用を確認</p></div></div></div>
+<!-- Slide 7: Shortcut Reference (Win/Linux) -->
+<div class="slide"><h2>ショートカットリファレンス (Win/Linux)</h2>
+<div style="max-width:950px;width:100%;overflow-y:auto;max-height:70vh">
+<table style="font-size:.85rem">
+<tr><th>Mac</th><th>Win/Linux</th><th>操作</th></tr>
+<tr><td><code>Cmd+P</code></td><td><code>Ctrl+P</code></td><td>Quick Open</td></tr>
+<tr><td><code>Cmd+Shift+P</code></td><td><code>Ctrl+Shift+P</code></td><td>コマンドパレット</td></tr>
+<tr><td><code>Cmd+B</code></td><td><code>Ctrl+B</code></td><td>サイドバー切替</td></tr>
+<tr><td><code>Cmd+D</code></td><td><code>Ctrl+D</code></td><td>次の同一語選択</td></tr>
+<tr><td><code>Cmd+Shift+L</code></td><td><code>Ctrl+Shift+L</code></td><td>同一語全選択</td></tr>
+<tr><td><code>Cmd+/</code></td><td><code>Ctrl+/</code></td><td>コメント切替</td></tr>
+<tr><td><code>Cmd+H</code></td><td><code>Ctrl+H</code></td><td>検索と置換</td></tr>
+<tr><td><code>Cmd+.</code></td><td><code>Ctrl+.</code></td><td>Quick Fix</td></tr>
+<tr><td><code>Cmd+Shift+F</code></td><td><code>Ctrl+Shift+F</code></td><td>プロジェクト内検索</td></tr>
+<tr><td><code>Cmd+K Z</code></td><td><code>Ctrl+K Z</code></td><td>Zen Mode</td></tr>
+<tr><td><code>Cmd+,</code></td><td><code>Ctrl+,</code></td><td>設定を開く</td></tr>
+<tr><td><code>Cmd+Shift+D</code></td><td><code>Ctrl+Shift+D</code></td><td>デバッグサイドバー</td></tr>
+</table></div></div>
 
-<div class="slide"><h2>トラブルシューティング（つづき）</h2><div style="max-width:800px;width:100%;display:grid;gap:1rem"><div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea;font-size:1rem">フォーマットが効かない</h3><p style="font-size:.85rem">→ <code>"editor.defaultFormatter"</code> を確認。Ruff の場合: <code>"charliermarsh.ruff"</code></p></div><div class="card" style="border-left:3px solid #f78c6c"><h3 style="color:#f78c6c;font-size:1rem">Git の変更が表示されない</h3><p style="font-size:.85rem">→ フォルダを開き直す。<code>git status</code> でリポジトリが初期化されているか確認</p></div><div class="card" style="border-left:3px solid #ff5370"><h3 style="color:#ff5370;font-size:1rem">デバッグが動かない</h3><p style="font-size:.85rem">→ Python 拡張が最新版か確認。<code>launch.json</code> を再作成 (Run → Add Configuration)</p></div></div></div>
+<!-- Slide 8: Practical Exercise overview -->
+<div class="slide"><h2>実践演習: Python プロジェクトをゼロから作る</h2>
+<div class="step-progress">
+<div class="sp-item"><span class="sp-node sp-active">1. フォルダ作成</span></div>
+<div class="sp-arrow">&rarr;</div>
+<div class="sp-item"><span class="sp-node">2. ファイル作成</span></div>
+<div class="sp-arrow">&rarr;</div>
+<div class="sp-item"><span class="sp-node">3. .vscode/ 設定</span></div>
+<div class="sp-arrow">&rarr;</div>
+<div class="sp-item"><span class="sp-node">4. コーディング</span></div>
+<div class="sp-arrow">&rarr;</div>
+<div class="sp-item"><span class="sp-node">5. デバッグ</span></div>
+<div class="sp-arrow">&rarr;</div>
+<div class="sp-item"><span class="sp-node">6. Git</span></div>
+</div>
+<div class="card" style="max-width:800px">
+<h3 style="color:#ffcb6b">今日の演習で使う全スキル</h3>
+<p style="font-size:.9rem">
+<span style="color:#00d2ff">Session 1-3:</span> VS Code UI、コマンドパレット、ショートカット<br>
+<span style="color:#7fdbca">Session 4-6:</span> マルチカーソル、検索と置換<br>
+<span style="color:#c792ea">Session 7-8:</span> 拡張機能、ターミナル<br>
+<span style="color:#ffcb6b">Session 9-10:</span> Git、Remote SSH<br>
+<span style="color:#f78c6c">Session 11-14:</span> デバッグ、設定、Workspace、AI
+</p></div></div>
 
-<div class="slide"><h2>5つの重要ポイント</h2><div style="display:grid;grid-template-columns:1fr;gap:.8rem;max-width:700px;width:100%"><div class="card" style="border-left:3px solid #00d2ff;padding:1rem 1.5rem"><h3 style="color:#00d2ff;font-size:1.1rem;margin-bottom:.3rem">1. フォルダで開く</h3><p style="font-size:.9rem"><code>code .</code> が全ての始まり。ファイル単体NG。</p></div><div class="card" style="border-left:3px solid #7fdbca;padding:1rem 1.5rem"><h3 style="color:#7fdbca;font-size:1.1rem;margin-bottom:.3rem">2. コマンドパレット</h3><p style="font-size:.9rem"><code>Cmd+Shift+P</code> で何でもできる。メニューを探さない。</p></div><div class="card" style="border-left:3px solid #c792ea;padding:1rem 1.5rem"><h3 style="color:#c792ea;font-size:1.1rem;margin-bottom:.3rem">3. ショートカットを毎日2個ずつ</h3><p style="font-size:.9rem">行操作 → マルチカーソル → 検索 の順に習得。</p></div><div class="card" style="border-left:3px solid #ffcb6b;padding:1rem 1.5rem"><h3 style="color:#ffcb6b;font-size:1.1rem;margin-bottom:.3rem">4. デバッガを使う</h3><p style="font-size:.9rem">print() 卒業。F5 でデバッグ開始が当たり前に。</p></div><div class="card" style="border-left:3px solid #f78c6c;padding:1rem 1.5rem"><h3 style="color:#f78c6c;font-size:1.1rem;margin-bottom:.3rem">5. Remote-SSH で研究室サーバー接続</h3><p style="font-size:.9rem">pws-160core, pws-gpu をフル活用。</p></div></div></div>
+<!-- Slide 9: Exercise Step 1 -->
+<div class="slide"><h2>Step 1: プロジェクト作成</h2>
+<p class="label green">HANDS-ON</p>
+<div class="terminal" style="max-width:800px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>Terminal</span></div>
+<div class="terminal-body" style="min-height:auto">
+<div><span class="prompt">$</span> <span class="cmd">mkdir ~/todo-app && cd ~/todo-app</span></div>
+<div><span class="prompt">$</span> <span class="cmd">code .</span></div>
+<div><span class="output"></span></div>
+<div><span class="prompt">$</span> <span class="cmd">python -m venv venv</span></div>
+<div><span class="prompt">$</span> <span class="cmd">source venv/bin/activate</span></div>
+<div><span class="prompt">$</span> <span class="cmd">pip install pytest</span></div>
+</div></div>
+<div class="card" style="max-width:800px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#00d2ff">ポイント:</strong> <code>code .</code> でVS Codeが開く。左下のステータスバーでPythonインタプリタが venv を指しているか確認。<br>
+<strong style="color:#7fdbca">Cmd+Shift+P</strong> &rarr; "Python: Select Interpreter" &rarr; venv を選択。</p>
+</div></div>
 
-<div class="slide"><h2>チェックリスト</h2><div class="cols" style="max-width:1000px"><div class="card"><p class="label green">今日やること</p><ul class="feature-list"><li>VS Code インストール済み</li><li><code>code .</code> が使える</li><li>日本語化 or English で固定</li><li>autoSave 設定済み</li><li>Python拡張インストール済み</li></ul></div><div class="card"><p class="label yellow">今週中に</p><ul class="feature-list"><li>テーマ・フォントを決定</li><li>行操作ショートカット習得</li><li>Cmd+P でファイルジャンプ</li><li>Git連携で初コミット</li><li>Settings Sync 設定</li></ul></div><div class="card"><p class="label purple">慣れたら</p><ul class="feature-list"><li>Remote-SSH で接続</li><li>デバッガ常用</li><li>マルチカーソル活用</li><li>スニペット自作</li><li>Copilot 導入</li></ul></div></div></div>
+<!-- Slide 10: Exercise Step 2 -->
+<div class="slide"><h2>Step 2: ファイル構造を作る</h2>
+<p class="label green">HANDS-ON</p>
+<div class="cols" style="max-width:900px">
+<div class="terminal" style="max-width:100%">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>プロジェクト構造</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.85rem">
+<div><span class="info">todo-app/</span></div>
+<div><span class="cmd">├── todo.py</span><span class="output">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# メインモジュール</span></div>
+<div><span class="cmd">├── test_todo.py</span><span class="output">&nbsp;&nbsp;# テスト</span></div>
+<div><span class="cmd">├── .vscode/</span></div>
+<div><span class="cmd">│&nbsp;&nbsp; ├── settings.json</span></div>
+<div><span class="cmd">│&nbsp;&nbsp; └── launch.json</span></div>
+<div><span class="cmd">├── .gitignore</span></div>
+<div><span class="cmd">└── venv/</span></div>
+</div></div>
+<div class="card">
+<h3 style="color:#00d2ff">使うテクニック</h3>
+<ul class="feature-list">
+<li><code>Cmd+N</code> で新規ファイル</li>
+<li>Explorer でフォルダ/ファイル作成</li>
+<li>.gitignore に <code>venv/</code> を追加</li>
+<li>マルチカーソルでデータ入力</li>
+</ul>
+</div></div></div>
 
-<div class="slide"><h2>参考リソース</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem"><h3>公式ドキュメント</h3><ul class="feature-list"><li><strong style="color:#00d2ff">VS Code Docs</strong> — code.visualstudio.com/docs</li><li><strong style="color:#00d2ff">Tips & Tricks</strong> — code.visualstudio.com/docs/getstarted/tips-and-tricks</li><li><strong style="color:#00d2ff">Key Bindings</strong> — code.visualstudio.com/docs/getstarted/keybindings</li></ul></div><div class="card"><h3>おすすめ YouTube チャンネル</h3><ul class="feature-list"><li><strong style="color:#7fdbca">VS Code</strong> (公式) — 新機能紹介、Tips</li><li><strong style="color:#7fdbca">Fireship</strong> — 100 seconds シリーズ</li></ul></div></div></div>
+<!-- Slide 11: Exercise Step 3 -->
+<div class="slide"><h2>Step 3: コードを書く (todo.py)</h2>
+<p class="label green">HANDS-ON</p>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>todo.py</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">class TodoList:</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;def __init__(self):</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.tasks = []</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;def add(self, task: str) -> None:</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.tasks.append({"text": task, "done": False})</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;def complete(self, index: int) -> None:</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.tasks[index]["done"] = True</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;def remove(self, index: int) -> None:</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;del self.tasks[index]</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;def pending(self) -> list:</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return [t for t in self.tasks if not t["done"]]</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">if __name__ == "__main__":</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;todo = TodoList()</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;todo.add("VS Code を学ぶ")</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;todo.add("Python でプロジェクトを作る")</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;todo.complete(0)</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;print(f"残タスク: {len(todo.pending())}")</span></div>
+</div></div></div>
 
-<div class="slide"><h2>Q&A</h2><div style="max-width:600px;width:100%;text-align:center"><div class="card" style="padding:3rem"><h3 style="font-size:1.5rem;color:#00d2ff;margin-bottom:1rem">質問はありますか？</h3><p style="font-size:1rem;color:#888;margin-bottom:2rem">VS Code に関するどんな質問でもお気軽にどうぞ。</p><div class="ai-badge" style="font-size:1rem">全15回お疲れさまでした！</div></div></div></div>
+<!-- Slide 12: Exercise Step 4 -->
+<div class="slide"><h2>Step 4: デバッグで動作確認</h2>
+<p class="label green">HANDS-ON</p>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">ブレークポイントを設置</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>todo.add("VS Code を学ぶ")</code> の行にBP</li>
+<li><code>F5</code> でデバッグ開始</li>
+<li>Variables パネルで <code>self.tasks</code> を確認</li>
+<li><code>F10</code> でステップオーバー</li>
+<li>tasks の中身が増えていくのを観察</li>
+</ol>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">Watch 式を追加</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li>Watch に <code>len(todo.tasks)</code> を追加</li>
+<li>Watch に <code>todo.pending()</code> を追加</li>
+<li>ステップ実行しながら値の変化を確認</li>
+<li>Debug Console で <code>todo.tasks</code> を入力</li>
+</ol>
+</div></div></div>
 
-<div class="slide"><h2>おわりに</h2><div style="text-align:center;max-width:700px"><h1 style="font-size:2.5rem;margin-bottom:1.5rem">VS Code 入門 完了！</h1><p style="font-size:1.2rem;color:#888;margin-bottom:2rem">15回のセッションで学んだことを<br>日々の研究・開発に活かしてください。</p><div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap"><div class="card" style="text-align:center;min-width:150px"><p style="color:#00d2ff;font-weight:600;font-size:1.5rem">15</p><p style="font-size:.8rem;color:#888">セッション完了</p></div><div class="card" style="text-align:center;min-width:150px"><p style="color:#7fdbca;font-weight:600;font-size:1.5rem">50+</p><p style="font-size:.8rem;color:#888">ショートカット</p></div><div class="card" style="text-align:center;min-width:150px"><p style="color:#c792ea;font-weight:600;font-size:1.5rem">12+</p><p style="font-size:.8rem;color:#888">必須拡張機能</p></div></div><p style="margin-top:2rem"><a href="../" style="color:#00d2ff;text-decoration:none;font-size:1rem">← トップページに戻る</a></p></div></div>
+<!-- Slide 13: Exercise Step 5 -->
+<div class="slide"><h2>Step 5: テストを書いて実行</h2>
+<p class="label green">HANDS-ON</p>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>test_todo.py</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">from todo import TodoList</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">def test_add():</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;t = TodoList()</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;t.add("task1")</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;assert len(t.tasks) == 1</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;assert t.tasks[0]["text"] == "task1"</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">def test_complete():</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;t = TodoList()</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;t.add("task1")</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;t.complete(0)</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;assert t.tasks[0]["done"] is True</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">def test_pending():</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;t = TodoList()</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;t.add("task1")</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;t.add("task2")</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;t.complete(0)</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;assert len(t.pending()) == 1</span></div>
+</div></div></div>
 
+<!-- Slide 14: Exercise Step 6 -->
+<div class="slide"><h2>Step 6: Git でコミット</h2>
+<p class="label green">HANDS-ON</p>
+<div class="terminal" style="max-width:800px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>Terminal</span></div>
+<div class="terminal-body" style="min-height:auto">
+<div><span class="prompt">$</span> <span class="cmd">git init</span></div>
+<div><span class="prompt">$</span> <span class="cmd">git add .</span></div>
+<div><span class="prompt">$</span> <span class="cmd">git commit -m "feat: initial todo app with tests"</span></div>
+</div></div>
+<div class="card" style="max-width:800px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#00d2ff">または</strong> Source Control サイドバー（<code>Cmd+Shift+G</code>）から:
+<br>1. + ボタンで Stage All
+<br>2. メッセージを入力
+<br>3. チェックマークで Commit
+<br><br>
+<strong style="color:#7fdbca">これで全15回で学んだスキルを一通り使いました!</strong></p>
+</div></div>
 
-<div class="progress"></div><div class="nav-hint">← → / j k / Space</div>
+<!-- Slide 15: Troubleshooting -->
+<div class="slide"><h2>トラブルシューティングガイド</h2>
+<table style="max-width:950px;font-size:.9rem">
+<tr><th style="width:28%">問題</th><th style="width:35%">原因</th><th style="width:37%">解決策</th></tr>
+<tr><td style="color:#ff5370">拡張機能が動かない</td><td>Workspace Trust が制限モード</td><td>左下の "Restricted Mode" &rarr; Trust</td></tr>
+<tr><td style="color:#ff5370">Python が見つからない</td><td>インタプリタ未選択</td><td><code>Cmd+Shift+P</code> &rarr; Select Interpreter</td></tr>
+<tr><td style="color:#ff5370">Git が検出されない</td><td>Git 未インストール or PATH</td><td><code>git --version</code> で確認。Xcode CLT</td></tr>
+<tr><td style="color:#ff5370">Remote SSH 接続失敗</td><td>SSH設定・鍵のミス</td><td><code>~/.ssh/config</code> と鍵の権限確認</td></tr>
+<tr><td style="color:#ff5370">ターミナルが遅い</td><td>シェル起動ファイルが重い</td><td>.zshrc を軽量化、不要プラグイン削除</td></tr>
+<tr><td style="color:#ff5370">formatOnSave が動かない</td><td>フォーマッタ未設定</td><td>defaultFormatter を設定</td></tr>
+</table></div>
+
+<!-- Slide 16: More troubleshooting -->
+<div class="slide"><h2>トラブルシューティング (続き)</h2>
+<table style="max-width:950px;font-size:.9rem">
+<tr><th style="width:28%">問題</th><th style="width:35%">原因</th><th style="width:37%">解決策</th></tr>
+<tr><td style="color:#ff5370">VS Code が重い</td><td>拡張機能が多すぎ</td><td>不要な拡張を無効化。Profiles で分離</td></tr>
+<tr><td style="color:#ff5370">検索結果が多すぎ</td><td>node_modules等を含む</td><td><code>"search.exclude"</code> で除外設定</td></tr>
+<tr><td style="color:#ff5370">日本語入力が変</td><td>IME との干渉</td><td><code>"editor.suggest.snippetsPreventQuickSuggestions": false</code></td></tr>
+<tr><td style="color:#ff5370">デバッグが始まらない</td><td>debugpy 未インストール</td><td>Python Debugger 拡張をインストール</td></tr>
+<tr><td style="color:#ff5370">Copilot が動かない</td><td>認証切れ or 制限超過</td><td>ステータスバーの Copilot アイコン確認</td></tr>
+</table>
+<div class="card" style="max-width:950px;margin-top:1rem;text-align:center">
+<p style="font-size:.95rem"><strong style="color:#00d2ff">困ったら:</strong> <code>Cmd+Shift+P</code> &rarr; "Developer: Reload Window" で再読み込み</p>
+</div></div>
+
+<!-- Slide 17: Performance tips -->
+<div class="slide"><h2>パフォーマンスTips</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">拡張機能の管理</h3>
+<ul class="feature-list">
+<li>使わない拡張は<strong>無効化</strong>（削除不要）</li>
+<li>Workspace 単位で<strong>有効/無効</strong>を切替</li>
+<li><strong>Profiles</strong> で用途別に分離</li>
+<li><code>@installed</code> で全拡張を確認</li>
+</ul>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">ファイル監視の除外</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.6rem;border-radius:6px;margin-top:.5rem">
+<span style="color:#ff5370">"files.watcherExclude"</span>: {<br>
+&nbsp;&nbsp;<span style="color:#c792ea">"**/node_modules"</span>: true,<br>
+&nbsp;&nbsp;<span style="color:#c792ea">"**/.git"</span>: true,<br>
+&nbsp;&nbsp;<span style="color:#c792ea">"**/venv"</span>: true,<br>
+&nbsp;&nbsp;<span style="color:#c792ea">"**/__pycache__"</span>: true<br>
+}
+</div>
+<p style="font-size:.8rem;margin-top:.5rem;color:#888">大きなフォルダを監視対象から除外してパフォーマンスUP。</p>
+</div></div></div>
+
+<!-- Slide 18: 5 Key Takeaways -->
+<div class="slide"><h2>5つのキーポイント</h2>
+<div style="max-width:800px;width:100%">
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #00d2ff">
+<h3 style="color:#00d2ff;font-size:1.2rem">1. コマンドパレットは全ての入口</h3>
+<p style="font-size:.9rem"><code>Cmd+Shift+P</code> を開けば、VS Code の全機能にアクセスできる。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #7fdbca">
+<h3 style="color:#7fdbca;font-size:1.2rem">2. ショートカットが生産性の鍵</h3>
+<p style="font-size:.9rem">毎日3つずつ覚えて、1ヶ月で劇的にスピードアップ。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #c792ea">
+<h3 style="color:#c792ea;font-size:1.2rem">3. デバッガ > print文</h3>
+<p style="font-size:.9rem">F5 / F10 / F11。一度慣れたら print には戻れない。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b;font-size:1.2rem">4. .vscode/ でチーム環境を統一</h3>
+<p style="font-size:.9rem">settings / launch / tasks / extensions を Git で共有。</p></div>
+<div class="card" style="border-left:3px solid #f78c6c">
+<h3 style="color:#f78c6c;font-size:1.2rem">5. AI は副操縦士、操縦するのは自分</h3>
+<p style="font-size:.9rem">Copilot の提案を理解し、検証し、学び続ける。</p></div>
+</div></div>
+
+<!-- Slide 19: Today / This Week / When Comfortable -->
+<div class="slide"><h2>今後の学習ロードマップ</h2>
+<div class="cols" style="max-width:950px">
+<div class="card" style="border-top:3px solid #00d2ff">
+<h3 style="color:#00d2ff">今日やること</h3>
+<ul class="feature-list">
+<li>settings.json に基本設定を追加</li>
+<li>好みのテーマを選ぶ</li>
+<li>Cmd+P / Cmd+Shift+P を試す</li>
+<li>1つプロジェクトを開いてみる</li>
+</ul>
+</div>
+<div class="card" style="border-top:3px solid #7fdbca">
+<h3 style="color:#7fdbca">今週やること</h3>
+<ul class="feature-list">
+<li>マルチカーソル (Cmd+D) を使い始める</li>
+<li>デバッガでコードを追跡してみる</li>
+<li>Git をVS Codeから操作</li>
+<li>1つ拡張機能を見つけて入れる</li>
+</ul>
+</div>
+<div class="card" style="border-top:3px solid #c792ea">
+<h3 style="color:#c792ea">慣れたら</h3>
+<ul class="feature-list">
+<li>.vscode/ を整備してチーム共有</li>
+<li>スニペット・タスクを自作</li>
+<li>Remote SSH で開発</li>
+<li>Copilot / AI ツールを活用</li>
+</ul>
+</div></div></div>
+
+<!-- Slide 20: Resources -->
+<div class="slide"><h2>参考リソース</h2>
+<div style="max-width:850px;width:100%">
+<table>
+<tr><th>リソース</th><th>URL / 説明</th></tr>
+<tr><td style="color:#00d2ff">公式ドキュメント</td><td>code.visualstudio.com/docs</td></tr>
+<tr><td style="color:#7fdbca">ショートカット PDF</td><td>Cmd+K Cmd+R で公式チートシートを開く</td></tr>
+<tr><td style="color:#c792ea">VS Code YouTube</td><td>youtube.com/@code — 公式チャンネル</td></tr>
+<tr><td style="color:#ffcb6b">VS Code Tips</td><td>vscodetips.com — 日替わりTips</td></tr>
+<tr><td style="color:#f78c6c">GitHub Education</td><td>education.github.com — 学生特典</td></tr>
+<tr><td style="color:#00d2ff">Extension Marketplace</td><td>marketplace.visualstudio.com</td></tr>
+</table>
+<div class="card" style="margin-top:1rem;text-align:center">
+<p style="font-size:.95rem"><strong style="color:#ffcb6b">ショートカットPDFは印刷して机に貼ろう!</strong><br>
+<code>Cmd+K Cmd+R</code> でブラウザに表示 &rarr; 印刷</p>
+</div></div></div>
+
+<!-- Slide 21: Course recap -->
+<div class="slide"><h2>全15回の振り返り</h2>
+<div style="max-width:950px;width:100%;overflow-y:auto;max-height:70vh">
+<table style="font-size:.85rem">
+<tr><th style="width:8%">#</th><th style="width:42%">トピック</th><th>身についたスキル</th></tr>
+<tr><td style="color:#00d2ff">1</td><td>VS Code とは</td><td>インストール、基本概念</td></tr>
+<tr><td style="color:#00d2ff">2</td><td>UI レイアウト</td><td>エディタ・サイドバー・パネル</td></tr>
+<tr><td style="color:#00d2ff">3</td><td>コマンドパレット</td><td>Cmd+Shift+P で何でも実行</td></tr>
+<tr><td style="color:#7fdbca">4</td><td>ショートカット</td><td>基本ショートカット 15個+</td></tr>
+<tr><td style="color:#7fdbca">5</td><td>マルチカーソル</td><td>Cmd+D、Alt+Click</td></tr>
+<tr><td style="color:#7fdbca">6</td><td>検索と置換</td><td>Cmd+F / Cmd+H / 正規表現</td></tr>
+<tr><td style="color:#c792ea">7</td><td>拡張機能</td><td>Python / Ruff / GitLens</td></tr>
+<tr><td style="color:#c792ea">8</td><td>ターミナル</td><td>Ctrl+`、分割、プロファイル</td></tr>
+<tr><td style="color:#c792ea">9</td><td>Git</td><td>Source Control、差分、コミット</td></tr>
+<tr><td style="color:#ffcb6b">10</td><td>Remote SSH</td><td>リモートサーバーで開発</td></tr>
+<tr><td style="color:#ffcb6b">11</td><td>デバッグ</td><td>F5 / F10 / F11、条件付きBP</td></tr>
+<tr><td style="color:#ffcb6b">12</td><td>設定</td><td>settings.json、テーマ、同期</td></tr>
+<tr><td style="color:#f78c6c">13</td><td>Workspace</td><td>スニペット、タスク、.vscode/</td></tr>
+<tr><td style="color:#f78c6c">14</td><td>AI & 生産性</td><td>Copilot、Quick Fix、Zen Mode</td></tr>
+<tr><td style="color:#f78c6c">15</td><td>総合演習</td><td>全スキルの統合実践</td></tr>
+</table></div></div>
+
+<!-- Slide 22: Final exercise challenge -->
+<div class="slide"><h2>最終チャレンジ: 自分のプロジェクトを作ろう</h2>
+<p class="label orange">CHALLENGE (残り時間全て)</p>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">やること</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li>テーマを自分で決める（電卓、じゃんけん等）</li>
+<li><code>mkdir</code> + <code>code .</code> でプロジェクト作成</li>
+<li>.vscode/ に settings + launch を配置</li>
+<li>Python でコードを書く</li>
+<li>テストを書く</li>
+<li>デバッグで動作確認</li>
+<li>Git init + commit</li>
+</ol>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">採点基準（自己採点）</h3>
+<ul class="feature-list">
+<li>.vscode/ が正しく設定されている</li>
+<li>マルチカーソルを1回以上使った</li>
+<li>デバッガでBPを使って確認した</li>
+<li>テストが1つ以上ある</li>
+<li>Git でコミットした</li>
+<li>Quick Fix (Cmd+.) を使った</li>
+</ul>
+</div></div></div>
+
+<!-- Slide 23: Q&A -->
+<div class="slide"><h2>Q&A</h2>
+<div style="text-align:center;max-width:600px">
+<p style="font-size:4rem;margin-bottom:1rem">?</p>
+<p style="font-size:1.3rem;color:#00d2ff;margin-bottom:2rem">質問・相談タイム</p>
+<div class="card">
+<p style="font-size:.95rem">
+<strong style="color:#7fdbca">よくある質問:</strong><br>
+「VS Code と PyCharm どっちがいい?」<br>
+「拡張機能のおすすめは?」<br>
+「リモート開発のベストプラクティスは?」<br>
+「AI ツールはどれを使うべき?」
+</p></div></div></div>
+
+<!-- Slide 24: Thank you -->
+<div class="slide"><div style="text-align:center;max-width:700px">
+<h1 style="font-size:2.5rem;margin-bottom:1.5rem">お疲れさまでした!</h1>
+<p style="font-size:1.2rem;color:#888;margin-bottom:2rem">全15回の VS Code マスターコース完了</p>
+<div style="display:flex;gap:1rem;justify-content:center;margin-bottom:2rem;flex-wrap:wrap">
+<span class="ai-badge" style="font-size:.9rem">Cmd+Shift+P</span>
+<span class="ai-badge" style="font-size:.9rem">Cmd+D</span>
+<span class="ai-badge" style="font-size:.9rem">F5 / F10 / F11</span>
+<span class="ai-badge" style="font-size:.9rem">Cmd+.</span>
+</div>
+<div class="card" style="border-left:3px solid #00d2ff;text-align:left">
+<p style="font-size:1rem;color:#00d2ff;font-weight:600;margin-bottom:.5rem">これからも使い続けることが一番の学習</p>
+<p style="font-size:.9rem">毎日のコーディングで少しずつショートカットを使い、<br>新しい機能を試し、VS Code を自分の武器にしてください。</p>
+</div>
+</div></div>
+
+<div class="progress"></div><div class="nav-hint">&larr; &rarr; / j k / Space</div>
 <script>const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');let cur=0,busy=false;function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}prog.textContent='1 / '+slides.length;document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});</script>
 <style>._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}._ts-gallery-info{padding:.8rem 1rem}._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}</style>
 <script>(function(){var _slides=document.querySelectorAll('.slide');if(_slides.length<2)return;function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}var oldHint=document.querySelector('.nav-hint');if(oldHint)oldHint.style.display='none';function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}var toolbar=document.createElement('div');toolbar.className='_ts-toolbar';toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';document.body.appendChild(toolbar);var counterBtn=toolbar.querySelector('._ts-counter-btn');var gridBtn=toolbar.querySelector('._ts-grid-btn');var jumpEl=document.createElement('div');jumpEl.className='_ts-jump';var jumpGrid=document.createElement('div');jumpGrid.className='_ts-jump-grid';for(var i=0;i<_slides.length;i++){var item=document.createElement('div');item.className='_ts-jump-item';item.textContent=i+1;item.dataset.idx=i;item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});jumpGrid.appendChild(item)}jumpEl.appendChild(jumpGrid);document.body.appendChild(jumpEl);var jumpOpen=false;function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});var gallery=document.createElement('div');gallery.className='_ts-gallery-overlay';var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';for(var i=0;i<_slides.length;i++){var title=_getTitle(_slides[i])||'Slide '+(i+1);galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>'}galleryHTML+='</div>';gallery.innerHTML=galleryHTML;document.body.appendChild(gallery);var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');for(var i=0;i<previews.length;i++){var idx=parseInt(previews[i].dataset.slideIdx);var clone=_slides[idx].cloneNode(true);clone.style.display='flex';clone.style.position='static';clone.style.animation='none';clone.classList.remove('out-left','out-right');clone.classList.add('active');previews[i].appendChild(clone)}var cards=gallery.querySelectorAll('._ts-gallery-card');for(var i=0;i<cards.length;i++){cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()})}var galleryOpen=false;function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}}},true);document.addEventListener('click',function(e){if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump()});function _tsUpdateUI(){var c=_tsCurIdx();counterBtn.textContent=(c+1)+' / '+_slides.length;if(jumpOpen)highlightJumpCurrent();if(galleryOpen)highlightGalleryCard()}var _lastIdx=_tsCurIdx();setInterval(function(){var c=_tsCurIdx();if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}},200);_tsUpdateUI()})();</script>

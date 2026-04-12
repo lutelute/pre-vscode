@@ -1,30 +1,578 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Session 14 — AI支援 & 生産性：最新ツールを活用する</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}p{font-size:1.05rem;line-height:1.7;color:#bbb}code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}.label.green{background:#7fdbca22;color:#7fdbca}.label.purple{background:#c792ea22;color:#c792ea}.label.orange{background:#f78c6c22;color:#f78c6c}.label.red{background:#ff537022;color:#ff5370}.label.yellow{background:#ffcb6b22;color:#ffcb6b}.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}.cols{display:flex;gap:2rem;width:100%;max-width:1100px}.cols>*{flex:1}.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}.terminal-bar .dot{width:10px;height:10px;border-radius:50%}.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}.terminal-body .prompt{color:#7fdbca}.terminal-body .cmd{color:#e0e0e0}.terminal-body .output{color:#888}.terminal-body .success{color:#27c93f}.terminal-body .error{color:#ff5370}.terminal-body .info{color:#00d2ff}.terminal-body .warn{color:#ffcb6b}.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}ul.feature-list{list-style:none;max-width:700px}ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}ul.feature-list li::before{content:'▸ ';color:#00d2ff}.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}table{border-collapse:collapse;width:100%;max-width:900px}th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}th{color:#00d2ff;font-weight:600;background:#1a1a2e}td{color:#bbb}tr:hover td{background:#1a1a2e55}.gif-container{border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;max-width:700px;width:100%}.gif-container img{width:100%;display:block}.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}.step-progress .sp-item{display:flex;align-items:center;gap:0}.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}.step-progress .sp-arrow.sp-done{color:#00d2ff55}</style></head><body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}
+.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}
+.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}
+h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}
+h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}
+p{font-size:1.05rem;line-height:1.7;color:#bbb}
+code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}
+.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}
+.label.green{background:#7fdbca22;color:#7fdbca}
+.label.purple{background:#c792ea22;color:#c792ea}
+.label.orange{background:#f78c6c22;color:#f78c6c}
+.label.red{background:#ff537022;color:#ff5370}
+.label.yellow{background:#ffcb6b22;color:#ffcb6b}
+.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}
+.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}
+.cols{display:flex;gap:2rem;width:100%;max-width:1100px}
+.cols>*{flex:1}
+.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}
+.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.terminal-bar .dot{width:10px;height:10px;border-radius:50%}
+.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}
+.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}
+.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}
+.terminal-body .prompt{color:#7fdbca}
+.terminal-body .cmd{color:#e0e0e0}
+.terminal-body .output{color:#888}
+.terminal-body .success{color:#27c93f}
+.terminal-body .error{color:#ff5370}
+.terminal-body .info{color:#00d2ff}
+.terminal-body .warn{color:#ffcb6b}
+.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}
+.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}
+.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}
+ul.feature-list{list-style:none;max-width:700px}
+ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}
+ul.feature-list li::before{content:'▸ ';color:#00d2ff}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}
+table{border-collapse:collapse;width:100%;max-width:900px}
+th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}
+th{color:#00d2ff;font-weight:600;background:#1a1a2e}
+td{color:#bbb}
+tr:hover td{background:#1a1a2e55}
+.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}
+.step-progress .sp-item{display:flex;align-items:center;gap:0}
+.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}
+.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}
+.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}
+.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}
+.step-progress .sp-arrow.sp-done{color:#00d2ff55}
+</style></head><body>
 
+<!-- Slide 1: Title -->
+<div class="slide active"><div style="text-align:center">
+<p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">&larr; トップに戻る</a></p>
+<p class="label">SESSION 14</p>
+<h1 style="font-size:2.8rem;margin-bottom:1rem">AI支援 & 生産性</h1>
+<p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">最新ツールを活用して開発を加速する</p>
+<span class="ai-badge">90分 / 全15回の第14回</span>
+<p style="margin-top:3rem;color:#555;font-size:.9rem">&rarr; / Space で次へ</p>
+</div></div>
 
-<div class="slide active"><div style="text-align:center"><p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p><p class="label">SESSION 14</p><h1 style="font-size:2.8rem;margin-bottom:1rem">AI支援 & 生産性</h1><p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">最新ツールを活用する</p><span class="ai-badge">90分 / 全15回の第14回</span><p style="margin-top:3rem;color:#555;font-size:.9rem">→ / Space で次へ</p></div></div>
+<!-- Slide 2: Objectives -->
+<div class="slide"><h2>今日のゴール</h2>
+<div style="max-width:700px;width:100%">
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. AI コーディングツールの全体像を把握</h3><p style="font-size:.95rem">Copilot / Continue / Cline / Cursor の違い</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. GitHub Copilot の使い方を学ぶ</h3><p style="font-size:.95rem">インライン補完・チャット・テスト生成</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. AI の注意点を理解する</h3><p style="font-size:.95rem">ハルシネーション・セキュリティ・依存のリスク</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b"><h3 style="color:#ffcb6b">4. 非AIの生産性機能もマスター</h3><p style="font-size:.95rem">Zen Mode / Quick Fix / Outline / Breadcrumbs</p></div>
+</div></div>
 
-<div class="slide"><h2>今日のゴール</h2><div style="max-width:700px;width:100%"><div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. GitHub Copilot を理解する</h3><p style="font-size:.95rem">コード補完、チャット、テスト生成</p></div><div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. 他のAIツールを知る</h3><p style="font-size:.95rem">Continue, Cline, Cursor</p></div><div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. 生産性向上機能を活用</h3><p style="font-size:.95rem">Zen Mode, Sticky Scroll, Quick Fix</p></div></div></div>
+<!-- Slide 3: AI Coding Landscape -->
+<div class="slide"><h2>AIコーディングツールの全体像</h2>
+<div style="max-width:950px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+<div class="card" style="border-left:3px solid #00d2ff">
+<h3 style="color:#00d2ff;font-size:1.1rem">GitHub Copilot</h3>
+<p style="font-size:.85rem">Microsoft/GitHub 製。最も普及。VS Code 公式統合。学生無料。インライン補完 + チャット。</p>
+</div>
+<div class="card" style="border-left:3px solid #7fdbca">
+<h3 style="color:#7fdbca;font-size:1.1rem">Continue</h3>
+<p style="font-size:.85rem">オープンソース。ローカルLLM対応。Claude / GPT / Ollama 等を切り替え可能。</p>
+</div>
+<div class="card" style="border-left:3px solid #c792ea">
+<h3 style="color:#c792ea;font-size:1.1rem">Cline</h3>
+<p style="font-size:.85rem">VS Code拡張。Claude等のAPIを使用。ファイル操作・ターミナル実行まで自律的に行う。</p>
+</div>
+<div class="card" style="border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b;font-size:1.1rem">Cursor</h3>
+<p style="font-size:.85rem">VS Code フォーク。AI-first設計。エディタ自体にAIが組み込まれた専用IDE。</p>
+</div>
+</div></div>
 
-<div class="slide"><h2>GitHub Copilot</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem;border:2px solid #c792ea44;padding:2rem"><h3 style="color:#c792ea;font-size:1.3rem">AIがコードを自動補完</h3><p style="font-size:1rem;margin-top:.5rem">コメントや文脈から次のコードを予測して提案。<br><strong style="color:#ffcb6b">学生は GitHub Education で無料！</strong></p></div><div class="card"><h3>主な機能</h3><ul class="feature-list"><li><strong style="color:#00d2ff">Inline Completion</strong> — グレー文字で候補表示、Tab で受け入れ</li><li><strong style="color:#00d2ff">Copilot Chat</strong> — <code>Cmd+I</code> でインラインチャット</li><li><strong style="color:#00d2ff">テスト生成</strong> — 右クリック → "Generate Tests"</li><li><strong style="color:#00d2ff">Explain</strong> — コード選択 → "Explain This"</li><li><strong style="color:#00d2ff">Fix</strong> — エラーを自動修正提案</li></ul></div></div></div>
+<!-- Slide 4: Copilot deep dive -->
+<div class="slide"><h2>GitHub Copilot — インライン補完</h2>
+<div class="cols" style="max-width:900px">
+<div class="terminal" style="max-width:100%">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>app.py — Copilot suggestion</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.85rem">
+<div><span class="cmd">def calculate_bmi(weight_kg, height_m):</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;"""体重と身長からBMIを計算"""</span></div>
+<div style="opacity:.5;color:#888">&nbsp;&nbsp;&nbsp;&nbsp;bmi = weight_kg / (height_m ** 2)</div>
+<div style="opacity:.5;color:#888">&nbsp;&nbsp;&nbsp;&nbsp;return round(bmi, 1)</div>
+<div style="margin-top:.5rem"><span class="output">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&larr; Tab で採用</span></div>
+</div></div>
+<div class="card">
+<h3>操作方法</h3>
+<table style="max-width:100%">
+<tr><td><code>Tab</code></td><td>提案を採用</td></tr>
+<tr><td><code>Esc</code></td><td>提案を拒否</td></tr>
+<tr><td><code>Alt+]</code></td><td>次の提案</td></tr>
+<tr><td><code>Alt+[</code></td><td>前の提案</td></tr>
+<tr><td><code>Cmd+→</code></td><td>単語単位で採用</td></tr>
+</table>
+</div></div></div>
 
-<div class="slide"><h2>Copilot の使い方</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem"><h3>インストール</h3><ol style="color:#bbb;font-size:.95rem;line-height:2;padding-left:1.5rem"><li>GitHub Student Developer Pack に登録（学生証で無料）</li><li><code>Cmd+Shift+X</code> → "GitHub Copilot" をインストール</li><li>GitHub アカウントでサインイン</li></ol></div><div class="card"><h3>効果的な使い方</h3><ul class="feature-list"><li>コメントで意図を書く → Copilot がコードを提案</li><li>関数名を書く → 中身を自動生成</li><li><code>Tab</code> で受け入れ、<code>Esc</code> で拒否</li><li><code>Alt+]</code> / <code>Alt+[</code> で別の候補を表示</li></ul></div></div></div>
+<!-- Slide 5: Copilot Chat -->
+<div class="slide"><h2>GitHub Copilot Chat</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">チャットパネル</h3>
+<p style="font-size:.9rem"><code>Cmd+Shift+I</code>（Mac）でチャットを開く。</p>
+<ul class="feature-list" style="margin-top:.5rem">
+<li><code>/explain</code> — 選択コードの説明</li>
+<li><code>/fix</code> — バグの修正提案</li>
+<li><code>/tests</code> — テストコードの生成</li>
+<li><code>/doc</code> — ドキュメント生成</li>
+<li><code>@workspace</code> — プロジェクト全体を参照</li>
+</ul>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">インラインチャット</h3>
+<p style="font-size:.9rem"><code>Cmd+I</code>（Mac）でエディタ内にチャット。</p>
+<div class="terminal" style="max-width:100%;margin-top:.5rem"><div class="terminal-body" style="min-height:auto;font-size:.8rem">
+<div><span class="info">User:</span> <span class="cmd">この関数にエラーハンドリングを追加して</span></div>
+<div><span class="output"></span></div>
+<div><span class="success">Copilot:</span></div>
+<div><span class="cmd">def fetch_data(url):</span></div>
+<div><span class="success">+&nbsp;&nbsp; try:</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response = requests.get(url)</span></div>
+<div><span class="success">+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; response.raise_for_status()</span></div>
+<div><span class="success">+&nbsp;&nbsp; except RequestException as e:</span></div>
+<div><span class="success">+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; logger.error(f"Failed: {e}")</span></div>
+</div></div>
+</div></div></div>
 
-<div class="slide"><h2>他のAIツール</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:900px;width:100%"><div class="card"><h3 style="color:#00d2ff">Continue</h3><p style="font-size:.9rem">オープンソースのAIアシスタント。<br>Claude, GPT, Ollama等のモデルを選択可能。<br>チャット、補完、コード編集。</p></div><div class="card"><h3 style="color:#7fdbca">Cline</h3><p style="font-size:.9rem">自律型AIコーディングエージェント。<br>ファイル作成、コマンド実行まで自動。<br>VS Code 拡張として動作。</p></div><div class="card"><h3 style="color:#c792ea">Cursor</h3><p style="font-size:.9rem">VS Code フォークのAI特化エディタ。<br>独自のAI統合。月額有料。<br>VS Code と同じ拡張が使える。</p></div><div class="card"><h3 style="color:#f78c6c">Claude Code</h3><p style="font-size:.9rem">Anthropic のターミナル型AIエージェント。<br>VS Code と併用して使う。<br>ファイル編集、Git操作まで自動。</p></div></div></div>
+<!-- Slide 6: Copilot for tests & commits -->
+<div class="slide"><h2>Copilot のテスト生成 & コミットメッセージ</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#c792ea">テスト生成</h3>
+<p style="font-size:.9rem">コードを選択 &rarr; 右クリック &rarr; "Copilot: Generate Tests"<br>
+またはチャットで <code>/tests</code></p>
+<div class="terminal" style="max-width:100%;margin-top:.5rem"><div class="terminal-body" style="min-height:auto;font-size:.78rem">
+<div><span class="cmd">def test_calculate_bmi():</span></div>
+<div><span class="cmd">&nbsp;&nbsp;assert calculate_bmi(70, 1.75) == 22.9</span></div>
+<div><span class="cmd">&nbsp;&nbsp;assert calculate_bmi(90, 1.80) == 27.8</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">def test_calculate_bmi_zero_height():</span></div>
+<div><span class="cmd">&nbsp;&nbsp;with pytest.raises(ZeroDivisionError):</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;calculate_bmi(70, 0)</span></div>
+</div></div>
+</div>
+<div class="card">
+<h3 style="color:#ffcb6b">コミットメッセージ生成</h3>
+<p style="font-size:.9rem">Source Control パネルでコミットメッセージ欄の<span style="color:#00d2ff">星マーク</span>をクリック。</p>
+<div class="terminal" style="max-width:100%;margin-top:.5rem"><div class="terminal-body" style="min-height:auto;font-size:.78rem">
+<div><span class="output">Generated message:</span></div>
+<div><span class="info">feat: add BMI calculation function</span></div>
+<div><span class="info">with input validation</span></div>
+</div></div>
+<p style="font-size:.8rem;margin-top:.5rem;color:#888">差分を解析して適切なメッセージを提案。Conventional Commits 形式対応。</p>
+</div></div></div>
 
-<div class="slide"><h2>Quick Fix: Cmd+.</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem"><h3>エラーの自動修正</h3><p style="font-size:.95rem">エラーや警告の行で <code>Cmd+.</code> を押すと、修正候補が表示される。</p><ul class="feature-list" style="margin-top:.5rem"><li>Import の自動追加</li><li>未使用変数の削除</li><li>型エラーの修正提案</li><li>リファクタリング（変数抽出、関数抽出）</li></ul></div><div class="card"><h3>電球アイコン</h3><p style="font-size:.9rem">行の左に黄色い電球 💡 が表示された時 = Quick Fix 利用可能。<br>クリック or <code>Cmd+.</code> で候補を見る。</p></div></div></div>
+<!-- Slide 7: Copilot pricing -->
+<div class="slide"><h2>Copilot の料金と学生無料プラン</h2>
+<table style="max-width:850px">
+<tr><th>プラン</th><th>料金</th><th>主な機能</th></tr>
+<tr><td style="color:#7fdbca">Free</td><td>$0/月</td><td>月2000回のコード補完、50回のチャット</td></tr>
+<tr><td style="color:#00d2ff">Pro</td><td>$10/月</td><td>無制限補完・チャット、GPT-4o / Claude</td></tr>
+<tr><td style="color:#c792ea">Business</td><td>$19/ユーザー/月</td><td>組織管理、IP保証、ポリシー制御</td></tr>
+</table>
+<div class="card" style="max-width:850px;margin-top:1.5rem;border-left:3px solid #7fdbca">
+<h3 style="color:#7fdbca">学生は Pro が無料!</h3>
+<p style="font-size:.95rem">
+<strong>1.</strong> <a href="https://education.github.com" style="color:#00d2ff">education.github.com</a> にアクセス<br>
+<strong>2.</strong> 学生証（または大学メール）で GitHub Education に申請<br>
+<strong>3.</strong> 承認後、Copilot Pro が無料で利用可能<br>
+<strong>4.</strong> VS Code に GitHub Copilot 拡張をインストール<br><br>
+<span style="color:#ffcb6b">大学のメールアドレスで GitHub アカウントを作成しておくと申請がスムーズ。</span>
+</p></div></div>
 
-<div class="slide"><h2>生産性向上機能</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:900px;width:100%"><div class="card"><h3 style="color:#00d2ff">Zen Mode</h3><p style="font-size:.85rem"><code>Cmd+K Z</code><br>全UI非表示の集中モード</p></div><div class="card"><h3 style="color:#7fdbca">Sticky Scroll</h3><p style="font-size:.85rem">スクロール時にスコープ（関数名、クラス名）が上部に固定表示</p></div><div class="card"><h3 style="color:#c792ea">Timeline</h3><p style="font-size:.85rem">Explorer下部。ファイルのローカル変更履歴+Git履歴</p></div><div class="card"><h3 style="color:#f78c6c">Breadcrumbs</h3><p style="font-size:.85rem">エディタ上部のパス+シンボルナビ。<code>Cmd+Shift+.</code></p></div><div class="card"><h3 style="color:#ffcb6b">Outline</h3><p style="font-size:.85rem">サイドバーで関数・クラスの構造を一覧表示</p></div><div class="card"><h3 style="color:#ff5370">Code Actions on Save</h3><p style="font-size:.85rem">保存時にimportソート、未使用import削除を自動実行</p></div></div></div>
+<!-- Slide 8: Copilot best practices -->
+<div class="slide"><h2>Copilot を上手に使うコツ</h2>
+<div style="max-width:800px;width:100%">
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #00d2ff">
+<h3 style="color:#00d2ff">1. 良いコメント・関数名を書く</h3>
+<p style="font-size:.9rem">Copilot はコンテキストから推測する。意図を明確にするほど良い提案が来る。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #7fdbca">
+<h3 style="color:#7fdbca">2. 小さな関数から始める</h3>
+<p style="font-size:.9rem">1つの関数の補完は高精度。100行の関数を一気に書かせるのは危険。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #c792ea">
+<h3 style="color:#c792ea">3. 生成されたコードを必ず読む</h3>
+<p style="font-size:.9rem">Tab で採用する前にコードを理解する。理解できないコードは使わない。</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b">4. テストで検証する</h3>
+<p style="font-size:.9rem">AI生成コードこそテストが重要。/tests で自動生成してカバレッジを確保。</p></div>
+</div></div>
 
-<div class="slide"><h2>練習タイム</h2><p class="label green">HANDS-ON</p><div style="max-width:700px;width:100%"><div class="card"><h3>AI & 生産性演習（15分）</h3><ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem"><li>GitHub Copilot をインストール（学生アカウント必要）</li><li>Pythonファイルでコメントを書いて Copilot の提案を確認</li><li>エラーのあるコードを書いて <code>Cmd+.</code> で Quick Fix</li><li>Zen Mode (<code>Cmd+K Z</code>) を試す</li><li>Sticky Scroll の動作を確認（長いファイルでスクロール）</li></ol></div></div></div>
+<!-- Slide 9: Continue -->
+<div class="slide"><h2>Continue — オープンソースAIアシスタント</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="flex:1.2">
+<h3 style="color:#7fdbca">特徴</h3>
+<ul class="feature-list">
+<li><strong>オープンソース</strong> — コードを確認可能</li>
+<li><strong>モデル選択</strong> — Claude / GPT / Gemini / Ollama</li>
+<li><strong>ローカルLLM</strong> — データが外に出ない</li>
+<li><strong>カスタマイズ</strong> — プロンプトテンプレート</li>
+<li><strong>コンテキスト</strong> — @file, @codebase で参照</li>
+</ul>
+</div>
+<div class="card">
+<h3 style="color:#00d2ff">インストール</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li>拡張機能で "Continue" を検索</li>
+<li>インストール</li>
+<li>APIキーを設定（or ローカルLLM）</li>
+<li><code>Cmd+L</code> でチャット開始</li>
+</ol>
+<p style="font-size:.85rem;margin-top:.5rem;color:#888">Copilot の代替として人気上昇中</p>
+</div></div></div>
 
-<div class="slide"><h2>まとめ</h2><div style="max-width:700px;width:100%"><div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea"><h3 style="color:#c792ea">Copilot は学生無料</h3><p style="font-size:.9rem">GitHub Education に登録して活用。コメントからコード生成。</p></div><div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">Quick Fix (Cmd+.) を習慣に</h3><p style="font-size:.9rem">エラーが出たらまず Cmd+.。自動修正が使えることが多い。</p></div><div class="card" style="border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">AIはツールの一つ</h3><p style="font-size:.9rem">AIの提案を鵜呑みにしない。理解して使う。</p></div></div></div>
+<!-- Slide 10: Cline -->
+<div class="slide"><h2>Cline — 自律型AIエージェント</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#c792ea">Cline の特徴</h3>
+<ul class="feature-list">
+<li>ファイルの<strong>作成・編集・削除</strong>を自律実行</li>
+<li>ターミナルコマンドの<strong>実行</strong></li>
+<li>ブラウザの<strong>操作</strong>（スクリーンショット+クリック）</li>
+<li>MCP (Model Context Protocol) 対応</li>
+<li>各操作前に<strong>承認を求める</strong>（安全性）</li>
+</ul>
+</div>
+<div class="card">
+<h3 style="color:#00d2ff">使い方</h3>
+<p style="font-size:.9rem">
+「このプロジェクトにログイン機能を追加して」のような自然言語の指示で、Cline が複数ファイルを編集し、テストを実行し、バグを修正する。<br><br>
+<span style="color:#ff5370">注意:</span> APIコスト（トークン消費）に注意。Claude や GPT のAPIキーが必要。
+</p>
+</div></div></div>
 
-<div class="slide"><h2>次回予告</h2><div style="text-align:center;max-width:600px"><p class="label purple">SESSION 15（最終回）</p><h1 style="font-size:2rem;margin-bottom:1rem">総合演習 & Tips</h1><p style="font-size:1.1rem;color:#888;margin-bottom:2rem">14回分の総復習と実践課題。トラブルシューティング。</p></div></div>
+<!-- Slide 11: Cursor -->
+<div class="slide"><h2>Cursor — AI-First IDE</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="flex:1.2">
+<h3 style="color:#ffcb6b">VS Code フォークだが...</h3>
+<ul class="feature-list">
+<li>VS Code の拡張機能がそのまま使える</li>
+<li>settings.json も互換性あり</li>
+<li>AI がエディタの<strong>一級市民</strong>として統合</li>
+<li><code>Cmd+K</code> でインラインAI編集</li>
+<li><code>Cmd+L</code> でコンテキスト付きチャット</li>
+<li>Codebase全体を理解した提案</li>
+</ul>
+</div>
+<div class="card">
+<h3 style="color:#00d2ff">VS Code vs Cursor</h3>
+<table style="max-width:100%">
+<tr><th></th><th style="color:#00d2ff">VS Code</th><th style="color:#ffcb6b">Cursor</th></tr>
+<tr><td>AI</td><td>拡張で追加</td><td>組み込み</td></tr>
+<tr><td>料金</td><td>無料 +AI別</td><td>$20/月(Pro)</td></tr>
+<tr><td>拡張</td><td>全対応</td><td>ほぼ全対応</td></tr>
+<tr><td>更新</td><td>月次</td><td>やや遅れる</td></tr>
+</table>
+</div></div></div>
 
+<!-- Slide 12: AI warnings -->
+<div class="slide"><h2>AI コーディングの注意点</h2>
+<div style="max-width:850px;width:100%">
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #ff5370">
+<h3 style="color:#ff5370">1. ハルシネーション（幻覚）</h3>
+<p style="font-size:.9rem">存在しないAPIやライブラリ関数を自信満々に提案する。<strong>必ず公式ドキュメントで確認。</strong></p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b">2. セキュリティリスク</h3>
+<p style="font-size:.9rem">SQLインジェクション・ハードコードされたシークレット等、脆弱なコードを生成する場合がある。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #c792ea">
+<h3 style="color:#c792ea">3. コード品質の低下</h3>
+<p style="font-size:.9rem">動くが保守しにくいコードになりがち。コードレビューの目を養うことが重要。</p></div>
+<div class="card" style="border-left:3px solid #00d2ff">
+<h3 style="color:#00d2ff">4. 学習の妨げ</h3>
+<p style="font-size:.9rem">理解せずにTabを押し続けると成長しない。<strong>「なぜこのコードか」を常に考える。</strong></p></div>
+</div></div>
 
-<div class="progress"></div><div class="nav-hint">← → / j k / Space</div>
+<!-- Slide 13: AI code review -->
+<div class="slide"><h2>AI によるコードレビュー・リファクタリング</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">Copilot Chat でレビュー</h3>
+<div class="terminal" style="max-width:100%"><div class="terminal-body" style="min-height:auto;font-size:.8rem">
+<div><span class="info">User:</span></div>
+<div><span class="cmd">この関数をレビューして。</span></div>
+<div><span class="cmd">バグ、パフォーマンス問題、</span></div>
+<div><span class="cmd">改善点を指摘して。</span></div>
+<div><span class="output"></span></div>
+<div><span class="success">Copilot:</span></div>
+<div><span class="cmd">1. N+1クエリ問題があります</span></div>
+<div><span class="cmd">2. 例外処理が不足しています</span></div>
+<div><span class="cmd">3. 変数名が不明確です</span></div>
+</div></div>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">リファクタリング依頼</h3>
+<ul class="feature-list">
+<li>「この関数を小さく分割して」</li>
+<li>「型ヒントを追加して」</li>
+<li>「このクラスをdataclassに変換して」</li>
+<li>「エラーハンドリングを改善して」</li>
+<li>「テストしやすい構造にリファクタして」</li>
+</ul>
+</div></div></div>
+
+<!-- Slide 14: Zen Mode -->
+<div class="slide"><h2>Zen Mode — 集中モード</h2>
+<div style="max-width:800px;width:100%;text-align:center">
+<div class="card" style="margin-bottom:1.5rem">
+<p style="font-size:1.3rem;color:#00d2ff;font-weight:600">Cmd+K Z (Mac) / Ctrl+K Z (Win/Linux)</p>
+<p style="font-size:.95rem;margin-top:.5rem">全画面表示 + サイドバー・ステータスバー・タブが全て非表示。<br>
+<strong style="color:#ffcb6b">Esc を2回押し</strong>で元に戻る。</p>
+</div>
+<div class="cols">
+<div class="card" style="border-top:3px solid #ff537055">
+<h3 style="color:#ff5370;font-size:1rem">通常モード</h3>
+<p style="font-size:.85rem">サイドバー、タブ、ステータスバー、ミニマップ... 情報過多で気が散る。</p>
+</div>
+<div class="card" style="border-top:3px solid #7fdbca55">
+<h3 style="color:#7fdbca;font-size:1rem">Zen Mode</h3>
+<p style="font-size:.85rem">コードだけ。集中してコーディングしたい時に最適。プレゼン時にも使える。</p>
+</div>
+</div></div></div>
+
+<!-- Slide 15: Sticky Scroll -->
+<div class="slide"><h2>Sticky Scroll — スコープヘッダー固定</h2>
+<div class="cols" style="max-width:900px">
+<div class="terminal" style="max-width:100%">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>app.py — Sticky Scroll</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div style="background:#1a1a2e;padding:2px 8px;margin:-2px -1.5rem;padding-left:1.5rem;border-bottom:1px solid #2a2a4a"><span style="color:#c792ea">class</span> <span style="color:#7fdbca">UserService:</span><span style="color:#888"> &larr; 固定!</span></div>
+<div style="background:#1a1a2e;padding:2px 8px;margin:-2px -1.5rem;padding-left:2.5rem;border-bottom:1px solid #2a2a4a"><span style="color:#c792ea">def</span> <span style="color:#7fdbca">get_user(self, id):</span><span style="color:#888"> &larr; 固定!</span></div>
+<div><span class="output">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# ここまでスクロールしても</span></div>
+<div><span class="output">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# class名と関数名が見える</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user = self.db.query(id)</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if not user:</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;raise NotFoundError</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return user</span></div>
+</div></div>
+<div class="card">
+<h3 style="color:#7fdbca">設定</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.6rem;border-radius:6px;margin-top:.5rem">
+<span style="color:#ff5370">"editor.stickyScroll.enabled"</span>:<br>
+&nbsp;&nbsp;<span style="color:#ffcb6b">true</span>
+</div>
+<p style="font-size:.85rem;margin-top:.8rem">長い関数やクラスをスクロールしても、「今どのスコープにいるか」が常にわかる。デフォルトON。</p>
+</div></div></div>
+
+<!-- Slide 16: Timeline view -->
+<div class="slide"><h2>Timeline — ファイルの変更履歴</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">Timeline ビュー</h3>
+<p style="font-size:.9rem">Explorer の下部にある "TIMELINE" セクション。ファイルの<strong>保存履歴</strong>と<strong>Git コミット履歴</strong>を時系列で表示。</p>
+<div class="terminal" style="max-width:100%;margin-top:.5rem"><div class="terminal-body" style="min-height:auto;font-size:.8rem">
+<div><span class="info">TIMELINE</span></div>
+<div><span class="cmd">10:23 AM &nbsp;Saved</span></div>
+<div><span class="cmd">10:15 AM &nbsp;Saved</span></div>
+<div><span class="success">10:02 AM &nbsp;fix: handle null case</span></div>
+<div><span class="cmd">9:45 AM &nbsp;&nbsp;Saved</span></div>
+<div><span class="success">9:30 AM &nbsp;&nbsp;feat: add validation</span></div>
+</div></div>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">使いどころ</h3>
+<ul class="feature-list">
+<li>「さっきまで動いてたコード」に戻したい</li>
+<li>Git コミット前の変更を追跡</li>
+<li>誰がいつ変更したか確認</li>
+<li>保存履歴をクリック &rarr; diff 表示</li>
+</ul>
+</div></div></div>
+
+<!-- Slide 17: Breadcrumbs -->
+<div class="slide"><h2>Breadcrumbs — ファイルパスナビゲーション</h2>
+<div style="max-width:800px;width:100%">
+<div class="card" style="margin-bottom:1rem">
+<div style="background:#1a1a2e;padding:.5rem 1rem;border-radius:6px;font-size:.9rem;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+<span style="color:#888">src</span> <span style="color:#555">/</span>
+<span style="color:#888">services</span> <span style="color:#555">/</span>
+<span style="color:#00d2ff">user_service.py</span> <span style="color:#555">/</span>
+<span style="color:#7fdbca">UserService</span> <span style="color:#555">/</span>
+<span style="color:#ffcb6b">get_user</span>
+</div>
+<p style="font-size:.85rem;margin-top:.5rem;color:#888">エディタ上部に表示されるパンくずリスト</p>
+</div>
+<div class="cols">
+<div class="card"><h3 style="color:#00d2ff;font-size:1.1rem">機能</h3>
+<ul class="feature-list">
+<li>ファイルパス + シンボル（関数/クラス）を表示</li>
+<li>クリックでファイル/シンボルの一覧</li>
+<li>別のファイルへ素早くジャンプ</li>
+</ul></div>
+<div class="card"><h3 style="color:#7fdbca;font-size:1.1rem">ショートカット</h3>
+<p style="font-size:.9rem"><code>Cmd+Shift+.</code> で Breadcrumbs にフォーカス。<br>矢印キーで移動、Enter で選択。<br><br>
+設定: <code>"breadcrumbs.enabled": true</code></p></div>
+</div></div></div>
+
+<!-- Slide 18: Outline view -->
+<div class="slide"><h2>Outline — 関数/クラスの目次</h2>
+<div class="cols" style="max-width:900px">
+<div class="terminal" style="max-width:100%">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>OUTLINE — user_service.py</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.85rem">
+<div><span style="color:#c792ea">&#9660;</span> <span style="color:#ffcb6b">UserService</span> <span style="color:#888">class</span></div>
+<div><span style="color:#888">&nbsp;&nbsp;</span><span style="color:#7fdbca">__init__</span> <span style="color:#888">method</span></div>
+<div><span style="color:#888">&nbsp;&nbsp;</span><span style="color:#7fdbca">get_user</span> <span style="color:#888">method</span></div>
+<div><span style="color:#888">&nbsp;&nbsp;</span><span style="color:#7fdbca">create_user</span> <span style="color:#888">method</span></div>
+<div><span style="color:#888">&nbsp;&nbsp;</span><span style="color:#7fdbca">update_user</span> <span style="color:#888">method</span></div>
+<div><span style="color:#888">&nbsp;&nbsp;</span><span style="color:#7fdbca">delete_user</span> <span style="color:#888">method</span></div>
+<div><span style="color:#c792ea">&#9660;</span> <span style="color:#ffcb6b">UserValidator</span> <span style="color:#888">class</span></div>
+<div><span style="color:#888">&nbsp;&nbsp;</span><span style="color:#7fdbca">validate_email</span> <span style="color:#888">method</span></div>
+<div><span style="color:#888">&nbsp;&nbsp;</span><span style="color:#7fdbca">validate_name</span> <span style="color:#888">method</span></div>
+</div></div>
+<div class="card">
+<h3 style="color:#00d2ff">使い方</h3>
+<p style="font-size:.9rem">Explorer の下部にある "OUTLINE" セクション。または:</p>
+<p style="font-size:.9rem;margin-top:.5rem"><code>Cmd+Shift+O</code> でファイル内シンボル検索（同等機能）。</p>
+<p style="font-size:.9rem;margin-top:.5rem">クリックで該当箇所にジャンプ。長いファイルの全体把握に最適。</p>
+</div></div></div>
+
+<!-- Slide 19: Quick Fix -->
+<div class="slide"><h2>Quick Fix — 即座に問題を解決</h2>
+<div style="max-width:850px;width:100%">
+<div class="card" style="margin-bottom:1rem;text-align:center">
+<p style="font-size:1.2rem;color:#00d2ff;font-weight:600">Cmd+. (Mac) / Ctrl+. (Win/Linux)</p>
+<p style="font-size:.9rem;color:#888">黄色い電球マークが表示されたら Quick Fix が利用可能</p>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+<div class="card"><h3 style="color:#7fdbca;font-size:1.1rem">自動インポート</h3>
+<p style="font-size:.85rem">未インポートのモジュールを使用 &rarr; Quick Fix で <code>import</code> 文を自動追加。</p></div>
+<div class="card"><h3 style="color:#c792ea;font-size:1.1rem">変数名修正</h3>
+<p style="font-size:.85rem">タイポ検出 &rarr; 正しい名前の候補を提案。F2 でリネームリファクタリング。</p></div>
+<div class="card"><h3 style="color:#ffcb6b;font-size:1.1rem">未使用インポートの削除</h3>
+<p style="font-size:.85rem">使っていない import を検出して「Remove unused import」を提案。</p></div>
+<div class="card"><h3 style="color:#00d2ff;font-size:1.1rem">型の追加</h3>
+<p style="font-size:.85rem">Pylance が型を推論して「Add type annotation」を提案。</p></div>
+</div></div></div>
+
+<!-- Slide 20: More productivity features -->
+<div class="slide"><h2>その他の生産性機能</h2>
+<table style="max-width:900px">
+<tr><th>機能</th><th>ショートカット / 設定</th><th>説明</th></tr>
+<tr><td style="color:#00d2ff">Zen Mode</td><td><code>Cmd+K Z</code></td><td>全画面集中モード（Esc x2 で戻る）</td></tr>
+<tr><td style="color:#7fdbca">Sticky Scroll</td><td>設定で ON</td><td>スコープヘッダーを固定表示</td></tr>
+<tr><td style="color:#c792ea">Breadcrumbs</td><td><code>Cmd+Shift+.</code></td><td>パンくずリストでナビゲーション</td></tr>
+<tr><td style="color:#ffcb6b">Outline</td><td><code>Cmd+Shift+O</code></td><td>関数/クラスの目次（ジャンプ可能）</td></tr>
+<tr><td style="color:#f78c6c">Quick Fix</td><td><code>Cmd+.</code></td><td>自動インポート、リネーム、修正</td></tr>
+<tr><td style="color:#ff5370">Timeline</td><td>Explorer 下部</td><td>ファイル変更履歴の表示</td></tr>
+<tr><td style="color:#7fdbca">Go to Definition</td><td><code>F12</code></td><td>関数/クラスの定義元にジャンプ</td></tr>
+<tr><td style="color:#00d2ff">Peek Definition</td><td><code>Alt+F12</code></td><td>定義をインラインプレビュー</td></tr>
+</table></div>
+
+<!-- Slide 21: Peek Definition -->
+<div class="slide"><h2>Go to / Peek Definition — コードジャンプ</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">Go to Definition (F12)</h3>
+<p style="font-size:.9rem">関数・クラス・変数の定義元にジャンプ。<br><br>
+<code>Cmd+Click</code>（Mac）でも同じ動作。<br>
+<code>Cmd+Alt+Click</code> で別タブに開く。</p>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">Peek Definition (Alt+F12)</h3>
+<p style="font-size:.9rem">現在のエディタを離れずに、定義をインラインでプレビュー。</p>
+<div style="background:#0a0a15;border:1px solid #2a2a4a;border-radius:6px;padding:.5rem;margin-top:.5rem;font-family:'Fira Code',monospace;font-size:.75rem">
+<div style="border-bottom:1px solid #2a2a4a;padding-bottom:.3rem;margin-bottom:.3rem;color:#888">utils.py</div>
+<div><span style="color:#c792ea">def</span> <span style="color:#7fdbca">validate</span>(data):</div>
+<div>&nbsp;&nbsp;<span style="color:#c792ea">if</span> <span style="color:#c792ea">not</span> data:</div>
+<div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">raise</span> ValueError</div>
+</div>
+</div></div></div>
+
+<!-- Slide 22: Exercise - Copilot -->
+<div class="slide"><h2>演習1: Copilot（またはAIツール）を試す</h2>
+<p class="label green">HANDS-ON (15分)</p>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">インライン補完</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li>新しいPythonファイルを作成</li>
+<li>コメントを書く:<br><code># リストの平均値を計算する関数</code></li>
+<li>Enter を押して Copilot の提案を待つ</li>
+<li>Tab で採用、内容を確認</li>
+<li>テスト関数も生成させてみる</li>
+</ol>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">チャットで質問</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>Cmd+Shift+I</code> でチャットを開く</li>
+<li>「Pythonでバブルソートを実装して」</li>
+<li>生成されたコードを確認</li>
+<li><code>/explain</code> でコードの説明を依頼</li>
+<li><code>/tests</code> でテストを生成</li>
+</ol>
+</div></div></div>
+
+<!-- Slide 23: Exercise - Quick Fix -->
+<div class="slide"><h2>演習2: Quick Fix と生産性機能</h2>
+<p class="label green">HANDS-ON (10分)</p>
+<div style="max-width:800px;width:100%">
+<div class="card" style="margin-bottom:1rem">
+<h3 style="color:#00d2ff">Quick Fix を試す</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li>Python ファイルで <code>json.dumps(data)</code> と書く（import なし）</li>
+<li>赤い波線が出たら <code>Cmd+.</code> で Quick Fix</li>
+<li>「Add import json」を選択</li>
+<li>F2 で変数名をリネームしてみる</li>
+</ol>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">Zen Mode & Outline</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>Cmd+K Z</code> で Zen Mode に入る</li>
+<li>集中してコーディング</li>
+<li><code>Esc x2</code> で戻る</li>
+<li><code>Cmd+Shift+O</code> で Outline を開いてジャンプ</li>
+</ol>
+</div></div></div>
+
+<!-- Slide 24: Summary -->
+<div class="slide"><h2>まとめ</h2>
+<div style="max-width:750px;width:100%">
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #00d2ff">
+<h3 style="color:#00d2ff">AI ツールは「副操縦士」として活用</h3>
+<p style="font-size:.9rem">Copilot / Continue / Cline / Cursor。コードの理解と検証は自分の責任。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #7fdbca">
+<h3 style="color:#7fdbca">Copilot: Tab補完 + /explain + /tests</h3>
+<p style="font-size:.9rem">学生無料。コード補完・説明・テスト生成・コミットメッセージ。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #ff5370">
+<h3 style="color:#ff5370">AI の出力は必ず検証する</h3>
+<p style="font-size:.9rem">ハルシネーション・セキュリティリスク・品質低下に注意。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #c792ea">
+<h3 style="color:#c792ea">非AI機能も強力</h3>
+<p style="font-size:.9rem">Zen Mode / Sticky Scroll / Quick Fix / Outline / Breadcrumbs を活用。</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b">「Cmd+. で Quick Fix」を体に覚えさせる</h3>
+<p style="font-size:.9rem">自動インポート・リネーム・修正が瞬時に完了。</p></div>
+</div></div>
+
+<!-- Slide 25: Next session -->
+<div class="slide"><h2>次回予告</h2>
+<div style="text-align:center;max-width:600px">
+<p class="label purple">SESSION 15（最終回）</p>
+<h1 style="font-size:2rem;margin-bottom:1rem">総合演習 & Tips：実践力を鍛える</h1>
+<p style="font-size:1.1rem;color:#888;margin-bottom:2rem">ショートカットクイズ、実践プロジェクト作成、<br>トラブルシューティング、これからの学習ロードマップ。</p>
+</div></div>
+
+<div class="progress"></div><div class="nav-hint">&larr; &rarr; / j k / Space</div>
 <script>const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');let cur=0,busy=false;function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}prog.textContent='1 / '+slides.length;document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});</script>
 <style>._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}._ts-gallery-info{padding:.8rem 1rem}._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}</style>
 <script>(function(){var _slides=document.querySelectorAll('.slide');if(_slides.length<2)return;function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}var oldHint=document.querySelector('.nav-hint');if(oldHint)oldHint.style.display='none';function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}var toolbar=document.createElement('div');toolbar.className='_ts-toolbar';toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';document.body.appendChild(toolbar);var counterBtn=toolbar.querySelector('._ts-counter-btn');var gridBtn=toolbar.querySelector('._ts-grid-btn');var jumpEl=document.createElement('div');jumpEl.className='_ts-jump';var jumpGrid=document.createElement('div');jumpGrid.className='_ts-jump-grid';for(var i=0;i<_slides.length;i++){var item=document.createElement('div');item.className='_ts-jump-item';item.textContent=i+1;item.dataset.idx=i;item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});jumpGrid.appendChild(item)}jumpEl.appendChild(jumpGrid);document.body.appendChild(jumpEl);var jumpOpen=false;function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});var gallery=document.createElement('div');gallery.className='_ts-gallery-overlay';var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';for(var i=0;i<_slides.length;i++){var title=_getTitle(_slides[i])||'Slide '+(i+1);galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>'}galleryHTML+='</div>';gallery.innerHTML=galleryHTML;document.body.appendChild(gallery);var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');for(var i=0;i<previews.length;i++){var idx=parseInt(previews[i].dataset.slideIdx);var clone=_slides[idx].cloneNode(true);clone.style.display='flex';clone.style.position='static';clone.style.animation='none';clone.classList.remove('out-left','out-right');clone.classList.add('active');previews[i].appendChild(clone)}var cards=gallery.querySelectorAll('._ts-gallery-card');for(var i=0;i<cards.length;i++){cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()})}var galleryOpen=false;function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}}},true);document.addEventListener('click',function(e){if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump()});function _tsUpdateUI(){var c=_tsCurIdx();counterBtn.textContent=(c+1)+' / '+_slides.length;if(jumpOpen)highlightJumpCurrent();if(galleryOpen)highlightGalleryCard()}var _lastIdx=_tsCurIdx();setInterval(function(){var c=_tsCurIdx();if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}},200);_tsUpdateUI()})();</script>

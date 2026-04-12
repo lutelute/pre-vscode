@@ -1,267 +1,975 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Session 5 — マルチカーソル：一括編集の技術</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}p{font-size:1.05rem;line-height:1.7;color:#bbb}code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}.label.green{background:#7fdbca22;color:#7fdbca}.label.purple{background:#c792ea22;color:#c792ea}.label.orange{background:#f78c6c22;color:#f78c6c}.label.red{background:#ff537022;color:#ff5370}.label.yellow{background:#ffcb6b22;color:#ffcb6b}.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}.cols{display:flex;gap:2rem;width:100%;max-width:1100px}.cols>*{flex:1}.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}.terminal-bar .dot{width:10px;height:10px;border-radius:50%}.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}.terminal-body .prompt{color:#7fdbca}.terminal-body .cmd{color:#e0e0e0}.terminal-body .output{color:#888}.terminal-body .success{color:#27c93f}.terminal-body .error{color:#ff5370}.terminal-body .info{color:#00d2ff}.terminal-body .warn{color:#ffcb6b}.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}ul.feature-list{list-style:none;max-width:700px}ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}ul.feature-list li::before{content:'▸ ';color:#00d2ff}.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}table{border-collapse:collapse;width:100%;max-width:900px}th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}th{color:#00d2ff;font-weight:600;background:#1a1a2e}td{color:#bbb}tr:hover td{background:#1a1a2e55}.gif-container{border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;max-width:700px;width:100%}.gif-container img{width:100%;display:block}.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}.step-progress .sp-item{display:flex;align-items:center;gap:0}.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}.step-progress .sp-arrow.sp-done{color:#00d2ff55}</style></head><body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}
+.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}
+.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}
+h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}
+h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}
+p{font-size:1.05rem;line-height:1.7;color:#bbb}
+code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}
+.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}
+.label.green{background:#7fdbca22;color:#7fdbca}
+.label.purple{background:#c792ea22;color:#c792ea}
+.label.orange{background:#f78c6c22;color:#f78c6c}
+.label.red{background:#ff537022;color:#ff5370}
+.label.yellow{background:#ffcb6b22;color:#ffcb6b}
+.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}
+.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}
+.cols{display:flex;gap:2rem;width:100%;max-width:1100px}
+.cols>*{flex:1}
+.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}
+.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.terminal-bar .dot{width:10px;height:10px;border-radius:50%}
+.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}
+.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}
+.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}
+.terminal-body .prompt{color:#7fdbca}
+.terminal-body .cmd{color:#e0e0e0}
+.terminal-body .output{color:#888}
+.terminal-body .success{color:#27c93f}
+.terminal-body .error{color:#ff5370}
+.terminal-body .info{color:#00d2ff}
+.terminal-body .warn{color:#ffcb6b}
+.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}
+.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}
+.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}
+ul.feature-list{list-style:none;max-width:700px}
+ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}
+ul.feature-list li::before{content:'▸ ';color:#00d2ff}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}
+table{border-collapse:collapse;width:100%;max-width:900px}
+th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}
+th{color:#00d2ff;font-weight:600;background:#1a1a2e}
+td{color:#bbb}
+tr:hover td{background:#1a1a2e55}
+.gif-container{border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;max-width:700px;width:100%}
+.gif-container img{width:100%;display:block}
+.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}
+.step-progress .sp-item{display:flex;align-items:center;gap:0}
+.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}
+.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}
+.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}
+.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}
+.step-progress .sp-arrow.sp-done{color:#00d2ff55}
+.vscode-editor{background:#1e1e2e;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px;font-family:'Fira Code','SF Mono',monospace}
+.vscode-titlebar{background:#2d2d3f;padding:6px 14px;display:flex;align-items:center;gap:8px;font-size:.8rem;color:#888}
+.vscode-body{padding:1rem 0;font-size:.9rem;line-height:1.8;counter-reset:line}
+.vscode-line{padding:0 1rem 0 3.5rem;position:relative;white-space:pre}
+.vscode-line::before{content:counter(line);counter-increment:line;position:absolute;left:.8rem;color:#555;font-size:.8rem;width:2rem;text-align:right}
+.vscode-line .cursor{background:#00d2ff;color:#0f0f1a;padding:0 1px;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.vscode-line .highlight{background:#00d2ff33;border:1px solid #00d2ff55;border-radius:2px;padding:0 1px}
+.vscode-line .multi-cursor{background:#ffcb6b44;border-left:2px solid #ffcb6b}
+.vscode-line .selected{background:#264f78;border-radius:2px}
+.kbd{display:inline-block;background:#2a2a4a;border:1px solid #3a3a5a;border-radius:4px;padding:.1em .5em;font-family:'Fira Code','SF Mono',monospace;font-size:.85em;color:#e0e0e0;box-shadow:0 2px 0 #1a1a2e}
+</style></head><body>
 
-
+<!-- ==================== Slide 1: Title ==================== -->
 <div class="slide active">
   <div style="text-align:center">
-    <p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p>
+    <p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">&larr; トップに戻る</a></p>
     <p class="label">SESSION 05</p>
     <h1 style="font-size:2.8rem;margin-bottom:1rem">マルチカーソル</h1>
     <p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">一括編集の技術</p>
     <span class="ai-badge">90分 / 全15回の第5回</span>
-    <p style="margin-top:3rem;color:#555;font-size:.9rem">→ / Space で次へ</p>
+    <p style="margin-top:3rem;color:#555;font-size:.9rem">&rarr; / Space で次へ</p>
   </div>
 </div>
 
+<!-- ==================== Slide 2: Goals ==================== -->
 <div class="slide">
   <h2>今日のゴール</h2>
   <div style="max-width:700px;width:100%">
-    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. マルチカーソルの4つの方法を覚える</h3><p style="font-size:.95rem">Cmd+D, Alt+Click, Cmd+Alt+↑↓, Cmd+Shift+L</p></div>
-    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. 実践的な一括編集ができる</h3><p style="font-size:.95rem">変数リネーム、CSV編集、HTMLタグ変更</p></div>
-    <div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. 矩形選択を使える</h3><p style="font-size:.95rem">Shift+Alt+ドラッグで列選択</p></div>
-  </div>
-</div>
-
-<div class="slide">
-  <h2>マルチカーソルとは</h2>
-  <div style="max-width:800px;width:100%;text-align:center">
-    <div class="card" style="padding:2rem;border:2px solid #00d2ff44">
-      <h3 style="font-size:1.5rem;color:#00d2ff">同時に複数の場所を編集する機能</h3>
-      <p style="font-size:1.1rem;margin-top:1rem">10箇所の変数名を変えるのに、10回コピペ？<br><strong style="color:#ffcb6b">マルチカーソルなら1回で完了。</strong></p>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
+      <h3 style="color:#00d2ff">1. マルチカーソルの4つの方法を覚える</h3>
+      <p style="font-size:.95rem">Cmd+D, Alt+Click, Cmd+Alt+Arrow, Cmd+Shift+L</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+      <h3 style="color:#7fdbca">2. 実践的な一括編集ができる</h3>
+      <p style="font-size:.95rem">変数リネーム、CSV編集、HTMLタグ変更、JSON整形</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea">
+      <h3 style="color:#c792ea">3. 矩形選択（Box Selection）を使える</h3>
+      <p style="font-size:.95rem">Shift+Alt+ドラッグで列単位の選択・編集</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ffcb6b">
+      <h3 style="color:#ffcb6b">4. よくある失敗と脱出方法を知る</h3>
+      <p style="font-size:.95rem">Escキーで安全にマルチカーソルを解除</p>
     </div>
   </div>
 </div>
 
+<!-- ==================== Slide 3: What is Multi-Cursor ==================== -->
 <div class="slide">
-  <h2>GIF デモ</h2>
+  <h2>マルチカーソルとは？</h2>
+  <div class="cols" style="max-width:1000px">
+    <div class="card" style="text-align:center">
+      <p class="label red">通常の編集</p>
+      <div style="font-size:3rem;margin:.5rem 0">|</div>
+      <p style="font-size:.95rem">カーソルは<strong style="color:#ff5370">1つ</strong>だけ</p>
+      <p style="font-size:.85rem;color:#888">10箇所を変更 = 10回の編集作業</p>
+    </div>
+    <div class="card" style="text-align:center;border-color:#00d2ff44">
+      <p class="label">マルチカーソル</p>
+      <div style="font-size:3rem;margin:.5rem 0;color:#ffcb6b">| | | | |</div>
+      <p style="font-size:.95rem">カーソルが<strong style="color:#00d2ff">同時に複数</strong></p>
+      <p style="font-size:.85rem;color:#888">10箇所を変更 = 1回の編集作業</p>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem;color:#888;max-width:700px;text-align:center">同じ文字列を何度も手作業で修正する必要がなくなる</p>
+</div>
+
+<!-- ==================== Slide 4: Overview of 4 Methods ==================== -->
+<div class="slide">
+  <h2>マルチカーソルの4つの方法</h2>
+  <div style="max-width:1000px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card" style="border-left:3px solid #00d2ff">
+      <p class="label">方法 1</p>
+      <h3 style="font-size:1.1rem"><span class="kbd">Cmd</span>+<span class="kbd">D</span></h3>
+      <p style="font-size:.9rem">同じ単語を1つずつ選択に追加</p>
+      <p style="font-size:.8rem;color:#7fdbca;margin-top:.3rem">最もよく使う方法</p>
+    </div>
+    <div class="card" style="border-left:3px solid #7fdbca">
+      <p class="label green">方法 2</p>
+      <h3 style="font-size:1.1rem"><span class="kbd">Alt</span>+Click</h3>
+      <p style="font-size:.9rem">クリックした場所にカーソルを追加</p>
+      <p style="font-size:.8rem;color:#7fdbca;margin-top:.3rem">任意の位置にピンポイント配置</p>
+    </div>
+    <div class="card" style="border-left:3px solid #c792ea">
+      <p class="label purple">方法 3</p>
+      <h3 style="font-size:1.1rem"><span class="kbd">Cmd</span>+<span class="kbd">Alt</span>+<span class="kbd">&uarr;</span><span class="kbd">&darr;</span></h3>
+      <p style="font-size:.9rem">上下にカーソルを追加</p>
+      <p style="font-size:.8rem;color:#7fdbca;margin-top:.3rem">連続した行の同じ位置を編集</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ffcb6b">
+      <p class="label yellow">方法 4</p>
+      <h3 style="font-size:1.1rem"><span class="kbd">Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">L</span></h3>
+      <p style="font-size:.9rem">同じ単語を全て一括選択</p>
+      <p style="font-size:.8rem;color:#7fdbca;margin-top:.3rem">ファイル内の全出現箇所を一度に</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 5: Cmd+D Detailed ==================== -->
+<div class="slide">
+  <h2>方法1: <span class="kbd">Cmd</span>+<span class="kbd">D</span> — 同じ単語を選択</h2>
+  <div style="max-width:850px;width:100%">
+    <div class="step-progress">
+      <div class="sp-item"><span class="sp-node sp-active">Step 1: 単語を選択</span></div>
+      <span class="sp-arrow">&rarr;</span>
+      <div class="sp-item"><span class="sp-node">Step 2: Cmd+D</span></div>
+      <span class="sp-arrow">&rarr;</span>
+      <div class="sp-item"><span class="sp-node">Step 3: 繰り返し</span></div>
+      <span class="sp-arrow">&rarr;</span>
+      <div class="sp-item"><span class="sp-node">Step 4: 編集</span></div>
+    </div>
+    <div class="vscode-editor">
+      <div class="vscode-titlebar">app.py &mdash; マルチカーソル例</div>
+      <div class="vscode-body">
+        <div class="vscode-line"><span style="color:#c792ea">def</span> <span style="color:#82aaff">calculate_total</span>(<span class="highlight">price</span>, tax):</div>
+        <div class="vscode-line">    total = <span class="highlight">price</span> + (<span class="highlight">price</span> * tax)</div>
+        <div class="vscode-line">    <span style="color:#c792ea">return</span> total</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <p style="font-size:.95rem"><strong style="color:#00d2ff">手順:</strong>
+        <code>price</code> をダブルクリックで選択 &rarr;
+        <span class="kbd">Cmd</span>+<span class="kbd">D</span> を2回押す &rarr;
+        3つの <code>price</code> が全て選択される &rarr;
+        <code>unit_price</code> と入力 &rarr; 全て一括変更！
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 6: Cmd+D Tips ==================== -->
+<div class="slide">
+  <h2><span class="kbd">Cmd</span>+<span class="kbd">D</span> の便利なTips</h2>
+  <div style="max-width:850px;width:100%">
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
+      <h3 style="color:#00d2ff">スキップ: Cmd+K, Cmd+D</h3>
+      <p style="font-size:.95rem">今の選択をスキップして次のマッチへ飛ぶ。</p>
+      <p style="font-size:.85rem;color:#888;margin-top:.3rem">例: 3つ目の <code>name</code> だけ変えたくない場合に使う</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+      <h3 style="color:#7fdbca">元に戻す: Cmd+U</h3>
+      <p style="font-size:.95rem">最後に追加したカーソル/選択を1つ取り消す。</p>
+      <p style="font-size:.85rem;color:#888;margin-top:.3rem">Cmd+D を押しすぎたときに使う</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ffcb6b">
+      <h3 style="color:#ffcb6b">大文字/小文字の区別</h3>
+      <p style="font-size:.95rem">Cmd+D は大文字小文字を区別してマッチする。</p>
+      <p style="font-size:.85rem;color:#888;margin-top:.3rem"><code>Name</code> と <code>name</code> は別扱い。正確にリネームできる</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 7: Cmd+D Visual Example ==================== -->
+<div class="slide">
+  <h2>Cmd+D 実例: 変数リネーム</h2>
+  <div class="vscode-editor" style="max-width:900px">
+    <div class="vscode-titlebar">models.py</div>
+    <div class="vscode-body">
+      <div class="vscode-line"><span style="color:#c792ea">class</span> <span style="color:#ffcb6b">User</span>:</div>
+      <div class="vscode-line">    <span style="color:#c792ea">def</span> <span style="color:#82aaff">__init__</span>(self, <span class="selected">username</span>, email):</div>
+      <div class="vscode-line">        self.<span class="selected">username</span> = <span class="selected">username</span></div>
+      <div class="vscode-line">        self.email = email</div>
+      <div class="vscode-line"></div>
+      <div class="vscode-line">    <span style="color:#c792ea">def</span> <span style="color:#82aaff">display</span>(self):</div>
+      <div class="vscode-line">        <span style="color:#c792ea">return</span> <span style="color:#c3e88d">f"User: {self.<span class="selected">username</span>}"</span></div>
+    </div>
+  </div>
+  <div style="max-width:900px;margin-top:1rem;text-align:center">
+    <p style="color:#888"><code>username</code> を選択 &rarr; <span class="kbd">Cmd</span>+<span class="kbd">D</span> &times;3 &rarr; 4箇所同時選択 &rarr; <code>user_name</code> と入力</p>
+    <p style="color:#ffcb6b;font-size:.9rem;margin-top:.5rem">注意: F2 (Rename Symbol) との違い &mdash; F2はインポート先も含めて変更。Cmd+D はファイル内のみ</p>
+  </div>
+</div>
+
+<!-- ==================== Slide 8: GIF Demo ==================== -->
+<div class="slide">
+  <h2>マルチカーソル デモ</h2>
   <div class="gif-container">
-    <img src="../assets/multi-cursor.gif" alt="Multi-cursor Demo" style="max-height:50vh;object-fit:contain;background:#1e1e1e">
+    <img src="../assets/multi-cursor.gif" alt="マルチカーソルのデモGIF" style="width:100%">
   </div>
-  <p style="margin-top:1rem;color:#888;font-size:.9rem">複数箇所を同時編集している様子</p>
+  <p style="margin-top:1rem;color:#888;font-size:.9rem;text-align:center">同じ単語を一括で変更する様子</p>
 </div>
 
+<!-- ==================== Slide 9: Alt+Click ==================== -->
 <div class="slide">
-  <h2>方法1: Cmd+D（同じ単語を順次選択）</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="card" style="margin-bottom:1rem">
-      <h3>使い方</h3>
-      <ol style="color:#bbb;font-size:.95rem;line-height:2;padding-left:1.5rem">
-        <li>変更したい単語にカーソルを置く</li>
-        <li><code>Cmd+D</code> を押すたびに次の同じ単語が選択される</li>
-        <li>そのまま入力すると全箇所が同時に変わる</li>
-      </ol>
-    </div>
+  <h2>方法2: <span class="kbd">Alt</span>+Click — 任意の場所にカーソル追加</h2>
+  <div class="cols" style="max-width:1000px">
     <div class="card">
-      <h3>Tips</h3>
-      <ul class="feature-list">
-        <li><code>Cmd+D</code> を押しすぎたら <code>Cmd+U</code> で1つ戻る</li>
-        <li>スキップしたい場合は <code>Cmd+K Cmd+D</code></li>
-        <li>全ての同じ単語を一括選択: <code>Cmd+Shift+L</code></li>
+      <h3>使い方</h3>
+      <p style="font-size:.95rem;margin-bottom:.8rem"><span class="kbd">Alt</span>（Option）を押しながらクリック。</p>
+      <p style="font-size:.95rem;margin-bottom:.8rem">クリックした位置にカーソルが追加される。</p>
+      <p style="font-size:.95rem">何箇所でもOK。</p>
+      <p style="font-size:.85rem;color:#888;margin-top:1rem">Win/Linux: <span class="kbd">Alt</span>+Click（同じ）</p>
+    </div>
+    <div class="card" style="border-color:#00d2ff44">
+      <h3>いつ使う？</h3>
+      <ul class="feature-list" style="max-width:100%">
+        <li>異なる単語を同時に編集したいとき</li>
+        <li>行の途中のバラバラな位置に入力したいとき</li>
+        <li>Cmd+D ではマッチしない場所を選びたいとき</li>
+        <li>特定の行だけピンポイントで編集</li>
       </ul>
     </div>
   </div>
 </div>
 
+<!-- ==================== Slide 10: Alt+Click Example ==================== -->
 <div class="slide">
-  <h2>方法2: Alt+Click（任意の位置にカーソル追加）</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="card" style="margin-bottom:1rem">
-      <h3>使い方</h3>
-      <p style="font-size:.95rem"><code>Alt</code> (macOS: <code>Option</code>) を押しながらクリックすると、クリックした場所にカーソルが追加される。</p>
+  <h2>Alt+Click 実例: バラバラな場所を編集</h2>
+  <div class="vscode-editor" style="max-width:900px">
+    <div class="vscode-titlebar">config.json</div>
+    <div class="vscode-body">
+      <div class="vscode-line">{</div>
+      <div class="vscode-line">  <span style="color:#c3e88d">"host"</span>: <span style="color:#c3e88d">"localhost"</span>,<span class="multi-cursor"> </span></div>
+      <div class="vscode-line">  <span style="color:#c3e88d">"port"</span>: <span style="color:#f78c6c">3000</span>,</div>
+      <div class="vscode-line">  <span style="color:#c3e88d">"debug"</span>: <span style="color:#ff5370">true</span>,<span class="multi-cursor"> </span></div>
+      <div class="vscode-line">  <span style="color:#c3e88d">"log_level"</span>: <span style="color:#c3e88d">"verbose"</span><span class="multi-cursor"> </span></div>
+      <div class="vscode-line">}</div>
     </div>
-    <div class="card">
-      <h3>使いどころ</h3>
-      <ul class="feature-list">
-        <li>離れた場所に同時にテキストを追加したい時</li>
-        <li>リストの各行の先頭に記号を追加</li>
-        <li>不規則な位置の編集</li>
-      </ul>
+  </div>
+  <div class="card" style="max-width:900px;margin-top:1rem">
+    <p style="font-size:.95rem"><strong style="color:#00d2ff">シナリオ:</strong> 行末にコメントを追加したい行が飛び飛び</p>
+    <p style="font-size:.9rem;color:#888;margin-top:.3rem">Alt+Click で3箇所にカーソルを置き、 <code>// TODO: 本番環境用に変更</code> を一括入力</p>
+  </div>
+</div>
+
+<!-- ==================== Slide 11: Cmd+Alt+Arrow ==================== -->
+<div class="slide">
+  <h2>方法3: <span class="kbd">Cmd</span>+<span class="kbd">Alt</span>+<span class="kbd">&uarr;</span><span class="kbd">&darr;</span> — 上下にカーソル追加</h2>
+  <div style="max-width:850px;width:100%">
+    <div class="vscode-editor">
+      <div class="vscode-titlebar">data.csv &mdash; 上下カーソル例</div>
+      <div class="vscode-body">
+        <div class="vscode-line"><span class="multi-cursor">T</span>anaka, 28, Tokyo</div>
+        <div class="vscode-line"><span class="multi-cursor">S</span>uzuki, 35, Osaka</div>
+        <div class="vscode-line"><span class="multi-cursor">Y</span>amada, 22, Nagoya</div>
+        <div class="vscode-line"><span class="multi-cursor">S</span>ato, 41, Fukuoka</div>
+        <div class="vscode-line"><span class="multi-cursor">K</span>ato, 30, Sapporo</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <p style="font-size:.95rem"><strong style="color:#00d2ff">手順:</strong> 1行目の先頭にカーソル &rarr; <span class="kbd">Cmd</span>+<span class="kbd">Alt</span>+<span class="kbd">&darr;</span> を4回 &rarr; 5行全てにカーソル &rarr; <span class="kbd">Home</span> で行頭に移動 &rarr; テキスト入力</p>
+      <p style="font-size:.85rem;color:#888;margin-top:.5rem">Win/Linux: <span class="kbd">Ctrl</span>+<span class="kbd">Alt</span>+<span class="kbd">&uarr;</span><span class="kbd">&darr;</span></p>
     </div>
   </div>
 </div>
 
+<!-- ==================== Slide 12: Cmd+Shift+L ==================== -->
 <div class="slide">
-  <h2>方法3: Cmd+Alt+↑↓（上下にカーソル追加）</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="card" style="margin-bottom:1rem">
-      <h3>連続した行に一括カーソル</h3>
-      <p style="font-size:.95rem"><code>Cmd+Alt+↑</code> or <code>Cmd+Alt+↓</code> で上下の行にカーソルを追加。<br>Windows/Linux: <code>Ctrl+Alt+↑↓</code></p>
-    </div>
+  <h2>方法4: <span class="kbd">Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">L</span> — 全出現箇所を一括選択</h2>
+  <div style="max-width:850px;width:100%">
     <div class="cols">
       <div class="card">
-        <p class="label red">Before</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div>name = "Alice"</div>
-          <div>age = 25</div>
-          <div>city = "Tokyo"</div>
-          <div>job = "Engineer"</div>
-        </div>
+        <h3 style="color:#ffcb6b">Cmd+D との違い</h3>
+        <table style="max-width:100%">
+          <tr><th></th><th>Cmd+D</th><th>Cmd+Shift+L</th></tr>
+          <tr><td>選択方式</td><td>1つずつ追加</td><td>全て一括</td></tr>
+          <tr><td>スキップ</td><td>可能</td><td>不可</td></tr>
+          <tr><td>用途</td><td>慎重に選びたい</td><td>全部変えたい</td></tr>
+        </table>
       </div>
-      <div class="card">
-        <p class="label green">After (先頭にself.を追加)</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div><span style="color:#7fdbca">self.</span>name = "Alice"</div>
-          <div><span style="color:#7fdbca">self.</span>age = 25</div>
-          <div><span style="color:#7fdbca">self.</span>city = "Tokyo"</div>
-          <div><span style="color:#7fdbca">self.</span>job = "Engineer"</div>
-        </div>
+      <div class="card" style="border-color:#ffcb6b44">
+        <h3>使い方</h3>
+        <p style="font-size:.95rem">1. 変更したい単語を選択</p>
+        <p style="font-size:.95rem">2. <span class="kbd">Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">L</span></p>
+        <p style="font-size:.95rem">3. ファイル内の全マッチにカーソルが出現</p>
+        <p style="font-size:.95rem">4. そのまま入力で一括変更</p>
+        <p style="font-size:.85rem;color:#888;margin-top:.5rem">Win/Linux: <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">L</span></p>
       </div>
     </div>
   </div>
 </div>
 
-<div class="slide">
-  <h2>方法4: Cmd+Shift+L（全一致選択）</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="card" style="margin-bottom:1rem">
-      <h3>ファイル内の全ての同じ単語を一括選択</h3>
-      <ol style="color:#bbb;font-size:.95rem;line-height:2;padding-left:1.5rem">
-        <li>変更したい単語を選択（ダブルクリック or <code>Cmd+D</code>）</li>
-        <li><code>Cmd+Shift+L</code> で全一致を選択</li>
-        <li>入力すると全箇所が同時に変更される</li>
-      </ol>
-    </div>
-    <div class="card">
-      <h3>Cmd+D vs Cmd+Shift+L</h3>
-      <table style="max-width:100%">
-        <tr><th></th><th>Cmd+D</th><th>Cmd+Shift+L</th></tr>
-        <tr><td>選択</td><td style="color:#7fdbca">1つずつ順番に</td><td style="color:#c792ea">全部一括</td></tr>
-        <tr><td>スキップ</td><td>可能（Cmd+K Cmd+D）</td><td>不可</td></tr>
-        <tr><td>用途</td><td>部分的な変更</td><td>全置換</td></tr>
-      </table>
-    </div>
-  </div>
-</div>
-
+<!-- ==================== Slide 13: Box Selection ==================== -->
 <div class="slide">
   <h2>矩形選択（Box Selection）</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="card" style="margin-bottom:1rem">
-      <h3>Shift+Alt+ドラッグ</h3>
-      <p style="font-size:.95rem">矩形（四角形）の範囲を選択。CSV やテーブルデータの列操作に便利。</p>
+  <p style="text-align:center;color:#888;margin-bottom:1rem"><span class="kbd">Shift</span>+<span class="kbd">Alt</span>+ドラッグ で列方向に選択</p>
+  <div class="vscode-editor" style="max-width:900px">
+    <div class="vscode-titlebar">table_data.txt &mdash; 矩形選択</div>
+    <div class="vscode-body">
+      <div class="vscode-line">ID   Name      <span class="selected">Price</span>   Stock</div>
+      <div class="vscode-line">001  Apple     <span class="selected">  120</span>   50</div>
+      <div class="vscode-line">002  Banana    <span class="selected">   80</span>   120</div>
+      <div class="vscode-line">003  Cherry    <span class="selected">  350</span>   30</div>
+      <div class="vscode-line">004  Date      <span class="selected">  500</span>   15</div>
+      <div class="vscode-line">005  Elderberry<span class="selected">  900</span>   8</div>
     </div>
+  </div>
+  <div class="card" style="max-width:900px;margin-top:1rem">
+    <p style="font-size:.95rem"><strong style="color:#c792ea">ポイント:</strong> Price列だけを選択してコピー/削除/置換できる。Excelの列選択に近い。</p>
+    <p style="font-size:.85rem;color:#888;margin-top:.3rem">Win/Linux: <span class="kbd">Shift</span>+<span class="kbd">Alt</span>+ドラッグ（同じ）</p>
+  </div>
+</div>
+
+<!-- ==================== Slide 14: Box Selection Visual Grid ==================== -->
+<div class="slide">
+  <h2>矩形選択の仕組み</h2>
+  <div style="max-width:800px;width:100%">
+    <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-width:500px;margin:0 auto 1.5rem">
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">a</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">b</div>
+      <div style="background:#264f78;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#00d2ff;border:1px solid #00d2ff55">c</div>
+      <div style="background:#264f78;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#00d2ff;border:1px solid #00d2ff55">d</div>
+      <div style="background:#264f78;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#00d2ff;border:1px solid #00d2ff55">e</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">f</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">g</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">h</div>
+
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">i</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">j</div>
+      <div style="background:#264f78;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#00d2ff;border:1px solid #00d2ff55">k</div>
+      <div style="background:#264f78;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#00d2ff;border:1px solid #00d2ff55">l</div>
+      <div style="background:#264f78;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#00d2ff;border:1px solid #00d2ff55">m</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">n</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">o</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">p</div>
+
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">q</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">r</div>
+      <div style="background:#264f78;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#00d2ff;border:1px solid #00d2ff55">s</div>
+      <div style="background:#264f78;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#00d2ff;border:1px solid #00d2ff55">t</div>
+      <div style="background:#264f78;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#00d2ff;border:1px solid #00d2ff55">u</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">v</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">w</div>
+      <div style="background:#1a1a2e;padding:.5rem;text-align:center;border-radius:4px;font-family:monospace;font-size:.8rem;color:#888">x</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <p style="font-size:.95rem">通常の選択は「行方向」に流れるが、矩形選択は<strong style="color:#00d2ff">列方向にブロック単位</strong>で選択される。</p>
+      <p style="font-size:.85rem;color:#888;margin-top:.5rem">上の青いセル (c,d,e / k,l,m / s,t,u) が矩形選択された領域のイメージ</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 15: Practical Example 1 - CSV ==================== -->
+<div class="slide">
+  <h2>実例1: CSV データの一括編集</h2>
+  <div class="cols" style="max-width:1000px">
     <div class="card">
-      <h3>例: CSVの特定列だけ選択</h3>
-      <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-        <div>Alice,<span style="background:#00d2ff33;color:#00d2ff">25</span>,Tokyo</div>
-        <div>Bob,<span style="background:#00d2ff33;color:#00d2ff">30</span>,Osaka</div>
-        <div>Carol,<span style="background:#00d2ff33;color:#00d2ff">22</span>,Kyoto</div>
-        <div>Dave,<span style="background:#00d2ff33;color:#00d2ff">28</span>,Nagoya</div>
-      </div>
-      <p style="font-size:.85rem;color:#888;margin-top:.5rem">年齢の列だけ選択して一括操作</p>
-    </div>
-  </div>
-</div>
-
-<div class="slide">
-  <h2>実践例1: 変数リネーム</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="cols">
-      <div class="card">
-        <p class="label red">Before</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div><span style="color:#ffcb6b">data</span> = load_csv()</div>
-          <div>clean_<span style="color:#ffcb6b">data</span> = preprocess(<span style="color:#ffcb6b">data</span>)</div>
-          <div>result = analyze(clean_<span style="color:#ffcb6b">data</span>)</div>
-          <div>save(result, <span style="color:#ffcb6b">data</span>)</div>
-        </div>
-      </div>
-      <div class="card">
-        <p class="label green">After (Cmd+D で data → df)</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div><span style="color:#7fdbca">df</span> = load_csv()</div>
-          <div>clean_<span style="color:#7fdbca">df</span> = preprocess(<span style="color:#7fdbca">df</span>)</div>
-          <div>result = analyze(clean_<span style="color:#7fdbca">df</span>)</div>
-          <div>save(result, <span style="color:#7fdbca">df</span>)</div>
+      <p class="label red">Before</p>
+      <div class="vscode-editor" style="max-width:100%;border:none">
+        <div class="vscode-body" style="min-height:auto">
+          <div class="vscode-line">Tanaka,28,Tokyo</div>
+          <div class="vscode-line">Suzuki,35,Osaka</div>
+          <div class="vscode-line">Yamada,22,Nagoya</div>
+          <div class="vscode-line">Sato,41,Fukuoka</div>
         </div>
       </div>
     </div>
-    <p style="margin-top:1rem;color:#888;font-size:.9rem;text-align:center">
-      より安全なリネーム: <code>F2</code>（Rename Symbol）を使うと参照を追跡してリネーム
-    </p>
-  </div>
-</div>
-
-<div class="slide">
-  <h2>実践例2: HTMLタグ一括変更</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="cols">
-      <div class="card">
-        <p class="label red">Before</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div>&lt;<span style="color:#ffcb6b">div</span>&gt;Item 1&lt;/<span style="color:#ffcb6b">div</span>&gt;</div>
-          <div>&lt;<span style="color:#ffcb6b">div</span>&gt;Item 2&lt;/<span style="color:#ffcb6b">div</span>&gt;</div>
-          <div>&lt;<span style="color:#ffcb6b">div</span>&gt;Item 3&lt;/<span style="color:#ffcb6b">div</span>&gt;</div>
-        </div>
-      </div>
-      <div class="card">
-        <p class="label green">After (div → li に一括変更)</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div>&lt;<span style="color:#7fdbca">li</span>&gt;Item 1&lt;/<span style="color:#7fdbca">li</span>&gt;</div>
-          <div>&lt;<span style="color:#7fdbca">li</span>&gt;Item 2&lt;/<span style="color:#7fdbca">li</span>&gt;</div>
-          <div>&lt;<span style="color:#7fdbca">li</span>&gt;Item 3&lt;/<span style="color:#7fdbca">li</span>&gt;</div>
+    <div class="card" style="border-color:#27c93f44">
+      <p class="label green">After</p>
+      <div class="vscode-editor" style="max-width:100%;border:none">
+        <div class="vscode-body" style="min-height:auto">
+          <div class="vscode-line">Tanaka, 28, Tokyo</div>
+          <div class="vscode-line">Suzuki, 35, Osaka</div>
+          <div class="vscode-line">Yamada, 22, Nagoya</div>
+          <div class="vscode-line">Sato, 41, Fukuoka</div>
         </div>
       </div>
     </div>
   </div>
+  <div class="card" style="max-width:1000px;margin-top:1rem">
+    <p style="font-size:.95rem"><strong style="color:#00d2ff">手順:</strong>
+      <code>,</code> を選択 &rarr; <span class="kbd">Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">L</span> &rarr; 全ての <code>,</code> を選択 &rarr; <code>, </code>（カンマ+スペース）と入力</p>
+  </div>
 </div>
 
+<!-- ==================== Slide 16: Practical Example 2 - HTML ==================== -->
 <div class="slide">
-  <h2>マルチカーソル早見表</h2>
-  <table style="max-width:850px">
-    <tr><th>操作</th><th>macOS</th><th>Win/Linux</th></tr>
-    <tr><td>同じ単語を順次選択</td><td><code>Cmd+D</code></td><td><code>Ctrl+D</code></td></tr>
-    <tr><td>選択をスキップ</td><td><code>Cmd+K Cmd+D</code></td><td><code>Ctrl+K Ctrl+D</code></td></tr>
-    <tr><td>1つ戻す</td><td><code>Cmd+U</code></td><td><code>Ctrl+U</code></td></tr>
-    <tr><td>全一致選択</td><td><code>Cmd+Shift+L</code></td><td><code>Ctrl+Shift+L</code></td></tr>
-    <tr><td>任意位置にカーソル追加</td><td><code>Alt+Click</code></td><td><code>Alt+Click</code></td></tr>
-    <tr><td>上下にカーソル追加</td><td><code>Cmd+Alt+↑↓</code></td><td><code>Ctrl+Alt+↑↓</code></td></tr>
-    <tr><td>矩形選択</td><td><code>Shift+Alt+Drag</code></td><td><code>Shift+Alt+Drag</code></td></tr>
-    <tr><td>マルチカーソル解除</td><td><code>Esc</code></td><td><code>Esc</code></td></tr>
+  <h2>実例2: HTMLタグの一括変更</h2>
+  <div class="vscode-editor" style="max-width:900px">
+    <div class="vscode-titlebar">index.html</div>
+    <div class="vscode-body">
+      <div class="vscode-line"><span style="color:#888">&lt;</span><span class="selected" style="color:#ff5370">div</span> <span style="color:#ffcb6b">class</span>=<span style="color:#c3e88d">"card"</span><span style="color:#888">&gt;</span></div>
+      <div class="vscode-line">  <span style="color:#888">&lt;</span><span style="color:#ff5370">h3</span><span style="color:#888">&gt;</span>Title<span style="color:#888">&lt;/</span><span style="color:#ff5370">h3</span><span style="color:#888">&gt;</span></div>
+      <div class="vscode-line">  <span style="color:#888">&lt;</span><span style="color:#ff5370">p</span><span style="color:#888">&gt;</span>Content<span style="color:#888">&lt;/</span><span style="color:#ff5370">p</span><span style="color:#888">&gt;</span></div>
+      <div class="vscode-line"><span style="color:#888">&lt;/</span><span class="selected" style="color:#ff5370">div</span><span style="color:#888">&gt;</span></div>
+    </div>
+  </div>
+  <div class="card" style="max-width:900px;margin-top:1rem">
+    <p style="font-size:.95rem"><strong style="color:#00d2ff">シナリオ:</strong> <code>&lt;div&gt;</code> を <code>&lt;section&gt;</code> に変更したい</p>
+    <p style="font-size:.95rem;margin-top:.5rem"><strong style="color:#7fdbca">手順:</strong>
+      開始タグの <code>div</code> を選択 &rarr; <span class="kbd">Cmd</span>+<span class="kbd">D</span> で閉じタグの <code>div</code> も選択 &rarr; <code>section</code> と入力</p>
+    <p style="font-size:.85rem;color:#ffcb6b;margin-top:.5rem">Tip: Emmet の「タグ名変更」も使えるが、Cmd+Dが直感的</p>
+  </div>
+</div>
+
+<!-- ==================== Slide 17: Practical Example 3 - JSON ==================== -->
+<div class="slide">
+  <h2>実例3: JSON整形 &mdash; キーにクオート追加</h2>
+  <div class="cols" style="max-width:1000px">
+    <div class="card">
+      <p class="label red">Before (Invalid JSON)</p>
+      <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8;color:#ff5370">
+        {<br>
+        &nbsp;&nbsp;name: "Tanaka",<br>
+        &nbsp;&nbsp;age: 28,<br>
+        &nbsp;&nbsp;city: "Tokyo",<br>
+        &nbsp;&nbsp;active: true<br>
+        }
+      </div>
+    </div>
+    <div class="card" style="border-color:#27c93f44">
+      <p class="label green">After (Valid JSON)</p>
+      <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8;color:#27c93f">
+        {<br>
+        &nbsp;&nbsp;"name": "Tanaka",<br>
+        &nbsp;&nbsp;"age": 28,<br>
+        &nbsp;&nbsp;"city": "Tokyo",<br>
+        &nbsp;&nbsp;"active": true<br>
+        }
+      </div>
+    </div>
+  </div>
+  <div class="card" style="max-width:1000px;margin-top:1rem">
+    <p style="font-size:.95rem"><strong style="color:#00d2ff">手順:</strong>
+      各キーの前に Alt+Click でカーソルを4つ配置 &rarr; <span class="kbd">"</span> を入力 &rarr;
+      <span class="kbd">Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">&rarr;</span> で単語選択 &rarr; <span class="kbd">End</span> &rarr; <code>:</code>の前に<span class="kbd">"</span> を入力</p>
+  </div>
+</div>
+
+<!-- ==================== Slide 18: Practical Example 4 - Variable Rename ==================== -->
+<div class="slide">
+  <h2>実例4: 関数パラメータの一括変更</h2>
+  <div class="vscode-editor" style="max-width:900px">
+    <div class="vscode-titlebar">utils.py</div>
+    <div class="vscode-body">
+      <div class="vscode-line"><span style="color:#c792ea">def</span> <span style="color:#82aaff">process_data</span>(<span class="selected">data</span>, <span class="selected">data</span>_type, <span class="selected">data</span>_format):</div>
+      <div class="vscode-line">    <span style="color:#c792ea">if</span> <span class="selected">data</span>_type == <span style="color:#c3e88d">"csv"</span>:</div>
+      <div class="vscode-line">        result = parse_csv(<span class="selected">data</span>)</div>
+      <div class="vscode-line">    <span style="color:#c792ea">elif</span> <span class="selected">data</span>_type == <span style="color:#c3e88d">"json"</span>:</div>
+      <div class="vscode-line">        result = parse_json(<span class="selected">data</span>)</div>
+      <div class="vscode-line">    <span style="color:#c792ea">return</span> format_output(result, <span class="selected">data</span>_format)</div>
+    </div>
+  </div>
+  <div class="card" style="max-width:900px;margin-top:1rem">
+    <p style="font-size:.95rem"><strong style="color:#ffcb6b">注意:</strong> <code>data</code> を Cmd+Shift+L すると <code>data_type</code> の中の <code>data</code> もマッチしてしまう!</p>
+    <p style="font-size:.95rem;margin-top:.5rem"><strong style="color:#7fdbca">解決策:</strong> Cmd+D で1つずつ追加し、<code>data_type</code> 内のマッチは Cmd+K, Cmd+D でスキップ</p>
+  </div>
+</div>
+
+<!-- ==================== Slide 19: Time Comparison ==================== -->
+<div class="slide">
+  <h2>時間比較: 手動 vs マルチカーソル</h2>
+  <table style="max-width:900px">
+    <tr><th>タスク</th><th>手動編集</th><th>マルチカーソル</th><th>節約</th></tr>
+    <tr><td>変数名を10箇所変更</td><td style="color:#ff5370">~60秒</td><td style="color:#27c93f">~5秒</td><td style="color:#ffcb6b">92%</td></tr>
+    <tr><td>20行にプレフィックス追加</td><td style="color:#ff5370">~90秒</td><td style="color:#27c93f">~8秒</td><td style="color:#ffcb6b">91%</td></tr>
+    <tr><td>CSV 100行のカンマをタブに</td><td style="color:#ff5370">~5分</td><td style="color:#27c93f">~3秒</td><td style="color:#ffcb6b">99%</td></tr>
+    <tr><td>HTMLタグ15組を変更</td><td style="color:#ff5370">~3分</td><td style="color:#27c93f">~10秒</td><td style="color:#ffcb6b">94%</td></tr>
+    <tr><td>JSON キーにクオート追加 (50件)</td><td style="color:#ff5370">~10分</td><td style="color:#27c93f">~15秒</td><td style="color:#ffcb6b">97%</td></tr>
+  </table>
+  <p style="margin-top:1rem;color:#888;font-size:.9rem;text-align:center">繰り返し作業が多いほど、マルチカーソルの効果は大きい</p>
+</div>
+
+<!-- ==================== Slide 20: Shortcut Summary ==================== -->
+<div class="slide">
+  <h2>ショートカットまとめ</h2>
+  <table style="max-width:900px">
+    <tr><th>操作</th><th>macOS</th><th>Win/Linux</th><th>説明</th></tr>
+    <tr><td>次の同じ単語を選択</td><td><span class="kbd">Cmd</span>+<span class="kbd">D</span></td><td><span class="kbd">Ctrl</span>+<span class="kbd">D</span></td><td>1つずつ追加</td></tr>
+    <tr><td>選択をスキップ</td><td><span class="kbd">Cmd</span>+<span class="kbd">K</span>, <span class="kbd">Cmd</span>+<span class="kbd">D</span></td><td><span class="kbd">Ctrl</span>+<span class="kbd">K</span>, <span class="kbd">Ctrl</span>+<span class="kbd">D</span></td><td>今のをスキップ</td></tr>
+    <tr><td>カーソル追加を元に戻す</td><td><span class="kbd">Cmd</span>+<span class="kbd">U</span></td><td><span class="kbd">Ctrl</span>+<span class="kbd">U</span></td><td>最後の1つを取消</td></tr>
+    <tr><td>任意の位置にカーソル</td><td><span class="kbd">Alt</span>+Click</td><td><span class="kbd">Alt</span>+Click</td><td>クリック位置に追加</td></tr>
+    <tr><td>上下にカーソル追加</td><td><span class="kbd">Cmd</span>+<span class="kbd">Alt</span>+<span class="kbd">&uarr;&darr;</span></td><td><span class="kbd">Ctrl</span>+<span class="kbd">Alt</span>+<span class="kbd">&uarr;&darr;</span></td><td>連続行に展開</td></tr>
+    <tr><td>全出現箇所を選択</td><td><span class="kbd">Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">L</span></td><td><span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">L</span></td><td>一括選択</td></tr>
+    <tr><td>矩形選択</td><td><span class="kbd">Shift</span>+<span class="kbd">Alt</span>+ドラッグ</td><td><span class="kbd">Shift</span>+<span class="kbd">Alt</span>+ドラッグ</td><td>列方向のブロック</td></tr>
+    <tr><td>マルチカーソル解除</td><td><span class="kbd">Esc</span></td><td><span class="kbd">Esc</span></td><td>通常に戻る</td></tr>
   </table>
 </div>
 
+<!-- ==================== Slide 21: Common Mistakes ==================== -->
 <div class="slide">
-  <h2>練習タイム</h2>
-  <p class="label green">HANDS-ON</p>
-  <div style="max-width:700px;width:100%">
-    <div class="card">
-      <h3>マルチカーソル演習（15分）</h3>
-      <ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem">
-        <li>Pythonファイルで変数 <code>data</code> を10箇所書く</li>
-        <li><code>Cmd+D</code> で1つずつ選択して <code>df</code> に変更</li>
-        <li>新しいファイルでリスト項目を5行書く</li>
-        <li><code>Cmd+Alt+↓</code> で全行にカーソルを置き、先頭に <code>- </code> を追加</li>
-        <li>CSVデータを作成し、矩形選択で列を選択</li>
-        <li><code>Cmd+Shift+L</code> で全置換を試す</li>
-      </ol>
+  <h2>よくある失敗と対処法</h2>
+  <div style="max-width:850px;width:100%">
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #ff5370">
+      <h3 style="color:#ff5370">失敗1: 意図しない場所もマッチした</h3>
+      <p style="font-size:.95rem">Cmd+Shift+L で全選択したら、コメント内の同名変数も変更してしまった</p>
+      <p style="font-size:.85rem;color:#7fdbca;margin-top:.3rem">対処: Cmd+Z で元に戻し、Cmd+D で1つずつ確認しながら選択</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #ff5370">
+      <h3 style="color:#ff5370">失敗2: マルチカーソルが残ったまま入力</h3>
+      <p style="font-size:.95rem">カーソルが複数あることに気づかず、別の場所にも文字が入ってしまった</p>
+      <p style="font-size:.85rem;color:#7fdbca;margin-top:.3rem">対処: <span class="kbd">Esc</span> を押してからCmd+Z。ステータスバーに「カーソル: N個」と表示される</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ff5370">
+      <h3 style="color:#ff5370">失敗3: 部分一致でマッチしすぎ</h3>
+      <p style="font-size:.95rem"><code>id</code> を選択したら <code>width</code>, <code>hidden</code> の中の <code>id</code> もマッチ</p>
+      <p style="font-size:.85rem;color:#7fdbca;margin-top:.3rem">対処: 検索ダイアログの「単語単位」オプションをON にしてから Cmd+Shift+L</p>
     </div>
   </div>
 </div>
 
+<!-- ==================== Slide 22: Escape Multi-Cursor ==================== -->
+<div class="slide">
+  <h2>マルチカーソルの解除方法</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="flow" style="margin-bottom:2rem">
+      <div class="flow-box" style="border-color:#ffcb6b">
+        <p style="font-size:2rem;margin-bottom:.3rem">| | | |</p>
+        <p style="font-size:.85rem;color:#ffcb6b">マルチカーソル中</p>
+      </div>
+      <div class="flow-arrow" style="font-size:2rem">&rarr;</div>
+      <div class="flow-box" style="min-width:100px">
+        <p style="font-size:1.2rem;margin-bottom:.3rem"><span class="kbd">Esc</span></p>
+        <p style="font-size:.85rem;color:#888">1回押す</p>
+      </div>
+      <div class="flow-arrow" style="font-size:2rem">&rarr;</div>
+      <div class="flow-box" style="border-color:#27c93f">
+        <p style="font-size:2rem;margin-bottom:.3rem">|</p>
+        <p style="font-size:.85rem;color:#27c93f">通常カーソル</p>
+      </div>
+    </div>
+    <div class="card" style="text-align:center">
+      <h3>確認方法</h3>
+      <p style="font-size:.95rem">VS Code のステータスバー（左下）に<strong style="color:#00d2ff">「カーソル: 5」</strong>のように表示される。</p>
+      <p style="font-size:.95rem;margin-top:.5rem">「カーソル: 1」に戻れば安全。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 23: Multi-Cursor + Other Features ==================== -->
+<div class="slide">
+  <h2>マルチカーソル + 他機能の組み合わせ</h2>
+  <div style="max-width:900px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card" style="border-left:3px solid #00d2ff">
+      <h3 style="font-size:1rem">+ 行選択</h3>
+      <p style="font-size:.85rem">マルチカーソル中に <span class="kbd">Cmd</span>+<span class="kbd">L</span> で複数行を一括選択</p>
+    </div>
+    <div class="card" style="border-left:3px solid #7fdbca">
+      <h3 style="font-size:1rem">+ Home/End</h3>
+      <p style="font-size:.85rem">全カーソルが一斉に行頭/行末に移動</p>
+    </div>
+    <div class="card" style="border-left:3px solid #c792ea">
+      <h3 style="font-size:1rem">+ 単語選択</h3>
+      <p style="font-size:.85rem"><span class="kbd">Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">&rarr;</span> で全カーソル位置の単語を選択</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ffcb6b">
+      <h3 style="font-size:1rem">+ コピー＆ペースト</h3>
+      <p style="font-size:.85rem">N個のカーソルでコピーした内容は、N個のカーソルに1行ずつ分配される</p>
+    </div>
+    <div class="card" style="border-left:3px solid #f78c6c">
+      <h3 style="font-size:1rem">+ インデント</h3>
+      <p style="font-size:.85rem"><span class="kbd">Tab</span> / <span class="kbd">Shift</span>+<span class="kbd">Tab</span> で複数行同時インデント</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ff5370">
+      <h3 style="font-size:1rem">+ 削除</h3>
+      <p style="font-size:.85rem"><span class="kbd">Backspace</span> / <span class="kbd">Delete</span> で全カーソル位置を同時削除</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 24: Copy-Paste with Multi-Cursor ==================== -->
+<div class="slide">
+  <h2>マルチカーソルとコピー＆ペーストの特殊動作</h2>
+  <div style="max-width:850px;width:100%">
+    <div class="cols">
+      <div class="card">
+        <p class="label">ケース1: N行コピー &rarr; N個のカーソルにペースト</p>
+        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+          <span style="color:#888">コピー元（3行）:</span><br>
+          <span style="color:#7fdbca">alpha</span><br>
+          <span style="color:#7fdbca">beta</span><br>
+          <span style="color:#7fdbca">gamma</span><br>
+          <br>
+          <span style="color:#888">3個のカーソルでペースト:</span><br>
+          カーソル1 &rarr; <span style="color:#27c93f">alpha</span><br>
+          カーソル2 &rarr; <span style="color:#27c93f">beta</span><br>
+          カーソル3 &rarr; <span style="color:#27c93f">gamma</span>
+        </div>
+      </div>
+      <div class="card">
+        <p class="label purple">ケース2: 1行コピー &rarr; N個のカーソルにペースト</p>
+        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+          <span style="color:#888">コピー元（1つ）:</span><br>
+          <span style="color:#7fdbca">prefix_</span><br>
+          <br>
+          <span style="color:#888">3個のカーソルでペースト:</span><br>
+          カーソル1 &rarr; <span style="color:#27c93f">prefix_</span><br>
+          カーソル2 &rarr; <span style="color:#27c93f">prefix_</span><br>
+          カーソル3 &rarr; <span style="color:#27c93f">prefix_</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 25: Exercise 1 ==================== -->
+<div class="slide">
+  <h2>演習1: 変数リネーム</h2>
+  <div style="max-width:850px;width:100%">
+    <div class="step-progress">
+      <div class="sp-item"><span class="sp-node sp-active">Step 1</span></div>
+      <span class="sp-arrow">&rarr;</span>
+      <div class="sp-item"><span class="sp-node">Step 2</span></div>
+      <span class="sp-arrow">&rarr;</span>
+      <div class="sp-item"><span class="sp-node">Step 3</span></div>
+      <span class="sp-arrow">&rarr;</span>
+      <div class="sp-item"><span class="sp-node">Step 4</span></div>
+    </div>
+    <div class="vscode-editor">
+      <div class="vscode-titlebar">exercise1.py</div>
+      <div class="vscode-body">
+        <div class="vscode-line"><span style="color:#c792ea">def</span> <span style="color:#82aaff">calc</span>(x, y, z):</div>
+        <div class="vscode-line">    tmp = x * y</div>
+        <div class="vscode-line">    tmp = tmp + z</div>
+        <div class="vscode-line">    <span style="color:#c792ea">return</span> tmp</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <h3>タスク</h3>
+      <p style="font-size:.95rem">1. <code>tmp</code> をダブルクリックで選択</p>
+      <p style="font-size:.95rem">2. <span class="kbd">Cmd</span>+<span class="kbd">D</span> を2回押して3つの <code>tmp</code> を全て選択</p>
+      <p style="font-size:.95rem">3. <code>result</code> と入力して一括変更</p>
+      <p style="font-size:.95rem">4. <span class="kbd">Esc</span> でマルチカーソルを解除</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 26: Exercise 2 ==================== -->
+<div class="slide">
+  <h2>演習2: リストにプレフィックス追加</h2>
+  <div style="max-width:850px;width:100%">
+    <div class="vscode-editor">
+      <div class="vscode-titlebar">exercise2.txt</div>
+      <div class="vscode-body">
+        <div class="vscode-line">apple</div>
+        <div class="vscode-line">banana</div>
+        <div class="vscode-line">cherry</div>
+        <div class="vscode-line">date</div>
+        <div class="vscode-line">elderberry</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <h3>タスク: 全行に <code>- [ ] </code> を追加してチェックリストにする</h3>
+      <p style="font-size:.95rem">1. 1行目の先頭にカーソルを置く</p>
+      <p style="font-size:.95rem">2. <span class="kbd">Cmd</span>+<span class="kbd">Alt</span>+<span class="kbd">&darr;</span> を4回押す（5行分のカーソル）</p>
+      <p style="font-size:.95rem">3. <span class="kbd">Home</span> で行頭に移動</p>
+      <p style="font-size:.95rem">4. <code>- [ ] </code> と入力</p>
+      <p style="font-size:.85rem;color:#7fdbca;margin-top:.5rem">結果: <code>- [ ] apple</code>, <code>- [ ] banana</code>, ... になる</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 27: Exercise 3 ==================== -->
+<div class="slide">
+  <h2>演習3: 矩形選択でデータ抽出</h2>
+  <div style="max-width:850px;width:100%">
+    <div class="vscode-editor">
+      <div class="vscode-titlebar">exercise3.txt</div>
+      <div class="vscode-body">
+        <div class="vscode-line">001  Tanaka     Tokyo     28</div>
+        <div class="vscode-line">002  Suzuki     Osaka     35</div>
+        <div class="vscode-line">003  Yamada     Nagoya    22</div>
+        <div class="vscode-line">004  Sato       Fukuoka   41</div>
+        <div class="vscode-line">005  Kato       Sapporo   30</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1rem">
+      <h3>タスク: 名前の列だけを抽出する</h3>
+      <p style="font-size:.95rem">1. 1行目の「Tanaka」の T にカーソルを置く</p>
+      <p style="font-size:.95rem">2. <span class="kbd">Shift</span>+<span class="kbd">Alt</span> を押しながら最終行の「Kato」の末尾までドラッグ</p>
+      <p style="font-size:.95rem">3. <span class="kbd">Cmd</span>+<span class="kbd">C</span> でコピー</p>
+      <p style="font-size:.95rem">4. 新しいファイルに <span class="kbd">Cmd</span>+<span class="kbd">V</span> でペースト</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 28: Advanced - Add Semicolons ==================== -->
+<div class="slide">
+  <h2>応用: 行末にセミコロン一括追加</h2>
+  <div class="cols" style="max-width:1000px">
+    <div class="card">
+      <p class="label red">Before</p>
+      <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+        <span style="color:#c792ea">let</span> name = <span style="color:#c3e88d">"Tanaka"</span><br>
+        <span style="color:#c792ea">let</span> age = <span style="color:#f78c6c">28</span><br>
+        <span style="color:#c792ea">let</span> city = <span style="color:#c3e88d">"Tokyo"</span><br>
+        <span style="color:#c792ea">let</span> active = <span style="color:#ff5370">true</span>
+      </div>
+    </div>
+    <div class="card" style="border-color:#27c93f44">
+      <p class="label green">After</p>
+      <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+        <span style="color:#c792ea">let</span> name = <span style="color:#c3e88d">"Tanaka"</span><span style="color:#00d2ff">;</span><br>
+        <span style="color:#c792ea">let</span> age = <span style="color:#f78c6c">28</span><span style="color:#00d2ff">;</span><br>
+        <span style="color:#c792ea">let</span> city = <span style="color:#c3e88d">"Tokyo"</span><span style="color:#00d2ff">;</span><br>
+        <span style="color:#c792ea">let</span> active = <span style="color:#ff5370">true</span><span style="color:#00d2ff">;</span>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="max-width:1000px;margin-top:1rem">
+    <p style="font-size:.95rem"><strong style="color:#00d2ff">方法:</strong>
+      <span class="kbd">Cmd</span>+<span class="kbd">A</span> で全選択 &rarr;
+      <span class="kbd">Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">L</span> で全行にカーソル &rarr;
+      <span class="kbd">End</span> で行末に移動 &rarr;
+      <code>;</code> を入力</p>
+  </div>
+</div>
+
+<!-- ==================== Slide 29: When NOT to Use ==================== -->
+<div class="slide">
+  <h2>マルチカーソルを使わないほうがいい場面</h2>
+  <div style="max-width:850px;width:100%">
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #ff5370">
+      <h3 style="color:#ff5370">プロジェクト全体のリネーム</h3>
+      <p style="font-size:.95rem">複数ファイルにまたがる変更は <span class="kbd">F2</span>（Rename Symbol）を使う。</p>
+      <p style="font-size:.85rem;color:#888">マルチカーソルは1ファイル内でしか動作しない</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #ff5370">
+      <h3 style="color:#ff5370">複雑なパターンの置換</h3>
+      <p style="font-size:.95rem">正規表現が必要な変換は <span class="kbd">Cmd</span>+<span class="kbd">H</span>（検索・置換）を使う。</p>
+      <p style="font-size:.85rem;color:#888">例: 日付形式の変換 (2024-01-15 → 01/15/2024)</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ff5370">
+      <h3 style="color:#ff5370">各行で異なる内容を入力</h3>
+      <p style="font-size:.95rem">マルチカーソルは全カーソルに同じ入力をする。行ごとに違う内容は1行ずつ。</p>
+      <p style="font-size:.85rem;color:#888">ただしコピー＆ペーストの分配機能は活用できる</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 30: Summary ==================== -->
 <div class="slide">
   <h2>まとめ</h2>
-  <div style="max-width:700px;width:100%">
-    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">Cmd+D が最重要</h3><p style="font-size:.9rem">同じ単語を順次選択。90%のマルチカーソル操作はこれで足りる。</p></div>
-    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">4つの方法を使い分ける</h3><p style="font-size:.9rem">Cmd+D / Alt+Click / Cmd+Alt+↑↓ / Cmd+Shift+L を状況に応じて。</p></div>
-    <div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">Esc で元に戻る</h3><p style="font-size:.9rem">マルチカーソルを解除するには Esc を1回押すだけ。</p></div>
+  <div style="max-width:900px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card" style="border-left:3px solid #00d2ff">
+      <h3 style="font-size:1rem;color:#00d2ff">Cmd+D</h3>
+      <p style="font-size:.85rem">同じ単語を1つずつ選択。最も使用頻度が高い。スキップも可能。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #7fdbca">
+      <h3 style="font-size:1rem;color:#7fdbca">Alt+Click</h3>
+      <p style="font-size:.85rem">任意の位置にカーソルを追加。バラバラな場所の編集に。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #c792ea">
+      <h3 style="font-size:1rem;color:#c792ea">Cmd+Alt+Arrow</h3>
+      <p style="font-size:.85rem">上下にカーソルを追加。連続行の編集に最適。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ffcb6b">
+      <h3 style="font-size:1rem;color:#ffcb6b">Cmd+Shift+L</h3>
+      <p style="font-size:.85rem">全出現箇所を一括選択。確実に全部変えたいとき。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #f78c6c">
+      <h3 style="font-size:1rem;color:#f78c6c">矩形選択</h3>
+      <p style="font-size:.85rem">Shift+Alt+ドラッグで列方向のブロック選択。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ff5370">
+      <h3 style="font-size:1rem;color:#ff5370">Esc で解除</h3>
+      <p style="font-size:.85rem">マルチカーソルを安全に終了。ステータスバーで確認。</p>
+    </div>
   </div>
 </div>
 
+<!-- ==================== Slide 31: Next Session ==================== -->
 <div class="slide">
   <h2>次回予告</h2>
-  <div style="text-align:center;max-width:600px">
-    <p class="label purple">SESSION 06</p>
-    <h1 style="font-size:2rem;margin-bottom:1rem">検索・置換：プロジェクト横断の検索力</h1>
-    <p style="font-size:1.1rem;color:#888;margin-bottom:2rem">正規表現を使った高度な検索・置換テクニック。</p>
-    <div class="card" style="text-align:left"><h3>予習</h3><ul class="feature-list"><li><code>Cmd+F</code> でファイル内検索を試す</li><li><code>Cmd+Shift+F</code> でプロジェクト検索を試す</li></ul></div>
+  <div style="max-width:700px;width:100%;text-align:center">
+    <div class="card" style="border:2px solid #00d2ff44;padding:2rem">
+      <p class="label">SESSION 06</p>
+      <h3 style="font-size:1.8rem;color:#00d2ff;margin-bottom:1rem">検索・置換</h3>
+      <p style="font-size:1.1rem;color:#888;margin-bottom:1.5rem">プロジェクト横断の検索力</p>
+      <ul class="feature-list" style="text-align:left;max-width:100%">
+        <li>Cmd+F / Cmd+H で高速検索・置換</li>
+        <li>Cmd+Shift+F でプロジェクト全体検索</li>
+        <li>正規表現で複雑なパターンを一括変換</li>
+        <li>Go to Definition / Peek で定義にジャンプ</li>
+      </ul>
+    </div>
+    <p style="margin-top:2rem;color:#555;font-size:.9rem">お疲れさまでした！</p>
   </div>
 </div>
 
 
-<div class="progress"></div><div class="nav-hint">← → / j k / Space</div>
-<script>const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');let cur=0,busy=false;function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}prog.textContent='1 / '+slides.length;document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});</script>
-<style>._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}._ts-gallery-info{padding:.8rem 1rem}._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}</style>
-<script>(function(){var _slides=document.querySelectorAll('.slide');if(_slides.length<2)return;function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}var oldHint=document.querySelector('.nav-hint');if(oldHint)oldHint.style.display='none';function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}var toolbar=document.createElement('div');toolbar.className='_ts-toolbar';toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';document.body.appendChild(toolbar);var counterBtn=toolbar.querySelector('._ts-counter-btn');var gridBtn=toolbar.querySelector('._ts-grid-btn');var jumpEl=document.createElement('div');jumpEl.className='_ts-jump';var jumpGrid=document.createElement('div');jumpGrid.className='_ts-jump-grid';for(var i=0;i<_slides.length;i++){var item=document.createElement('div');item.className='_ts-jump-item';item.textContent=i+1;item.dataset.idx=i;item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});jumpGrid.appendChild(item)}jumpEl.appendChild(jumpGrid);document.body.appendChild(jumpEl);var jumpOpen=false;function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});var gallery=document.createElement('div');gallery.className='_ts-gallery-overlay';var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';for(var i=0;i<_slides.length;i++){var title=_getTitle(_slides[i])||'Slide '+(i+1);galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>'}galleryHTML+='</div>';gallery.innerHTML=galleryHTML;document.body.appendChild(gallery);var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');for(var i=0;i<previews.length;i++){var idx=parseInt(previews[i].dataset.slideIdx);var clone=_slides[idx].cloneNode(true);clone.style.display='flex';clone.style.position='static';clone.style.animation='none';clone.classList.remove('out-left','out-right');clone.classList.add('active');previews[i].appendChild(clone)}var cards=gallery.querySelectorAll('._ts-gallery-card');for(var i=0;i<cards.length;i++){cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()})}var galleryOpen=false;function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}}},true);document.addEventListener('click',function(e){if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump()});function _tsUpdateUI(){var c=_tsCurIdx();counterBtn.textContent=(c+1)+' / '+_slides.length;if(jumpOpen)highlightJumpCurrent();if(galleryOpen)highlightGalleryCard()}var _lastIdx=_tsCurIdx();setInterval(function(){var c=_tsCurIdx();if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}},200);_tsUpdateUI()})();</script>
+<div class="progress"></div>
+<div class="nav-hint">&larr; &rarr; / j k / Space</div>
+
+<script>
+const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');
+let cur=0,busy=false;
+function go(i){
+  if(busy||i===cur)return;
+  var next=Math.max(0,Math.min(i,slides.length-1));
+  if(next===cur)return;
+  busy=true;
+  slides[cur].classList.remove('active');
+  slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';
+  slides[next].classList.add('active');
+  cur=next;
+  prog.textContent=(cur+1)+' / '+slides.length;
+  setTimeout(function(){busy=false},350);
+}
+prog.textContent='1 / '+slides.length;
+document.addEventListener('keydown',function(e){
+  if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;
+  if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}
+  else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}
+  else if(e.key==='g')go(0);
+  else if(e.key==='G')go(slides.length-1);
+});
+</script>
+<!-- Gallery / Jump Grid -->
+<style>
+._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}
+._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}
+._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}
+._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}
+._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}
+._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}
+._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}
+._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}
+._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}
+._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}
+._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}
+._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}
+._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}
+._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}
+._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}
+._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}
+._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}
+._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}
+._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}
+._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}
+._ts-gallery-info{padding:.8rem 1rem}
+._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}
+@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}
+</style>
+<script>
+(function(){
+  var _slides=document.querySelectorAll('.slide');
+  if(_slides.length<2)return;
+  function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}
+  var oldHint=document.querySelector('.nav-hint');
+  if(oldHint)oldHint.style.display='none';
+  function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}
+  var toolbar=document.createElement('div');
+  toolbar.className='_ts-toolbar';
+  toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';
+  document.body.appendChild(toolbar);
+  var counterBtn=toolbar.querySelector('._ts-counter-btn');
+  var gridBtn=toolbar.querySelector('._ts-grid-btn');
+  var jumpEl=document.createElement('div');
+  jumpEl.className='_ts-jump';
+  var jumpGrid=document.createElement('div');
+  jumpGrid.className='_ts-jump-grid';
+  for(var i=0;i<_slides.length;i++){
+    var item=document.createElement('div');
+    item.className='_ts-jump-item';
+    item.textContent=i+1;
+    item.dataset.idx=i;
+    item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});
+    jumpGrid.appendChild(item);
+  }
+  jumpEl.appendChild(jumpGrid);
+  document.body.appendChild(jumpEl);
+  var jumpOpen=false;
+  function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}
+  function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}
+  function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}
+  counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});
+  var gallery=document.createElement('div');
+  gallery.className='_ts-gallery-overlay';
+  var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';
+  for(var i=0;i<_slides.length;i++){
+    var title=_getTitle(_slides[i])||'Slide '+(i+1);
+    galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>';
+  }
+  galleryHTML+='</div>';
+  gallery.innerHTML=galleryHTML;
+  document.body.appendChild(gallery);
+  var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');
+  for(var i=0;i<previews.length;i++){
+    var idx=parseInt(previews[i].dataset.slideIdx);
+    var clone=_slides[idx].cloneNode(true);
+    clone.style.display='flex';clone.style.position='static';clone.style.animation='none';
+    clone.classList.remove('out-left','out-right');clone.classList.add('active');
+    previews[i].appendChild(clone);
+  }
+  var cards=gallery.querySelectorAll('._ts-gallery-card');
+  for(var i=0;i<cards.length;i++){
+    cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()});
+  }
+  var galleryOpen=false;
+  function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}
+  function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}
+  function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}
+  gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});
+  gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}
+      else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}
+    }
+  },true);
+  document.addEventListener('click',function(e){
+    if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump();
+  });
+  function _tsUpdateUI(){
+    var c=_tsCurIdx();
+    counterBtn.textContent=(c+1)+' / '+_slides.length;
+    if(jumpOpen)highlightJumpCurrent();
+    if(galleryOpen)highlightGalleryCard();
+  }
+  var _lastIdx=_tsCurIdx();
+  setInterval(function(){
+    var c=_tsCurIdx();
+    if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}
+  },200);
+  _tsUpdateUI();
+})();
+</script>
+
 </body></html>

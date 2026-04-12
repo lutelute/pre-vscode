@@ -1,34 +1,739 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Session 11 — デバッグ：print文からの卒業</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}p{font-size:1.05rem;line-height:1.7;color:#bbb}code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}.label.green{background:#7fdbca22;color:#7fdbca}.label.purple{background:#c792ea22;color:#c792ea}.label.orange{background:#f78c6c22;color:#f78c6c}.label.red{background:#ff537022;color:#ff5370}.label.yellow{background:#ffcb6b22;color:#ffcb6b}.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}.cols{display:flex;gap:2rem;width:100%;max-width:1100px}.cols>*{flex:1}.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}.terminal-bar .dot{width:10px;height:10px;border-radius:50%}.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}.terminal-body .prompt{color:#7fdbca}.terminal-body .cmd{color:#e0e0e0}.terminal-body .output{color:#888}.terminal-body .success{color:#27c93f}.terminal-body .error{color:#ff5370}.terminal-body .info{color:#00d2ff}.terminal-body .warn{color:#ffcb6b}.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}ul.feature-list{list-style:none;max-width:700px}ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}ul.feature-list li::before{content:'▸ ';color:#00d2ff}.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}table{border-collapse:collapse;width:100%;max-width:900px}th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}th{color:#00d2ff;font-weight:600;background:#1a1a2e}td{color:#bbb}tr:hover td{background:#1a1a2e55}.gif-container{border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;max-width:700px;width:100%}.gif-container img{width:100%;display:block}.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}.step-progress .sp-item{display:flex;align-items:center;gap:0}.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}.step-progress .sp-arrow.sp-done{color:#00d2ff55}</style></head><body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}
+.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}
+.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}
+h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}
+h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}
+p{font-size:1.05rem;line-height:1.7;color:#bbb}
+code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}
+.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}
+.label.green{background:#7fdbca22;color:#7fdbca}
+.label.purple{background:#c792ea22;color:#c792ea}
+.label.orange{background:#f78c6c22;color:#f78c6c}
+.label.red{background:#ff537022;color:#ff5370}
+.label.yellow{background:#ffcb6b22;color:#ffcb6b}
+.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}
+.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}
+.cols{display:flex;gap:2rem;width:100%;max-width:1100px}
+.cols>*{flex:1}
+.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}
+.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.terminal-bar .dot{width:10px;height:10px;border-radius:50%}
+.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}
+.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}
+.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}
+.terminal-body .prompt{color:#7fdbca}
+.terminal-body .cmd{color:#e0e0e0}
+.terminal-body .output{color:#888}
+.terminal-body .success{color:#27c93f}
+.terminal-body .error{color:#ff5370}
+.terminal-body .info{color:#00d2ff}
+.terminal-body .warn{color:#ffcb6b}
+.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}
+.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}
+.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}
+ul.feature-list{list-style:none;max-width:700px}
+ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}
+ul.feature-list li::before{content:'▸ ';color:#00d2ff}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}
+table{border-collapse:collapse;width:100%;max-width:900px}
+th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}
+th{color:#00d2ff;font-weight:600;background:#1a1a2e}
+td{color:#bbb}
+tr:hover td{background:#1a1a2e55}
+.gif-container{border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;max-width:700px;width:100%}
+.gif-container img{width:100%;display:block}
+.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}
+.step-progress .sp-item{display:flex;align-items:center;gap:0}
+.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}
+.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}
+.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}
+.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}
+.step-progress .sp-arrow.sp-done{color:#00d2ff55}
+.vscode-ui{background:#1e1e2e;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}
+.vscode-titlebar{background:#181825;padding:6px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #2a2a4a}
+.vscode-titlebar .dot{width:10px;height:10px;border-radius:50%}
+.vscode-titlebar .dot.r{background:#ff5f56}.vscode-titlebar .dot.y{background:#ffbd2e}.vscode-titlebar .dot.g{background:#27c93f}
+.vscode-titlebar span{color:#666;font-size:.8rem;margin-left:8px}
+.vscode-body{padding:1rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.85rem;line-height:1.7}
+.line-num{color:#555;display:inline-block;width:2.5rem;text-align:right;margin-right:1rem;user-select:none}
+.bp-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.5rem;vertical-align:middle}
+.bp-red{background:#ff5370;box-shadow:0 0 6px rgba(255,83,112,.5)}
+.bp-yellow{background:#ffcb6b;box-shadow:0 0 6px rgba(255,203,107,.5)}
+.bp-blue{background:#00d2ff;box-shadow:0 0 6px rgba(0,210,255,.5)}
+.highlight-line{background:rgba(255,203,107,.1);border-left:2px solid #ffcb6b;margin:-2px -1.5rem;padding:2px 1.5rem}
+</style></head><body>
 
+<!-- Slide 1: Title -->
+<div class="slide active"><div style="text-align:center">
+<p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">&larr; トップに戻る</a></p>
+<p class="label">SESSION 11</p>
+<h1 style="font-size:2.8rem;margin-bottom:1rem">デバッグ：print文からの卒業</h1>
+<p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">VS Code デバッガで効率的にバグを見つける</p>
+<span class="ai-badge">90分 / 全15回の第11回</span>
+<p style="margin-top:3rem;color:#555;font-size:.9rem">&rarr; / Space で次へ</p>
+</div></div>
 
-<div class="slide active"><div style="text-align:center"><p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p><p class="label">SESSION 11</p><h1 style="font-size:2.8rem;margin-bottom:1rem">デバッグ</h1><p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">print文からの卒業</p><span class="ai-badge">90分 / 全15回の第11回</span><p style="margin-top:3rem;color:#555;font-size:.9rem">→ / Space で次へ</p></div></div>
+<!-- Slide 2: Objectives -->
+<div class="slide"><h2>今日のゴール</h2>
+<div style="max-width:700px;width:100%">
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. print() の限界を理解し、デバッガに切り替えられる</h3><p style="font-size:.95rem">なぜデバッガを使うべきかを知る</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. ブレークポイント・ステップ実行をマスター</h3><p style="font-size:.95rem">F5 / F10 / F11 を自在に使う</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. 変数パネル・Watch・Call Stack を活用</h3><p style="font-size:.95rem">デバッグ中に何が起きているか完全把握</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b"><h3 style="color:#ffcb6b">4. launch.json と条件付きBP を設定</h3><p style="font-size:.95rem">高度なデバッグ手法を身につける</p></div>
+</div></div>
 
-<div class="slide"><h2>今日のゴール</h2><div style="max-width:700px;width:100%"><div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. print() vs デバッガの違いを理解</h3><p style="font-size:.95rem">なぜデバッガを使うべきか</p></div><div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. ブレークポイントとステップ実行</h3><p style="font-size:.95rem">基本的なデバッグ操作をマスター</p></div><div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. launch.json と条件付きブレークポイント</h3><p style="font-size:.95rem">高度なデバッグ設定</p></div></div></div>
+<!-- Slide 3: print debugging - the problem -->
+<div class="slide"><h2>print() デバッグの現実</h2>
+<div class="terminal" style="max-width:800px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>buggy_code.py</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.85rem">
+<div><span class="cmd">def process_data(items):</span></div>
+<div><span class="warn">&nbsp;&nbsp;&nbsp;&nbsp;print("items =", items)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 1個目</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;for i, item in enumerate(items):</span></div>
+<div><span class="warn">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"i={i}, item={item}")&nbsp;&nbsp;# 2個目</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result = transform(item)</span></div>
+<div><span class="warn">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"result={result}")&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 3個目</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if validate(result):</span></div>
+<div><span class="warn">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("validated!")&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 4個目</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save(result)</span></div>
+<div><span class="warn">&nbsp;&nbsp;&nbsp;&nbsp;print("done!")&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 5個目</span></div>
+</div></div>
+<p style="margin-top:1rem;color:#ff5370;font-size:1rem;text-align:center">print文が5個... デバッグ後に消し忘れる未来が見える</p>
+</div>
 
-<div class="slide"><h2>print() vs デバッガ</h2><div class="cols" style="max-width:900px"><div class="card" style="border-color:#ff537044"><p class="label red">print() デバッグ</p><ul class="feature-list"><li>print文を書く → 実行 → 確認 → 削除</li><li>毎回コードを変更する必要</li><li>深いネストの変数が見づらい</li><li>実行の流れが見えない</li><li>消し忘れて本番に残る...</li></ul></div><div class="card" style="border-color:#7fdbca44"><p class="label green">デバッガ</p><ul class="feature-list"><li>コード変更不要</li><li>任意の場所で一時停止</li><li>全変数の値を一覧表示</li><li>1行ずつ実行を追跡</li><li>条件付きで止められる</li></ul></div></div></div>
+<!-- Slide 4: print vs debugger comparison table -->
+<div class="slide"><h2>print() vs デバッガ 徹底比較</h2>
+<table style="max-width:900px">
+<tr><th style="width:25%">観点</th><th style="width:37%"><span style="color:#ff5370">print() デバッグ</span></th><th style="width:37%"><span style="color:#7fdbca">VS Code デバッガ</span></th></tr>
+<tr><td>コード変更</td><td style="color:#ff5370">毎回 print を追加・削除</td><td style="color:#7fdbca">変更不要</td></tr>
+<tr><td>変数確認</td><td style="color:#ff5370">見たい変数を1つずつ書く</td><td style="color:#7fdbca">全変数を自動表示</td></tr>
+<tr><td>実行制御</td><td style="color:#ff5370">できない（全部実行される）</td><td style="color:#7fdbca">任意の行で一時停止</td></tr>
+<tr><td>条件分岐</td><td style="color:#ff5370">if文で囲む必要あり</td><td style="color:#7fdbca">条件付きBPで簡単</td></tr>
+<tr><td>ネスト</td><td style="color:#ff5370">深い構造は表示しづらい</td><td style="color:#7fdbca">ツリー表示で展開</td></tr>
+<tr><td>本番リスク</td><td style="color:#ff5370">消し忘れで本番に残る</td><td style="color:#7fdbca">リスクゼロ</td></tr>
+<tr><td>学習コスト</td><td style="color:#7fdbca">ほぼゼロ</td><td style="color:#ffcb6b">少しだけ必要</td></tr>
+</table></div>
 
-<div class="slide"><h2>GIF デモ</h2><div class="gif-container"><img src="../assets/debugger.gif" alt="Debugger Demo" style="max-height:50vh;object-fit:contain;background:#1e1e1e"></div><p style="margin-top:1rem;color:#888;font-size:.9rem">ブレークポイントで停止 → 変数を確認 → ステップ実行</p></div>
+<!-- Slide 5: print debugging - visual flow -->
+<div class="slide"><h2>print() デバッグの問題フロー</h2>
+<div class="flow" style="margin-bottom:2rem">
+<div class="flow-box" style="border-color:#ff537055"><span style="color:#ff5370;font-size:.85rem">バグ発見</span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box" style="border-color:#ffcb6b55"><span style="color:#ffcb6b;font-size:.85rem">print追加</span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box" style="border-color:#c792ea55"><span style="color:#c792ea;font-size:.85rem">実行</span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box" style="border-color:#00d2ff55"><span style="color:#00d2ff;font-size:.85rem">出力確認</span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box" style="border-color:#ff537055"><span style="color:#ff5370;font-size:.85rem">情報不足?</span></div>
+</div>
+<div class="flow" style="margin-bottom:1.5rem">
+<div class="flow-arrow" style="transform:rotate(180deg)">&larr;</div>
+<div style="color:#ff5370;font-size:1.1rem;padding:0 1rem">繰り返し...</div>
+<div class="flow-arrow">&rarr;</div>
+</div>
+<div class="card" style="max-width:600px;border-left:3px solid #ff5370;text-align:center">
+<p style="color:#ff5370;font-size:1.1rem;font-weight:600">1回のバグ修正に print を何度も書き直す</p>
+<p style="font-size:.9rem;margin-top:.5rem">しかも最後に全部消さないといけない</p>
+</div></div>
 
-<div class="slide"><h2>ブレークポイント</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem"><h3>設定方法</h3><p style="font-size:.95rem">行番号の左側をクリック → 赤い丸が表示される = ブレークポイント<br>プログラムがこの行に到達すると一時停止する。</p></div><div class="card"><h3>種類</h3><table style="max-width:100%"><tr><th>種類</th><th>設定方法</th><th>説明</th></tr><tr><td style="color:#ff5370">通常</td><td>行番号クリック</td><td>その行で必ず停止</td></tr><tr><td style="color:#ffcb6b">条件付き</td><td>右クリック → 条件</td><td>条件が true の時だけ停止</td></tr><tr><td style="color:#00d2ff">Log Point</td><td>右クリック → Log</td><td>停止せずにログ出力</td></tr><tr><td style="color:#c792ea">ヒットカウント</td><td>右クリック → Hit</td><td>N回目の到達で停止</td></tr></table></div></div></div>
+<!-- Slide 6: Debugger overview -->
+<div class="slide"><h2>VS Code デバッガの全体像</h2>
+<div class="flow" style="margin-bottom:2rem">
+<div class="flow-box active-box"><span style="font-size:.85rem">ブレークポイント<br><span style="font-size:.75rem;color:#888">停止位置を指定</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">F5 で起動<br><span style="font-size:.75rem;color:#888">デバッグ開始</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">一時停止<br><span style="font-size:.75rem;color:#888">変数を確認</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">ステップ実行<br><span style="font-size:.75rem;color:#888">1行ずつ追跡</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">バグ特定<br><span style="font-size:.75rem;color:#888">原因を発見</span></span></div>
+</div>
+<div class="card" style="max-width:700px;text-align:center">
+<p style="font-size:1.1rem;color:#00d2ff">コードに一切触れずに全ての情報を取得できる</p>
+</div></div>
 
-<div class="slide"><h2>デバッグ操作</h2><table style="max-width:850px"><tr><th>操作</th><th>アイコン</th><th>ショートカット</th><th>説明</th></tr><tr><td>続行</td><td style="color:#7fdbca">▶</td><td><code>F5</code></td><td>次のブレークポイントまで実行</td></tr><tr><td>ステップオーバー</td><td style="color:#00d2ff">⤵</td><td><code>F10</code></td><td>次の行へ（関数の中に入らない）</td></tr><tr><td>ステップイン</td><td style="color:#c792ea">↓</td><td><code>F11</code></td><td>関数の中に入る</td></tr><tr><td>ステップアウト</td><td style="color:#f78c6c">↑</td><td><code>Shift+F11</code></td><td>現在の関数から出る</td></tr><tr><td>再起動</td><td style="color:#ffcb6b">↻</td><td><code>Cmd+Shift+F5</code></td><td>最初からやり直し</td></tr><tr><td>停止</td><td style="color:#ff5370">■</td><td><code>Shift+F5</code></td><td>デバッグ終了</td></tr></table></div>
+<!-- Slide 7: GIF Demo -->
+<div class="slide"><h2>デモ：デバッガの動作</h2>
+<div class="gif-container"><img src="../assets/debugger.gif" alt="Debugger Demo" style="max-height:50vh;object-fit:contain;background:#1e1e1e"></div>
+<p style="margin-top:1rem;color:#888;font-size:.95rem">ブレークポイントで停止 &rarr; 変数を確認 &rarr; ステップ実行 &rarr; バグ特定</p></div>
 
-<div class="slide"><h2>デバッグパネル</h2><div style="max-width:800px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1rem"><div class="card"><h3 style="color:#00d2ff">Variables</h3><p style="font-size:.9rem">現在のスコープの全変数と値を表示。<br>値を直接編集することも可能。</p></div><div class="card"><h3 style="color:#7fdbca">Watch</h3><p style="font-size:.9rem">監視したい式を登録。<br>例: <code>len(data)</code>, <code>x > 10</code></p></div><div class="card"><h3 style="color:#c792ea">Call Stack</h3><p style="font-size:.9rem">関数の呼び出し階層を表示。<br>どこから呼ばれたか追跡。</p></div><div class="card"><h3 style="color:#f78c6c">Debug Console</h3><p style="font-size:.9rem">停止中に任意のコードを実行。<br>変数の値を確認・変更。</p></div></div></div>
+<!-- Slide 8: How to start debugging -->
+<div class="slide"><h2>デバッグの始め方</h2>
+<div class="step-progress">
+<div class="sp-item"><span class="sp-node sp-done">1. Python ファイルを開く</span></div>
+<div class="sp-arrow sp-done">&rarr;</div>
+<div class="sp-item"><span class="sp-node sp-done">2. ブレークポイント設定</span></div>
+<div class="sp-arrow sp-done">&rarr;</div>
+<div class="sp-item"><span class="sp-node sp-active">3. F5 で起動</span></div>
+<div class="sp-arrow">&rarr;</div>
+<div class="sp-item"><span class="sp-node">4. デバッグ操作</span></div>
+</div>
+<div class="cols" style="max-width:900px">
+<div class="card"><h3 style="color:#00d2ff">方法1: F5 キー</h3>
+<p style="font-size:.9rem">最もよく使う方法。初回は「Python Debugger: Debug Python File」を選択。<br><br>
+<code>F5</code> = デバッグ開始/続行<br>
+<code>Ctrl+F5</code> = デバッグなしで実行</p>
+</div>
+<div class="card"><h3 style="color:#7fdbca">方法2: サイドバー</h3>
+<p style="font-size:.9rem">左サイドバーの<span style="color:#00d2ff">虫アイコン</span>（Run and Debug）をクリック。<br><br>
+「Run and Debug」ボタン、または「create a launch.json file」リンクで起動。</p>
+</div>
+<div class="card"><h3 style="color:#c792ea">方法3: 右クリック</h3>
+<p style="font-size:.9rem">エディタ上で右クリック &rarr;「Run Python」&rarr;「Debug Python File」。<br><br>
+launch.json 不要で手軽に始められる。</p>
+</div></div></div>
 
-<div class="slide"><h2>launch.json</h2><div style="max-width:800px;width:100%"><div class="terminal"><div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>.vscode/launch.json</span></div><div class="terminal-body" style="min-height:auto"><div><span class="cmd">{</span></div><div><span class="cmd">&nbsp;&nbsp;"version": "0.2.0",</span></div><div><span class="cmd">&nbsp;&nbsp;"configurations": [</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;{</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "Python: Current File",</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"type": "debugpy",</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"request": "launch",</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"program": "${file}",</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"console": "integratedTerminal",</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"args": ["--verbose"]</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;}</span></div><div><span class="cmd">&nbsp;&nbsp;]</span></div><div><span class="cmd">}</span></div></div></div></div></div>
+<!-- Slide 9: Breakpoint types -->
+<div class="slide"><h2>ブレークポイントの種類</h2>
+<div class="vscode-ui" style="max-width:850px">
+<div class="vscode-titlebar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>example.py — VS Code</span></div>
+<div class="vscode-body">
+<div><span class="bp-dot bp-red"></span><span class="line-num">1</span><span class="cmd">def calculate(data):</span></div>
+<div><span style="display:inline-block;width:10px;margin-right:.5rem"></span><span class="line-num">2</span><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;total = 0</span></div>
+<div><span style="display:inline-block;width:10px;margin-right:.5rem"></span><span class="line-num">3</span><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;for i, val in enumerate(data):</span></div>
+<div><span class="bp-dot bp-yellow"></span><span class="line-num">4</span><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += val * weights[i]</span><span style="color:#ffcb6b;font-size:.75rem;margin-left:1rem">// 条件: i == 50</span></div>
+<div><span class="bp-dot bp-blue"></span><span class="line-num">5</span><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ratio = total / len(data)</span><span style="color:#00d2ff;font-size:.75rem;margin-left:1rem">// Log: "ratio={ratio:.4f}"</span></div>
+<div><span style="display:inline-block;width:10px;margin-right:.5rem"></span><span class="line-num">6</span><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;return total</span></div>
+</div></div>
+<div style="display:flex;gap:1rem;margin-top:1.2rem;max-width:850px;width:100%">
+<div class="card" style="flex:1;text-align:center;border-top:3px solid #ff5370"><span class="bp-dot bp-red"></span><p style="font-size:.85rem"><strong style="color:#ff5370">通常</strong><br>行番号の左をクリック<br>その行で必ず停止</p></div>
+<div class="card" style="flex:1;text-align:center;border-top:3px solid #ffcb6b"><span class="bp-dot bp-yellow"></span><p style="font-size:.85rem"><strong style="color:#ffcb6b">条件付き</strong><br>右クリック &rarr; 条件入力<br>条件trueの時だけ停止</p></div>
+<div class="card" style="flex:1;text-align:center;border-top:3px solid #00d2ff"><span class="bp-dot bp-blue"></span><p style="font-size:.85rem"><strong style="color:#00d2ff">Log Point</strong><br>右クリック &rarr; Log Message<br>停止せずにログ出力</p></div>
+</div></div>
 
-<div class="slide"><h2>条件付きブレークポイント</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem"><h3>使い方</h3><p style="font-size:.95rem">行番号を右クリック → "Add Conditional Breakpoint" → 条件式を入力</p><div style="margin-top:.8rem;font-family:'Fira Code',monospace;font-size:.85rem;background:#0a0a15;padding:.8rem;border-radius:6px"><div style="color:#888"># 例: i が 100 の時だけ停止</div><div style="color:#ffcb6b">条件: i == 100</div><div style="color:#888"></div><div style="color:#888"># 例: data がNoneの時だけ停止</div><div style="color:#ffcb6b">条件: data is None</div></div></div><div class="card"><h3>Log Point（停止しないブレークポイント）</h3><p style="font-size:.9rem">print文の代わりに使える。コードを変更せずにログ出力。<br>書式: <code>Processing item {item.name}, count={len(items)}</code></p></div></div></div>
+<!-- Slide 10: Debug Toolbar -->
+<div class="slide"><h2>デバッグツールバー</h2>
+<div style="max-width:800px;width:100%;text-align:center;margin-bottom:1.5rem">
+<div style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:30px;display:inline-flex;gap:.8rem;padding:.8rem 1.5rem;margin-bottom:1rem">
+<span style="font-size:1.5rem;color:#7fdbca;cursor:default" title="Continue">▶</span>
+<span style="font-size:1.5rem;color:#00d2ff;cursor:default" title="Step Over">⤵</span>
+<span style="font-size:1.5rem;color:#c792ea;cursor:default" title="Step In">↓</span>
+<span style="font-size:1.5rem;color:#f78c6c;cursor:default" title="Step Out">↑</span>
+<span style="font-size:1.5rem;color:#ffcb6b;cursor:default" title="Restart">↻</span>
+<span style="font-size:1.5rem;color:#ff5370;cursor:default" title="Stop">■</span>
+</div>
+<p style="color:#888;font-size:.85rem">デバッグ中にエディタ上部に表示されるフローティングツールバー</p>
+</div>
+<table style="max-width:800px">
+<tr><th>アイコン</th><th>操作</th><th>キー (Mac)</th><th>キー (Win/Linux)</th><th>説明</th></tr>
+<tr><td style="font-size:1.2rem;color:#7fdbca">▶</td><td>Continue</td><td><code>F5</code></td><td><code>F5</code></td><td>次のBPまで実行</td></tr>
+<tr><td style="font-size:1.2rem;color:#00d2ff">⤵</td><td>Step Over</td><td><code>F10</code></td><td><code>F10</code></td><td>次の行へ（関数に入らない）</td></tr>
+<tr><td style="font-size:1.2rem;color:#c792ea">↓</td><td>Step Into</td><td><code>F11</code></td><td><code>F11</code></td><td>関数の中に入る</td></tr>
+<tr><td style="font-size:1.2rem;color:#f78c6c">↑</td><td>Step Out</td><td><code>Shift+F11</code></td><td><code>Shift+F11</code></td><td>関数から出る</td></tr>
+<tr><td style="font-size:1.2rem;color:#ffcb6b">↻</td><td>Restart</td><td><code>Cmd+Shift+F5</code></td><td><code>Ctrl+Shift+F5</code></td><td>最初からやり直し</td></tr>
+<tr><td style="font-size:1.2rem;color:#ff5370">■</td><td>Stop</td><td><code>Shift+F5</code></td><td><code>Shift+F5</code></td><td>デバッグ終了</td></tr>
+</table></div>
 
-<div class="slide"><h2>練習タイム</h2><p class="label green">HANDS-ON</p><div style="max-width:700px;width:100%"><div class="card"><h3>デバッグ演習（20分）</h3><ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem"><li>以下のバグ入りコードを作成:<br><code style="font-size:.85rem">def sum_list(lst):<br>&nbsp;&nbsp;total = 0<br>&nbsp;&nbsp;for i in range(len(lst) + 1):<br>&nbsp;&nbsp;&nbsp;&nbsp;total += lst[i]<br>&nbsp;&nbsp;return total</code></li><li>ブレークポイントを設定して F5 でデバッグ開始</li><li>F10 でステップ実行しながら変数 i を監視</li><li>バグの原因を特定して修正</li><li>条件付きブレークポイント（<code>i == len(lst)</code>）を試す</li></ol></div></div></div>
+<!-- Slide 11: Step Over vs Step Into vs Step Out -->
+<div class="slide"><h2>Step Over / Step Into / Step Out の違い</h2>
+<div class="cols" style="max-width:950px">
+<div class="card" style="border-top:3px solid #00d2ff"><h3 style="color:#00d2ff">Step Over (F10)</h3>
+<div class="terminal" style="max-width:100%;margin-top:.5rem"><div class="terminal-body" style="min-height:auto;font-size:.8rem">
+<div><span class="info">&rarr;</span><span class="cmd"> result = calc(x)</span></div>
+<div><span class="output">&nbsp;&nbsp;&nbsp;# calc() の中身は見ない</span></div>
+<div><span class="info">&rarr;</span><span class="cmd"> print(result)</span></div>
+</div></div>
+<p style="font-size:.85rem;margin-top:.5rem">関数をスキップして次の行へ。中身を見る必要がない時に使う。</p>
+</div>
+<div class="card" style="border-top:3px solid #c792ea"><h3 style="color:#c792ea">Step Into (F11)</h3>
+<div class="terminal" style="max-width:100%;margin-top:.5rem"><div class="terminal-body" style="min-height:auto;font-size:.8rem">
+<div><span class="info">&rarr;</span><span class="cmd"> result = calc(x)</span></div>
+<div><span class="output">&nbsp;&nbsp;&nbsp;# calc() の中に入る!</span></div>
+<div><span class="info">&nbsp;&nbsp;&rarr;</span><span class="cmd"> def calc(x):</span></div>
+<div><span class="info">&nbsp;&nbsp;&rarr;</span><span class="cmd">&nbsp;&nbsp; return x * 2</span></div>
+</div></div>
+<p style="font-size:.85rem;margin-top:.5rem">関数の中に飛び込む。バグが関数内にある時に使う。</p>
+</div>
+<div class="card" style="border-top:3px solid #f78c6c"><h3 style="color:#f78c6c">Step Out (Shift+F11)</h3>
+<div class="terminal" style="max-width:100%;margin-top:.5rem"><div class="terminal-body" style="min-height:auto;font-size:.8rem">
+<div><span class="output">&nbsp;&nbsp;&nbsp;# 今、calc() の中にいる</span></div>
+<div><span class="info">&nbsp;&nbsp;&rarr;</span><span class="cmd">&nbsp;&nbsp; return x * 2</span></div>
+<div><span class="output">&nbsp;&nbsp;&nbsp;# 呼び出し元に戻る</span></div>
+<div><span class="info">&rarr;</span><span class="cmd"> print(result)</span></div>
+</div></div>
+<p style="font-size:.85rem;margin-top:.5rem">今いる関数を抜ける。間違ってStep Inした時のリカバリ。</p>
+</div></div></div>
 
-<div class="slide"><h2>まとめ</h2><div style="max-width:700px;width:100%"><div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">デバッガはprint文の上位互換</h3><p style="font-size:.9rem">コード変更不要、全変数表示、ステップ実行。</p></div><div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">F5, F10, F11 を覚える</h3><p style="font-size:.9rem">開始(F5)、ステップオーバー(F10)、ステップイン(F11)。</p></div><div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">条件付きBP と Log Point</h3><p style="font-size:.9rem">大量のループでも効率的にデバッグ。print文要らず。</p></div></div></div>
+<!-- Slide 12: Variables Panel -->
+<div class="slide"><h2>Variables パネル</h2>
+<div class="cols" style="max-width:950px">
+<div class="vscode-ui" style="max-width:100%;flex:1.2">
+<div class="vscode-titlebar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>VARIABLES</span></div>
+<div class="vscode-body" style="font-size:.82rem">
+<div style="color:#00d2ff;margin-bottom:.3rem">&#9660; Locals</div>
+<div style="padding-left:1rem"><span style="color:#7fdbca">data</span> <span style="color:#888">= [1, 2, 3, 4, 5]</span></div>
+<div style="padding-left:1rem"><span style="color:#7fdbca">total</span> <span style="color:#888">= 6</span></div>
+<div style="padding-left:1rem"><span style="color:#7fdbca">i</span> <span style="color:#ffcb6b">= 2</span></div>
+<div style="padding-left:1rem"><span style="color:#7fdbca">result</span> <span style="color:#888">= None</span></div>
+<div style="color:#00d2ff;margin-top:.5rem;margin-bottom:.3rem">&#9660; Globals</div>
+<div style="padding-left:1rem"><span style="color:#7fdbca">__name__</span> <span style="color:#888">= "__main__"</span></div>
+<div style="padding-left:1rem"><span style="color:#7fdbca">CONFIG</span> <span style="color:#888">= {"debug": True}</span></div>
+</div></div>
+<div style="flex:1">
+<div class="card" style="margin-bottom:1rem"><h3 style="color:#00d2ff">自動表示</h3><p style="font-size:.9rem">現在のスコープの全変数が自動で表示される。print不要!</p></div>
+<div class="card" style="margin-bottom:1rem"><h3 style="color:#7fdbca">ツリー展開</h3><p style="font-size:.9rem">リスト・辞書・オブジェクトは<span style="color:#00d2ff">&#9660;</span>で中身を展開して確認できる。</p></div>
+<div class="card"><h3 style="color:#ffcb6b">値の編集</h3><p style="font-size:.9rem">変数をダブルクリックして値を直接編集。「もしこの値だったら?」をその場で試せる。</p></div>
+</div></div></div>
 
-<div class="slide"><h2>次回予告</h2><div style="text-align:center;max-width:600px"><p class="label purple">SESSION 12</p><h1 style="font-size:2rem;margin-bottom:1rem">設定・カスタマイズ：自分だけの環境を作る</h1><p style="font-size:1.1rem;color:#888;margin-bottom:2rem">settings.json、テーマ、フォント、キーバインドの最適化。</p></div></div>
+<!-- Slide 13: Watch Expressions -->
+<div class="slide"><h2>Watch 式</h2>
+<div class="cols" style="max-width:900px">
+<div class="vscode-ui" style="max-width:100%">
+<div class="vscode-titlebar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>WATCH</span></div>
+<div class="vscode-body" style="font-size:.85rem">
+<div><span style="color:#7fdbca">len(data)</span> <span style="color:#888">= 5</span></div>
+<div><span style="color:#7fdbca">total / len(data)</span> <span style="color:#888">= 1.2</span></div>
+<div><span style="color:#7fdbca">i > 3</span> <span style="color:#ffcb6b">= False</span></div>
+<div><span style="color:#7fdbca">type(result)</span> <span style="color:#888">= &lt;class 'NoneType'&gt;</span></div>
+<div><span style="color:#7fdbca">data[i]</span> <span style="color:#888">= 3</span></div>
+</div></div>
+<div class="card"><h3>使い方</h3>
+<p style="font-size:.9rem">Watch パネルの<span style="color:#00d2ff"> + </span>ボタンで式を追加。</p>
+<ul class="feature-list" style="margin-top:.5rem">
+<li>変数名だけでなく<strong>任意の式</strong>を登録可能</li>
+<li>ステップ実行のたびに<strong>自動で再評価</strong></li>
+<li>条件式（<code>x > 10</code>）で真偽値を監視</li>
+<li>関数呼び出し（<code>len(data)</code>）もOK</li>
+<li>複数のWatch式を同時に監視</li>
+</ul></div></div></div>
 
+<!-- Slide 14: Call Stack -->
+<div class="slide"><h2>Call Stack（呼び出し履歴）</h2>
+<div class="cols" style="max-width:900px">
+<div class="vscode-ui" style="max-width:100%">
+<div class="vscode-titlebar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>CALL STACK</span></div>
+<div class="vscode-body" style="font-size:.85rem">
+<div class="highlight-line"><span style="color:#ffcb6b">&#9654;</span> <span style="color:#7fdbca">validate</span> <span style="color:#888">validator.py:23</span></div>
+<div><span style="color:#555">&nbsp;&nbsp;</span> <span style="color:#00d2ff">process_item</span> <span style="color:#888">processor.py:45</span></div>
+<div><span style="color:#555">&nbsp;&nbsp;</span> <span style="color:#c792ea">handle_batch</span> <span style="color:#888">batch.py:12</span></div>
+<div><span style="color:#555">&nbsp;&nbsp;</span> <span style="color:#e0e0e0">main</span> <span style="color:#888">app.py:8</span></div>
+<div><span style="color:#555">&nbsp;&nbsp;</span> <span style="color:#888">&lt;module&gt;</span> <span style="color:#888">app.py:67</span></div>
+</div></div>
+<div>
+<div class="card" style="margin-bottom:1rem"><h3 style="color:#c792ea">これが Call Stack</h3>
+<p style="font-size:.9rem">「今どの関数の中にいて、どこから呼ばれたか」を表示。上が現在地、下に行くほど呼び出し元。</p></div>
+<div class="card"><h3 style="color:#7fdbca">使いどころ</h3>
+<ul class="feature-list">
+<li>バグの<strong>原因箇所</strong>ではなく<strong>呼び出し元</strong>が怪しい時</li>
+<li>スタック内の任意のフレームをクリックしてジャンプ</li>
+<li>各フレームでの変数の状態を確認可能</li>
+</ul></div>
+</div></div></div>
 
-<div class="progress"></div><div class="nav-hint">← → / j k / Space</div>
+<!-- Slide 15: Debug Console -->
+<div class="slide"><h2>Debug Console</h2>
+<div class="terminal" style="max-width:800px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>DEBUG CONSOLE</span></div>
+<div class="terminal-body" style="min-height:auto">
+<div><span class="prompt">&gt;</span> <span class="cmd">data</span></div>
+<div><span class="output">[1, 2, 3, 4, 5]</span></div>
+<div><span class="prompt">&gt;</span> <span class="cmd">sum(data)</span></div>
+<div><span class="output">15</span></div>
+<div><span class="prompt">&gt;</span> <span class="cmd">data[i]</span></div>
+<div><span class="output">3</span></div>
+<div><span class="prompt">&gt;</span> <span class="cmd">[x**2 for x in data]</span></div>
+<div><span class="output">[1, 4, 9, 16, 25]</span></div>
+<div><span class="prompt">&gt;</span> <span class="cmd">total = 999</span> <span class="warn">&larr; 値を変更!</span></div>
+</div></div>
+<div class="card" style="max-width:800px;margin-top:1rem"><h3>Debug Console でできること</h3>
+<ul class="feature-list">
+<li><strong>変数の値を確認</strong>: 変数名を入力するだけ</li>
+<li><strong>任意の式を評価</strong>: Python式をその場で実行</li>
+<li><strong>値を変更</strong>: 変数に新しい値を代入して「もしも」をテスト</li>
+<li><strong>関数を呼び出し</strong>: メソッドを直接実行して結果確認</li>
+</ul></div></div>
+
+<!-- Slide 16: Debug sidebar overview -->
+<div class="slide"><h2>デバッグサイドバー全体像</h2>
+<div style="max-width:900px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+<div class="card" style="border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">&#9312; Variables</h3><p style="font-size:.9rem">ローカル変数・グローバル変数を自動表示。値をダブルクリックで編集可能。</p></div>
+<div class="card" style="border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">&#9313; Watch</h3><p style="font-size:.9rem">監視したい式を登録。ステップごとに自動評価。+ ボタンで追加。</p></div>
+<div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">&#9314; Call Stack</h3><p style="font-size:.9rem">関数の呼び出し階層。クリックでフレーム間をジャンプ。</p></div>
+<div class="card" style="border-left:3px solid #f78c6c"><h3 style="color:#f78c6c">&#9315; Breakpoints</h3><p style="font-size:.9rem">全ブレークポイント一覧。チェックボックスで有効/無効を切替。</p></div>
+</div>
+<div class="card" style="margin-top:1rem;max-width:900px;text-align:center">
+<p style="color:#00d2ff;font-size:1rem">サイドバーを開く: <code>Cmd+Shift+D</code>（Mac）/ <code>Ctrl+Shift+D</code>（Win/Linux）</p>
+</div></div>
+
+<!-- Slide 17: launch.json basics -->
+<div class="slide"><h2>launch.json — デバッグ設定ファイル</h2>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>.vscode/launch.json</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"version"</span>: <span style="color:#c792ea">"0.2.0"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"configurations"</span>: [</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"name"</span>: <span style="color:#c792ea">"Python: Current File"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"type"</span>: <span style="color:#c792ea">"debugpy"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"request"</span>: <span style="color:#c792ea">"launch"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"program"</span>: <span style="color:#c792ea">"${file}"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"console"</span>: <span style="color:#c792ea">"integratedTerminal"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"justMyCode"</span>: <span style="color:#ffcb6b">true</span></span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;}</span></div>
+<div><span class="cmd">&nbsp;&nbsp;]</span></div>
+<div><span class="cmd">}</span></div>
+</div></div>
+<div class="card" style="max-width:850px;margin-top:1rem"><p style="font-size:.9rem">
+<strong style="color:#00d2ff">作成方法</strong>: Run and Debug サイドバー &rarr; 「create a launch.json file」をクリック &rarr; 「Python Debugger」を選択<br>
+<strong style="color:#7fdbca">${file}</strong> は「今開いているファイル」を意味する変数
+</p></div></div>
+
+<!-- Slide 18: launch.json configurations -->
+<div class="slide"><h2>launch.json の便利な設定例</h2>
+<div class="cols" style="max-width:950px">
+<div class="card"><h3 style="color:#00d2ff">引数付き実行</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.6rem;border-radius:6px;margin-top:.5rem">
+<span style="color:#ff5370">"args"</span>: [<span style="color:#c792ea">"--input"</span>, <span style="color:#c792ea">"data.csv"</span>,<br>&nbsp;&nbsp;<span style="color:#c792ea">"--output"</span>, <span style="color:#c792ea">"result.json"</span>]
+</div></div>
+<div class="card"><h3 style="color:#7fdbca">環境変数</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.6rem;border-radius:6px;margin-top:.5rem">
+<span style="color:#ff5370">"env"</span>: {<br>&nbsp;&nbsp;<span style="color:#ff5370">"DEBUG"</span>: <span style="color:#c792ea">"1"</span>,<br>&nbsp;&nbsp;<span style="color:#ff5370">"API_KEY"</span>: <span style="color:#c792ea">"test123"</span><br>}
+</div></div>
+<div class="card"><h3 style="color:#c792ea">特定ファイル実行</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.6rem;border-radius:6px;margin-top:.5rem">
+<span style="color:#ff5370">"program"</span>:<br>&nbsp;&nbsp;<span style="color:#c792ea">"${workspaceFolder}/main.py"</span>
+</div></div></div>
+<div class="card" style="margin-top:1rem;max-width:950px">
+<h3 style="color:#ffcb6b">Flask デバッグ設定</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.8rem;border-radius:6px;margin-top:.5rem">
+{<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"name"</span>: <span style="color:#c792ea">"Flask"</span>,<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"type"</span>: <span style="color:#c792ea">"debugpy"</span>,<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"request"</span>: <span style="color:#c792ea">"launch"</span>,<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"module"</span>: <span style="color:#c792ea">"flask"</span>,<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"env"</span>: { <span style="color:#ff5370">"FLASK_APP"</span>: <span style="color:#c792ea">"app.py"</span> },<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"args"</span>: [<span style="color:#c792ea">"run"</span>, <span style="color:#c792ea">"--no-debugger"</span>],<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"jinja"</span>: <span style="color:#ffcb6b">true</span><br>
+}
+</div></div></div>
+
+<!-- Slide 19: Conditional Breakpoints deep dive -->
+<div class="slide"><h2>条件付きブレークポイント 詳解</h2>
+<div style="max-width:850px;width:100%">
+<div class="card" style="margin-bottom:1rem">
+<h3 style="color:#ffcb6b">設定方法</h3>
+<p style="font-size:.95rem">行番号を<strong>右クリック</strong> &rarr; 「Add Conditional Breakpoint...」&rarr; 条件式を入力</p>
+<p style="font-size:.85rem;color:#888;margin-top:.3rem">既存のBPを右クリック &rarr; 「Edit Breakpoint...」でも変更可能</p>
+</div>
+<table style="max-width:100%">
+<tr><th>条件式の例</th><th>説明</th><th>使いどころ</th></tr>
+<tr><td><code>i == 100</code></td><td>100回目のループで停止</td><td>大量ループの特定回</td></tr>
+<tr><td><code>data is None</code></td><td>Noneの時だけ停止</td><td>NoneType エラーの調査</td></tr>
+<tr><td><code>name == "admin"</code></td><td>特定ユーザーで停止</td><td>ユーザー固有のバグ</td></tr>
+<tr><td><code>len(items) > 1000</code></td><td>大きなデータで停止</td><td>パフォーマンス問題</td></tr>
+<tr><td><code>response.status != 200</code></td><td>エラーレスポンスで停止</td><td>API通信のデバッグ</td></tr>
+</table></div></div>
+
+<!-- Slide 20: Log Points -->
+<div class="slide"><h2>Log Point — コードを変えないprint</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="border-left:3px solid #ff5370"><h3 style="color:#ff5370">Before (print文)</h3>
+<div class="terminal" style="max-width:100%"><div class="terminal-body" style="min-height:auto;font-size:.8rem">
+<div><span class="cmd">for item in items:</span></div>
+<div><span class="warn">&nbsp;&nbsp;print(f"Processing {item.name}")</span></div>
+<div><span class="cmd">&nbsp;&nbsp;result = process(item)</span></div>
+<div><span class="warn">&nbsp;&nbsp;print(f"Result: {result}")</span></div>
+</div></div>
+<p style="font-size:.85rem;margin-top:.5rem;color:#ff5370">コードを変更 &rarr; 後で削除が必要</p>
+</div>
+<div class="card" style="border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">After (Log Point)</h3>
+<div class="terminal" style="max-width:100%"><div class="terminal-body" style="min-height:auto;font-size:.8rem">
+<div><span class="cmd">for item in items:</span></div>
+<div><span class="info">&nbsp;&nbsp;◆ Processing {item.name}</span></div>
+<div><span class="cmd">&nbsp;&nbsp;result = process(item)</span></div>
+<div><span class="info">&nbsp;&nbsp;◆ Result: {result}</span></div>
+</div></div>
+<p style="font-size:.85rem;margin-top:.5rem;color:#00d2ff">コード変更なし &rarr; 削除も不要</p>
+</div></div>
+<div class="card" style="max-width:900px;margin-top:1rem">
+<h3>Log Point の設定</h3>
+<p style="font-size:.9rem">行番号を右クリック &rarr;「Add Logpoint...」&rarr; メッセージを入力<br>
+<code>{}</code> 内に式を書くと評価される: <code>Processing {item.name}, count={len(items)}</code></p>
+</div></div>
+
+<!-- Slide 21: Hit Count Breakpoint -->
+<div class="slide"><h2>Hit Count ブレークポイント</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="flex:1.2">
+<h3 style="color:#c792ea">特定の回数目で停止</h3>
+<p style="font-size:.95rem;margin-bottom:1rem">行番号を右クリック &rarr;「Add Conditional Breakpoint...」&rarr; ドロップダウンで「Hit Count」を選択</p>
+<table style="max-width:100%">
+<tr><th>入力値</th><th>動作</th></tr>
+<tr><td><code>5</code></td><td>5回目のヒットで停止</td></tr>
+<tr><td><code>>10</code></td><td>10回目以降のヒットで停止</td></tr>
+<tr><td><code>%3</code></td><td>3の倍数回目で停止</td></tr>
+</table>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">使用例</h3>
+<div class="terminal" style="max-width:100%"><div class="terminal-body" style="min-height:auto;font-size:.8rem">
+<div><span class="output"># 1000回ループする処理で</span></div>
+<div><span class="output"># 500回目だけ調べたい</span></div>
+<div><span class="cmd">for i in range(1000):</span></div>
+<div><span class="cmd">&nbsp;&nbsp;process(data[i])</span></div>
+<div><span class="output">&nbsp;&nbsp;# Hit Count: 500</span></div>
+<div><span class="info">&nbsp;&nbsp;# &rarr; 500回目で停止!</span></div>
+</div></div>
+</div></div></div>
+
+<!-- Slide 22: Debugging pytest -->
+<div class="slide"><h2>pytest をデバッグする</h2>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>.vscode/launch.json</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"name"</span>: <span style="color:#c792ea">"pytest: Current File"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"type"</span>: <span style="color:#c792ea">"debugpy"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"request"</span>: <span style="color:#c792ea">"launch"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"module"</span>: <span style="color:#c792ea">"pytest"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"args"</span>: [<span style="color:#c792ea">"${file}"</span>, <span style="color:#c792ea">"-v"</span>],</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"console"</span>: <span style="color:#c792ea">"integratedTerminal"</span></span></div>
+<div><span class="cmd">}</span></div>
+</div></div>
+<div class="cols" style="max-width:850px;margin-top:1rem">
+<div class="card"><h3 style="color:#7fdbca">テスト内にBP設置</h3><p style="font-size:.9rem">テスト関数内にブレークポイントを置いてF5。失敗するテストの原因を追跡。</p></div>
+<div class="card"><h3 style="color:#c792ea">Testing サイドバー</h3><p style="font-size:.9rem">ビーカーアイコン &rarr; テスト一覧 &rarr; 右クリック &rarr;「Debug Test」でも起動可能。</p></div>
+</div></div>
+
+<!-- Slide 23: print vs debugger - when to use which -->
+<div class="slide"><h2>print() と デバッガの使い分け</h2>
+<div class="cols" style="max-width:950px">
+<div class="card" style="border-top:3px solid #7fdbca">
+<h3 style="color:#7fdbca">print() が適切な場面</h3>
+<ul class="feature-list">
+<li>サーバーログの<strong>常時出力</strong></li>
+<li>データパイプラインの<strong>進捗表示</strong></li>
+<li>本番環境の<strong>logging</strong>（loggingモジュール推奨）</li>
+<li>1行だけの<strong>簡単な値確認</strong></li>
+<li>再現が困難な<strong>タイミング依存</strong>のバグ</li>
+</ul>
+</div>
+<div class="card" style="border-top:3px solid #00d2ff">
+<h3 style="color:#00d2ff">デバッガが適切な場面</h3>
+<ul class="feature-list">
+<li>原因不明の<strong>ロジックバグ</strong></li>
+<li>複雑なデータ構造の<strong>状態確認</strong></li>
+<li>ループ内の<strong>特定条件</strong>で何が起きているか</li>
+<li><strong>例外</strong>が発生する直前の状態</li>
+<li>他人が書いたコードの<strong>理解</strong></li>
+</ul>
+</div></div>
+<div class="card" style="max-width:950px;margin-top:1rem;text-align:center;border-left:3px solid #ffcb6b">
+<p style="color:#ffcb6b;font-size:1.05rem;font-weight:600">結論: 両方使えることが大事。デバッガを「使える」ようになっておく</p>
+</div></div>
+
+<!-- Slide 24: Exception Breakpoints -->
+<div class="slide"><h2>Exception ブレークポイント</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="flex:1.2">
+<h3 style="color:#ff5370">例外発生時に自動停止</h3>
+<p style="font-size:.95rem;margin-bottom:1rem">Breakpoints パネル &rarr;「Raised Exceptions」または「Uncaught Exceptions」にチェック。</p>
+<table style="max-width:100%">
+<tr><th>設定</th><th>説明</th></tr>
+<tr><td><span style="color:#ff5370">Raised Exceptions</span></td><td>全ての例外で停止（try-catch内も含む）</td></tr>
+<tr><td><span style="color:#ffcb6b">Uncaught Exceptions</span></td><td>キャッチされない例外でのみ停止</td></tr>
+<tr><td><span style="color:#00d2ff">User Uncaught</span></td><td>自分のコード内のキャッチされない例外</td></tr>
+</table>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">使用場面</h3>
+<p style="font-size:.9rem">「エラーが出ているけど、<strong>どこで</strong>発生しているかわからない」時に最強。</p>
+<div class="terminal" style="max-width:100%;margin-top:.5rem"><div class="terminal-body" style="min-height:auto;font-size:.8rem">
+<div><span class="error">TypeError: 'NoneType' has no</span></div>
+<div><span class="error">&nbsp;attribute 'name'</span></div>
+<div><span class="output"></span></div>
+<div><span class="info">&rarr; 例外BPで発生箇所に</span></div>
+<div><span class="info">&nbsp;&nbsp;自動的にジャンプ!</span></div>
+</div></div>
+</div></div></div>
+
+<!-- Slide 25: Remote debugging basics -->
+<div class="slide"><h2>リモートデバッグの基本</h2>
+<div style="max-width:850px;width:100%">
+<div class="flow" style="margin-bottom:1.5rem">
+<div class="flow-box" style="border-color:#00d2ff55"><span style="font-size:.85rem;color:#00d2ff">ローカル VS Code</span></div>
+<div class="flow-arrow">&larr;&rarr;</div>
+<div class="flow-box" style="border-color:#c792ea55"><span style="font-size:.85rem;color:#c792ea">SSH / Docker</span></div>
+<div class="flow-arrow">&larr;&rarr;</div>
+<div class="flow-box" style="border-color:#7fdbca55"><span style="font-size:.85rem;color:#7fdbca">リモートサーバー</span></div>
+</div>
+<div class="cols">
+<div class="card"><h3 style="color:#00d2ff">Remote SSH でデバッグ</h3>
+<p style="font-size:.9rem">Session 10 で学んだ Remote SSH を使用。リモートサーバー上で<strong>そのままデバッガが使える</strong>。launch.json もリモート側に配置。</p></div>
+<div class="card"><h3 style="color:#7fdbca">debugpy でアタッチ</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.6rem;border-radius:6px;margin-top:.5rem">
+<span style="color:#888"># リモート側で実行</span><br>
+python -m debugpy --listen<br>
+&nbsp;&nbsp;0.0.0.0:5678 --wait-for-client<br>
+&nbsp;&nbsp;app.py
+</div></div></div>
+</div></div>
+
+<!-- Slide 26: Common debugging mistakes -->
+<div class="slide"><h2>よくあるデバッグのミス</h2>
+<div style="max-width:850px;width:100%">
+<table>
+<tr><th style="width:30%">ミス</th><th style="width:35%">症状</th><th style="width:35%">解決策</th></tr>
+<tr><td style="color:#ff5370">BPが灰色で効かない</td><td>行がコメントか空行</td><td>実行可能な行に設置する</td></tr>
+<tr><td style="color:#ff5370">F5で何も起きない</td><td>Python拡張未インストール</td><td>Python + Python Debugger 拡張を入れる</td></tr>
+<tr><td style="color:#ff5370">変数が表示されない</td><td>justMyCode が true</td><td>ライブラリ内を見るなら false に</td></tr>
+<tr><td style="color:#ff5370">間違ったファイルが実行</td><td>launch.json の program 設定</td><td>${file} か明示的パスを確認</td></tr>
+<tr><td style="color:#ff5370">venv が反映されない</td><td>別の Python を使用中</td><td>ステータスバーでインタプリタ選択</td></tr>
+<tr><td style="color:#ff5370">デバッグが遅い</td><td>ブレークポイントが多すぎ</td><td>不要なBPを無効化・削除</td></tr>
+</table></div></div>
+
+<!-- Slide 27: Debugging workflow best practices -->
+<div class="slide"><h2>デバッグのベストプラクティス</h2>
+<div style="max-width:800px;width:100%">
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #00d2ff">
+<h3 style="color:#00d2ff">1. まず仮説を立てる</h3>
+<p style="font-size:.9rem">「この変数が None になっているのでは?」のように予想してからデバッグ開始。闇雲にステップ実行しない。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #7fdbca">
+<h3 style="color:#7fdbca">2. バグの近くにBPを置く</h3>
+<p style="font-size:.9rem">エラーメッセージの行番号の少し前にBP。そこからStep Overで進めていく。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #c792ea">
+<h3 style="color:#c792ea">3. 二分探索デバッグ</h3>
+<p style="font-size:.9rem">コードの中間点にBPを置いて、バグが前半か後半か絞り込む。大きなコードベースで有効。</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b">4. Watch式を活用</h3>
+<p style="font-size:.9rem">仮説に基づいた条件式をWatchに登録。True/Falseの変化を監視する。</p></div>
+</div></div>
+
+<!-- Slide 28: Exercise 1 - Find the bug -->
+<div class="slide"><h2>演習1: バグを見つけよう</h2>
+<p class="label green">HANDS-ON (15分)</p>
+<div class="cols" style="max-width:900px">
+<div class="terminal" style="max-width:100%">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>buggy.py</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">def find_average(numbers):</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;total = 0</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;for i in range(len(numbers) + 1):</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += numbers[i]</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;return total / len(numbers)</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">data = [10, 20, 30, 40, 50]</span></div>
+<div><span class="cmd">print(find_average(data))</span></div>
+</div></div>
+<div class="card">
+<h3>手順</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li>上記コードを <code>buggy.py</code> として保存</li>
+<li>4行目にブレークポイントを設定</li>
+<li><code>F5</code> でデバッグ開始</li>
+<li><code>F10</code> でステップ実行</li>
+<li>Variables パネルで <code>i</code> を監視</li>
+<li>エラーの原因を特定</li>
+<li>条件付きBP: <code>i == len(numbers)</code> を試す</li>
+</ol>
+</div></div></div>
+
+<!-- Slide 29: Exercise 2 - Conditional BP -->
+<div class="slide"><h2>演習2: 条件付きBPとLog Point</h2>
+<p class="label green">HANDS-ON (15分)</p>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>search.py</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">def search_users(users, query):</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;results = []</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;for user in users:</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if query.lower() in user["name"].lower():</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;results.append(user)</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;return results</span></div>
+<div><span class="cmd"></span></div>
+<div><span class="cmd">users = [</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;{"name": "Alice", "age": 25},</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;{"name": "Bob", "age": 30},</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;{"name": None, "age": 22},&nbsp;&nbsp;</span><span class="warn"># &larr; バグ!</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;{"name": "Charlie", "age": 28},</span></div>
+<div><span class="cmd">]</span></div>
+<div><span class="cmd">print(search_users(users, "ali"))</span></div>
+</div></div>
+<div class="card" style="max-width:850px;margin-top:.8rem">
+<p style="font-size:.9rem"><strong style="color:#ffcb6b">課題1:</strong> 条件付きBP <code>user["name"] is None</code> で4行目に設定 &rarr; バグを特定<br>
+<strong style="color:#00d2ff">課題2:</strong> Log Point で「Checking user: {user['name']}」を3行目に設定 &rarr; 出力確認</p>
+</div></div>
+
+<!-- Slide 30: Exercise 3 - Debug a Flask app -->
+<div class="slide"><h2>演習3: launch.json を設定してデバッグ</h2>
+<p class="label green">HANDS-ON (10分)</p>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">Step 1: launch.json を作成</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>Cmd+Shift+D</code> でデバッグサイドバーを開く</li>
+<li>「create a launch.json file」をクリック</li>
+<li>「Python Debugger」を選択</li>
+<li>「Python File」を選択</li>
+</ol>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">Step 2: 設定をカスタマイズ</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>"args": ["--input", "test.csv"]</code> を追加</li>
+<li><code>"justMyCode": false</code> に変更</li>
+<li>F5 で起動して動作確認</li>
+<li>ドロップダウンで設定を切り替え</li>
+</ol>
+</div></div></div>
+
+<!-- Slide 31: Multi-target debugging -->
+<div class="slide"><h2>マルチターゲットデバッグ</h2>
+<div style="max-width:850px;width:100%">
+<div class="card" style="margin-bottom:1rem">
+<h3 style="color:#c792ea">複数のプロセスを同時にデバッグ</h3>
+<p style="font-size:.9rem">launch.json の <code>"compounds"</code> を使って、サーバーとクライアントを同時起動。</p>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.8rem;border-radius:6px;margin-top:.5rem">
+<span style="color:#ff5370">"compounds"</span>: [{<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"name"</span>: <span style="color:#c792ea">"Server + Client"</span>,<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"configurations"</span>: [<span style="color:#c792ea">"Flask"</span>, <span style="color:#c792ea">"Client Script"</span>]<br>
+}]
+</div></div>
+<div class="card">
+<h3 style="color:#7fdbca">Call Stack の使い分け</h3>
+<p style="font-size:.9rem">複数プロセスが停止している場合、Call Stack パネルでプロセスを切り替えて調査できる。各プロセスのBPは独立して動作。</p>
+</div></div></div>
+
+<!-- Slide 32: Summary -->
+<div class="slide"><h2>まとめ</h2>
+<div style="max-width:750px;width:100%">
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #00d2ff">
+<h3 style="color:#00d2ff">デバッガ = print文の完全上位互換</h3>
+<p style="font-size:.9rem">コード変更不要。全変数を自動表示。ステップ実行で流れを追跡。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #7fdbca">
+<h3 style="color:#7fdbca">基本の3キー: F5 / F10 / F11</h3>
+<p style="font-size:.9rem">開始(F5)、ステップオーバー(F10)、ステップイン(F11)。これだけで8割カバー。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #c792ea">
+<h3 style="color:#c792ea">4つのパネルを活用</h3>
+<p style="font-size:.9rem">Variables / Watch / Call Stack / Debug Console で完全把握。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b">条件付きBP & Log Point</h3>
+<p style="font-size:.9rem">大量ループの特定条件で停止。Log Pointでprint文不要。</p></div>
+<div class="card" style="border-left:3px solid #f78c6c">
+<h3 style="color:#f78c6c">launch.json で設定を保存</h3>
+<p style="font-size:.9rem">引数・環境変数・Flask/pytestの設定を.vscodeに保存して共有。</p></div>
+</div></div>
+
+<!-- Slide 33: Next session preview -->
+<div class="slide"><h2>次回予告</h2>
+<div style="text-align:center;max-width:600px">
+<p class="label purple">SESSION 12</p>
+<h1 style="font-size:2rem;margin-bottom:1rem">設定・カスタマイズ：自分だけの環境を作る</h1>
+<p style="font-size:1.1rem;color:#888;margin-bottom:2rem">settings.json、テーマ、フォント、キーバインドの最適化。<br>自分だけのVS Code環境を構築しよう。</p>
+</div></div>
+
+<div class="progress"></div><div class="nav-hint">&larr; &rarr; / j k / Space</div>
 <script>const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');let cur=0,busy=false;function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}prog.textContent='1 / '+slides.length;document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});</script>
 <style>._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}._ts-gallery-info{padding:.8rem 1rem}._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}</style>
 <script>(function(){var _slides=document.querySelectorAll('.slide');if(_slides.length<2)return;function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}var oldHint=document.querySelector('.nav-hint');if(oldHint)oldHint.style.display='none';function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}var toolbar=document.createElement('div');toolbar.className='_ts-toolbar';toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';document.body.appendChild(toolbar);var counterBtn=toolbar.querySelector('._ts-counter-btn');var gridBtn=toolbar.querySelector('._ts-grid-btn');var jumpEl=document.createElement('div');jumpEl.className='_ts-jump';var jumpGrid=document.createElement('div');jumpGrid.className='_ts-jump-grid';for(var i=0;i<_slides.length;i++){var item=document.createElement('div');item.className='_ts-jump-item';item.textContent=i+1;item.dataset.idx=i;item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});jumpGrid.appendChild(item)}jumpEl.appendChild(jumpGrid);document.body.appendChild(jumpEl);var jumpOpen=false;function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});var gallery=document.createElement('div');gallery.className='_ts-gallery-overlay';var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';for(var i=0;i<_slides.length;i++){var title=_getTitle(_slides[i])||'Slide '+(i+1);galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>'}galleryHTML+='</div>';gallery.innerHTML=galleryHTML;document.body.appendChild(gallery);var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');for(var i=0;i<previews.length;i++){var idx=parseInt(previews[i].dataset.slideIdx);var clone=_slides[idx].cloneNode(true);clone.style.display='flex';clone.style.position='static';clone.style.animation='none';clone.classList.remove('out-left','out-right');clone.classList.add('active');previews[i].appendChild(clone)}var cards=gallery.querySelectorAll('._ts-gallery-card');for(var i=0;i<cards.length;i++){cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()})}var galleryOpen=false;function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}}},true);document.addEventListener('click',function(e){if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump()});function _tsUpdateUI(){var c=_tsCurIdx();counterBtn.textContent=(c+1)+' / '+_slides.length;if(jumpOpen)highlightJumpCurrent();if(galleryOpen)highlightGalleryCard()}var _lastIdx=_tsCurIdx();setInterval(function(){var c=_tsCurIdx();if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}},200);_tsUpdateUI()})();</script>

@@ -1,30 +1,584 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Session 13 — Workspace活用：チーム開発の基盤</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}p{font-size:1.05rem;line-height:1.7;color:#bbb}code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}.label.green{background:#7fdbca22;color:#7fdbca}.label.purple{background:#c792ea22;color:#c792ea}.label.orange{background:#f78c6c22;color:#f78c6c}.label.red{background:#ff537022;color:#ff5370}.label.yellow{background:#ffcb6b22;color:#ffcb6b}.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}.cols{display:flex;gap:2rem;width:100%;max-width:1100px}.cols>*{flex:1}.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}.terminal-bar .dot{width:10px;height:10px;border-radius:50%}.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}.terminal-body .prompt{color:#7fdbca}.terminal-body .cmd{color:#e0e0e0}.terminal-body .output{color:#888}.terminal-body .success{color:#27c93f}.terminal-body .error{color:#ff5370}.terminal-body .info{color:#00d2ff}.terminal-body .warn{color:#ffcb6b}.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}ul.feature-list{list-style:none;max-width:700px}ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}ul.feature-list li::before{content:'▸ ';color:#00d2ff}.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}table{border-collapse:collapse;width:100%;max-width:900px}th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}th{color:#00d2ff;font-weight:600;background:#1a1a2e}td{color:#bbb}tr:hover td{background:#1a1a2e55}.gif-container{border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;max-width:700px;width:100%}.gif-container img{width:100%;display:block}.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}.step-progress .sp-item{display:flex;align-items:center;gap:0}.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}.step-progress .sp-arrow.sp-done{color:#00d2ff55}</style></head><body>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}
+.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}
+.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}
+h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}
+h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}
+p{font-size:1.05rem;line-height:1.7;color:#bbb}
+code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}
+.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}
+.label.green{background:#7fdbca22;color:#7fdbca}
+.label.purple{background:#c792ea22;color:#c792ea}
+.label.orange{background:#f78c6c22;color:#f78c6c}
+.label.red{background:#ff537022;color:#ff5370}
+.label.yellow{background:#ffcb6b22;color:#ffcb6b}
+.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}
+.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}
+.cols{display:flex;gap:2rem;width:100%;max-width:1100px}
+.cols>*{flex:1}
+.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}
+.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.terminal-bar .dot{width:10px;height:10px;border-radius:50%}
+.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}
+.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}
+.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}
+.terminal-body .prompt{color:#7fdbca}
+.terminal-body .cmd{color:#e0e0e0}
+.terminal-body .output{color:#888}
+.terminal-body .success{color:#27c93f}
+.terminal-body .error{color:#ff5370}
+.terminal-body .info{color:#00d2ff}
+.terminal-body .warn{color:#ffcb6b}
+.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}
+.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}
+.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}
+ul.feature-list{list-style:none;max-width:700px}
+ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}
+ul.feature-list li::before{content:'▸ ';color:#00d2ff}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}
+table{border-collapse:collapse;width:100%;max-width:900px}
+th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}
+th{color:#00d2ff;font-weight:600;background:#1a1a2e}
+td{color:#bbb}
+tr:hover td{background:#1a1a2e55}
+.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}
+.step-progress .sp-item{display:flex;align-items:center;gap:0}
+.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}
+.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}
+.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}
+.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}
+.step-progress .sp-arrow.sp-done{color:#00d2ff55}
+</style></head><body>
 
+<!-- Slide 1: Title -->
+<div class="slide active"><div style="text-align:center">
+<p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">&larr; トップに戻る</a></p>
+<p class="label">SESSION 13</p>
+<h1 style="font-size:2.8rem;margin-bottom:1rem">Workspace活用</h1>
+<p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">チーム開発の基盤を作る</p>
+<span class="ai-badge">90分 / 全15回の第13回</span>
+<p style="margin-top:3rem;color:#555;font-size:.9rem">&rarr; / Space で次へ</p>
+</div></div>
 
-<div class="slide active"><div style="text-align:center"><p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p><p class="label">SESSION 13</p><h1 style="font-size:2.8rem;margin-bottom:1rem">Workspace活用</h1><p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">チーム開発の基盤</p><span class="ai-badge">90分 / 全15回の第13回</span><p style="margin-top:3rem;color:#555;font-size:.9rem">→ / Space で次へ</p></div></div>
+<!-- Slide 2: Objectives -->
+<div class="slide"><h2>今日のゴール</h2>
+<div style="max-width:700px;width:100%">
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. .vscode/ ディレクトリを理解する</h3><p style="font-size:.95rem">settings.json / launch.json / tasks.json / extensions.json の役割</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. スニペットを自作する</h3><p style="font-size:.95rem">定型コードをワンタッチで展開</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. タスクを定義して自動化する</h3><p style="font-size:.95rem">tasks.json でテスト・リンターを実行</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b"><h3 style="color:#ffcb6b">4. マルチルートワークスペース</h3><p style="font-size:.95rem">複数プロジェクトを1つのウィンドウで管理</p></div>
+</div></div>
 
-<div class="slide"><h2>今日のゴール</h2><div style="max-width:700px;width:100%"><div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. .vscode/ ディレクトリを理解</h3><p style="font-size:.95rem">settings.json, launch.json, tasks.json, extensions.json</p></div><div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. スニペットを作成できる</h3><p style="font-size:.95rem">prefix, body, tab stops の使い方</p></div><div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. Task Runner を活用</h3><p style="font-size:.95rem">tasks.json でビルド・テストを自動化</p></div></div></div>
+<!-- Slide 3: .vscode/ directory -->
+<div class="slide"><h2>.vscode/ ディレクトリ構造</h2>
+<div class="terminal" style="max-width:700px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>プロジェクト構造</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.9rem">
+<div><span class="info">my-project/</span></div>
+<div><span class="warn">├── .vscode/</span></div>
+<div><span class="cmd">│&nbsp;&nbsp; ├── settings.json</span><span class="output">&nbsp;&nbsp;# ワークスペース設定</span></div>
+<div><span class="cmd">│&nbsp;&nbsp; ├── launch.json</span><span class="output">&nbsp;&nbsp;&nbsp;# デバッグ設定</span></div>
+<div><span class="cmd">│&nbsp;&nbsp; ├── tasks.json</span><span class="output">&nbsp;&nbsp;&nbsp;&nbsp;# タスク定義</span></div>
+<div><span class="cmd">│&nbsp;&nbsp; └── extensions.json</span><span class="output"># 推奨拡張</span></div>
+<div><span class="cmd">├── src/</span></div>
+<div><span class="cmd">├── tests/</span></div>
+<div><span class="cmd">├── .gitignore</span></div>
+<div><span class="cmd">└── README.md</span></div>
+</div></div>
+<div class="card" style="max-width:700px;margin-top:1rem;text-align:center">
+<p style="font-size:.95rem"><strong style="color:#ffcb6b">.vscode/ は Git にコミットしてチームで共有する</strong></p>
+<p style="font-size:.85rem;color:#888">（ただし個人設定は除く）</p>
+</div></div>
 
-<div class="slide"><h2>.vscode/ ディレクトリ</h2><div style="max-width:800px;width:100%"><div class="card"><div style="font-family:'Fira Code',monospace;font-size:.9rem;line-height:2"><div style="color:#888">my-project/</div><div style="color:#00d2ff">├── .vscode/</div><div style="color:#7fdbca">│&nbsp;&nbsp; ├── settings.json &nbsp;&nbsp;<span style="color:#888"># ワークスペース設定</span></div><div style="color:#7fdbca">│&nbsp;&nbsp; ├── launch.json &nbsp;&nbsp;&nbsp;<span style="color:#888"># デバッグ設定</span></div><div style="color:#7fdbca">│&nbsp;&nbsp; ├── tasks.json &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#888"># タスク定義</span></div><div style="color:#7fdbca">│&nbsp;&nbsp; └── extensions.json <span style="color:#888"># 推奨拡張機能</span></div><div style="color:#888">├── src/</div><div style="color:#888">└── README.md</div></div><p style="font-size:.9rem;margin-top:1rem;color:#888">Gitに含めてチームで共有。新メンバーもフォルダを開くだけで同じ環境。</p></div></div></div>
+<!-- Slide 4: What to commit -->
+<div class="slide"><h2>.vscode/ で Git にコミットするもの/しないもの</h2>
+<table style="max-width:900px">
+<tr><th>ファイル</th><th style="color:#7fdbca">Git にコミット</th><th>理由</th></tr>
+<tr><td><code>settings.json</code></td><td style="color:#7fdbca">する</td><td>チーム共通のフォーマッタ・リンター設定</td></tr>
+<tr><td><code>launch.json</code></td><td style="color:#7fdbca">する</td><td>デバッグ設定をチームで統一</td></tr>
+<tr><td><code>tasks.json</code></td><td style="color:#7fdbca">する</td><td>ビルド・テストコマンドを共有</td></tr>
+<tr><td><code>extensions.json</code></td><td style="color:#7fdbca">する</td><td>必須拡張をチームに推奨</td></tr>
+<tr><td>個人的なパス設定</td><td style="color:#ff5370">しない</td><td>マシン固有のパスは User 設定へ</td></tr>
+<tr><td><code>*.code-snippets</code></td><td style="color:#ffcb6b">場合による</td><td>プロジェクト共通なら Git、個人用なら User</td></tr>
+</table>
+<div class="card" style="max-width:900px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#00d2ff">.gitignore の例:</strong> <code>.vscode/*</code> + <code>!.vscode/settings.json</code> + <code>!.vscode/launch.json</code> で選択的にコミット</p>
+</div></div>
 
-<div class="slide"><h2>マルチルートワークスペース</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem"><h3>複数フォルダを1つのウィンドウで開く</h3><p style="font-size:.95rem">File → "Add Folder to Workspace" で複数のプロジェクトフォルダを追加。<br>保存: <code>.code-workspace</code> ファイル</p></div><div class="card"><h3>使いどころ</h3><ul class="feature-list"><li>フロントエンド + バックエンドを同時に開く</li><li>本体 + ライブラリを並行開発</li><li>複数のマイクロサービスを一括管理</li></ul></div></div></div>
+<!-- Slide 5: extensions.json -->
+<div class="slide"><h2>extensions.json — 推奨拡張の共有</h2>
+<div class="terminal" style="max-width:800px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>.vscode/extensions.json</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"recommendations"</span>: [</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"ms-python.python"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"ms-python.debugpy"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"charliermarsh.ruff"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"ms-python.pylint"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"eamodio.gitlens"</span></span></div>
+<div><span class="cmd">&nbsp;&nbsp;],</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"unwantedRecommendations"</span>: [</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"ms-vscode.vscode-typescript-tslint-plugin"</span></span></div>
+<div><span class="cmd">&nbsp;&nbsp;]</span></div>
+<div><span class="cmd">}</span></div>
+</div></div>
+<div class="card" style="max-width:800px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#7fdbca">効果:</strong> プロジェクトを開くと「推奨拡張をインストールしますか?」と通知が出る。チーム全員が同じ拡張を使えるようになる。</p>
+</div></div>
 
-<div class="slide"><h2>ユーザースニペット</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem"><h3>作成方法</h3><p style="font-size:.95rem"><code>Cmd+Shift+P</code> → "Snippets: Configure Snippets" → 言語選択</p></div><div class="terminal"><div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>python.json (snippet)</span></div><div class="terminal-body" style="min-height:auto"><div><span class="cmd">{</span></div><div><span class="cmd">&nbsp;&nbsp;"Main Guard": {</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;"prefix": "ifmain",</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;"body": [</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"if __name__ == \"__main__\":",</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;&nbsp;&nbsp;&nbsp;$0"</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;],</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;"description": "if __name__ guard"</span></div><div><span class="cmd">&nbsp;&nbsp;}</span></div><div><span class="cmd">}</span></div></div></div><p style="margin-top:.5rem;color:#888;font-size:.85rem"><code>$1</code>, <code>$2</code> = Tab Stop, <code>$0</code> = 最終カーソル位置, <code>${1:default}</code> = デフォルト値付き</p></div></div>
+<!-- Slide 6: Multi-root workspace -->
+<div class="slide"><h2>マルチルートワークスペース</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">1つのウィンドウで複数プロジェクト</h3>
+<div class="terminal" style="max-width:100%"><div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="info">Explorer</span></div>
+<div><span class="warn">FRONTEND</span></div>
+<div><span class="cmd">&nbsp;&nbsp;├── src/</span></div>
+<div><span class="cmd">&nbsp;&nbsp;└── package.json</span></div>
+<div><span class="warn">BACKEND</span></div>
+<div><span class="cmd">&nbsp;&nbsp;├── app/</span></div>
+<div><span class="cmd">&nbsp;&nbsp;└── requirements.txt</span></div>
+<div><span class="warn">SHARED-LIB</span></div>
+<div><span class="cmd">&nbsp;&nbsp;├── utils/</span></div>
+<div><span class="cmd">&nbsp;&nbsp;└── setup.py</span></div>
+</div></div>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">.code-workspace ファイル</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.78rem;background:#0a0a15;padding:.8rem;border-radius:6px;margin-top:.5rem">
+{<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"folders"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span style="color:#ff5370">"path"</span>: <span style="color:#c792ea">"./frontend"</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span style="color:#ff5370">"path"</span>: <span style="color:#c792ea">"./backend"</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span style="color:#ff5370">"path"</span>: <span style="color:#c792ea">"./shared-lib"</span> }<br>
+&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;<span style="color:#ff5370">"settings"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"editor.tabSize"</span>: <span style="color:#ffcb6b">2</span><br>
+&nbsp;&nbsp;}<br>
+}
+</div>
+<p style="font-size:.8rem;margin-top:.5rem;color:#888">File &rarr; Open Workspace from File...</p>
+</div></div></div>
 
-<div class="slide"><h2>Emmet</h2><div style="max-width:800px;width:100%"><div class="card" style="margin-bottom:1rem"><h3>HTML/CSS を超高速で書く</h3><p style="font-size:.95rem">VS Code に標準搭載。HTML/CSS ファイルで自動有効。</p></div><div class="card"><h3>よく使う展開</h3><table style="max-width:100%"><tr><th>入力</th><th>展開結果</th></tr><tr><td><code>div.container>ul>li*3</code></td><td>div&gt;ul&gt;li × 3</td></tr><tr><td><code>!</code></td><td>HTML5テンプレート全体</td></tr><tr><td><code>.card</code></td><td>&lt;div class="card"&gt;&lt;/div&gt;</td></tr><tr><td><code>#header</code></td><td>&lt;div id="header"&gt;&lt;/div&gt;</td></tr></table></div></div></div>
+<!-- Slide 7: Snippets intro -->
+<div class="slide"><h2>ユーザースニペット — 定型コードを瞬間展開</h2>
+<div class="flow" style="margin-bottom:1.5rem">
+<div class="flow-box active-box"><span style="font-size:.85rem">prefix を入力<br><span style="font-size:.75rem;color:#888">例: ifmain</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">Tab で確定</span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">コード展開!<br><span style="font-size:.75rem;color:#888">if __name__...</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">Tab で移動<br><span style="font-size:.75rem;color:#888">次の入力位置へ</span></span></div>
+</div>
+<div class="card" style="max-width:700px">
+<h3>スニペットの作り方</h3>
+<p style="font-size:.95rem"><code>Cmd+Shift+P</code> &rarr; "Snippets: Configure Snippets" &rarr; 言語を選択（例: Python）</p>
+<p style="font-size:.85rem;color:#888;margin-top:.5rem">Global / プロジェクト固有 / 言語固有から選べる</p>
+</div></div>
 
-<div class="slide"><h2>Task Runner: tasks.json</h2><div style="max-width:800px;width:100%"><div class="terminal"><div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>.vscode/tasks.json</span></div><div class="terminal-body" style="min-height:auto"><div><span class="cmd">{</span></div><div><span class="cmd">&nbsp;&nbsp;"version": "2.0.0",</span></div><div><span class="cmd">&nbsp;&nbsp;"tasks": [</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;{</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"label": "Run Tests",</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"type": "shell",</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"command": "python -m pytest tests/",</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"group": { "kind": "test", "isDefault": true },</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"problemMatcher": []</span></div><div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;}</span></div><div><span class="cmd">&nbsp;&nbsp;]</span></div><div><span class="cmd">}</span></div></div></div><p style="margin-top:.5rem;color:#888;font-size:.85rem">実行: <code>Cmd+Shift+P</code> → "Tasks: Run Task" → タスク選択</p></div></div>
+<!-- Slide 8: Snippet syntax -->
+<div class="slide"><h2>スニペット構文の基本</h2>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>python.json (snippet file)</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"Python Main Block"</span>: {</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"prefix"</span>: <span style="color:#c792ea">"ifmain"</span>,</span><span class="output"> // トリガー文字列</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"body"</span>: [</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"if __name__ == \"__main__\":"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">"&nbsp;&nbsp;&nbsp;&nbsp;${1:main()}"</span></span><span class="output"> // $1 = 最初のTab位置</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;],</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"description"</span>: <span style="color:#c792ea">"if __name__ == '__main__' block"</span></span></div>
+<div><span class="cmd">&nbsp;&nbsp;}</span></div>
+<div><span class="cmd">}</span></div>
+</div></div>
+<table style="max-width:850px;margin-top:1rem">
+<tr><th>構文</th><th>意味</th><th>例</th></tr>
+<tr><td><code>$1, $2, $3...</code></td><td>Tab ストップ（入力位置）</td><td>Tab で順番に移動</td></tr>
+<tr><td><code>$0</code></td><td>最終カーソル位置</td><td>全てのTab入力後の位置</td></tr>
+<tr><td><code>${1:default}</code></td><td>デフォルト値付き</td><td><code>${1:name}</code></td></tr>
+<tr><td><code>${1|one,two,three|}</code></td><td>選択肢</td><td>ドロップダウンから選択</td></tr>
+</table></div>
 
-<div class="slide"><h2>練習タイム</h2><p class="label green">HANDS-ON</p><div style="max-width:700px;width:100%"><div class="card"><h3>Workspace 演習（15分）</h3><ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem"><li><code>.vscode/settings.json</code> を作成してワークスペース設定を追加</li><li>Python用スニペット "ifmain" を作成して使ってみる</li><li>もう1つスニペット（例: "fori" で for ループ）を作成</li><li><code>.vscode/tasks.json</code> でテストタスクを定義</li><li>タスクを実行してみる</li></ol></div></div></div>
+<!-- Slide 9: Snippet variables -->
+<div class="slide"><h2>スニペット変数</h2>
+<table style="max-width:850px">
+<tr><th>変数</th><th>展開結果</th><th>使いどころ</th></tr>
+<tr><td><code>$TM_FILENAME</code></td><td>現在のファイル名</td><td>ヘッダーコメント</td></tr>
+<tr><td><code>$TM_FILENAME_BASE</code></td><td>拡張子なしファイル名</td><td>クラス名・モジュール名</td></tr>
+<tr><td><code>$TM_DIRECTORY</code></td><td>ディレクトリパス</td><td>パス参照</td></tr>
+<tr><td><code>$CURRENT_YEAR</code></td><td>現在の年</td><td>Copyright年</td></tr>
+<tr><td><code>$CURRENT_MONTH</code></td><td>現在の月</td><td>日付</td></tr>
+<tr><td><code>$CURRENT_DATE</code></td><td>現在の日</td><td>日付</td></tr>
+<tr><td><code>$CLIPBOARD</code></td><td>クリップボード内容</td><td>ペースト+テンプレート</td></tr>
+<tr><td><code>$UUID</code></td><td>ランダムUUID</td><td>一意ID生成</td></tr>
+</table></div>
 
-<div class="slide"><h2>まとめ</h2><div style="max-width:700px;width:100%"><div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">.vscode/ でチーム統一</h3><p style="font-size:.9rem">settings, launch, tasks, extensions をGitで共有。</p></div><div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">スニペットで定型コード高速化</h3><p style="font-size:.9rem">prefix を入力 → Tab で展開。Tab Stop でフィールド移動。</p></div><div class="card" style="border-left:3px solid #c792ea"><h3 style="color:#c792ea">Task Runner で自動化</h3><p style="font-size:.9rem">テスト、ビルド、リントをワンコマンドで実行。</p></div></div></div>
+<!-- Slide 10: Python snippet examples -->
+<div class="slide"><h2>Python スニペット実例集</h2>
+<div class="cols" style="max-width:950px">
+<div class="card"><h3 style="color:#00d2ff;font-size:1.1rem">docstring</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.75rem;background:#0a0a15;padding:.5rem;border-radius:6px">
+"prefix": "doc",<br>
+"body": [<br>
+&nbsp;&nbsp;"\"\"\"${1:Summary}",<br>
+&nbsp;&nbsp;"",<br>
+&nbsp;&nbsp;"Args:",<br>
+&nbsp;&nbsp;"&nbsp;&nbsp;${2:param}: ${3:desc}",<br>
+&nbsp;&nbsp;"",<br>
+&nbsp;&nbsp;"Returns:",<br>
+&nbsp;&nbsp;"&nbsp;&nbsp;${0:desc}",<br>
+&nbsp;&nbsp;"\"\"\""<br>
+]
+</div></div>
+<div class="card"><h3 style="color:#7fdbca;font-size:1.1rem">class</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.75rem;background:#0a0a15;padding:.5rem;border-radius:6px">
+"prefix": "cls",<br>
+"body": [<br>
+&nbsp;&nbsp;"class ${1:ClassName}:",<br>
+&nbsp;&nbsp;"&nbsp;&nbsp;\"\"\"${2:docstring}\"\"\"",<br>
+&nbsp;&nbsp;"",<br>
+&nbsp;&nbsp;"&nbsp;&nbsp;def __init__(self, ${3}):",<br>
+&nbsp;&nbsp;"&nbsp;&nbsp;&nbsp;&nbsp;${0:pass}"<br>
+]
+</div></div>
+<div class="card"><h3 style="color:#c792ea;font-size:1.1rem">try-except</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.75rem;background:#0a0a15;padding:.5rem;border-radius:6px">
+"prefix": "try",<br>
+"body": [<br>
+&nbsp;&nbsp;"try:",<br>
+&nbsp;&nbsp;"&nbsp;&nbsp;${1:pass}",<br>
+&nbsp;&nbsp;"except ${2:Exception} as e:",<br>
+&nbsp;&nbsp;"&nbsp;&nbsp;${0:print(e)}"<br>
+]
+</div></div>
+</div></div>
 
-<div class="slide"><h2>次回予告</h2><div style="text-align:center;max-width:600px"><p class="label purple">SESSION 14</p><h1 style="font-size:2rem;margin-bottom:1rem">AI支援 & 生産性：最新ツールを活用する</h1><p style="font-size:1.1rem;color:#888;margin-bottom:2rem">GitHub Copilot、Continue、Zen Mode、Quick Fix。</p></div></div>
+<!-- Slide 11: Emmet for HTML -->
+<div class="slide"><h2>Emmet — HTML をワンタッチで展開</h2>
+<div style="max-width:850px;width:100%">
+<table>
+<tr><th>入力 (Emmet 略記)</th><th>展開結果</th></tr>
+<tr><td><code>div.container>h1+p*3</code></td><td>div.container の中に h1 と p が3つ</td></tr>
+<tr><td><code>ul>li.item*5</code></td><td>ul の中に li.item が5つ</td></tr>
+<tr><td><code>input:email</code></td><td>&lt;input type="email"&gt;</td></tr>
+<tr><td><code>link:css</code></td><td>&lt;link rel="stylesheet" href="style.css"&gt;</td></tr>
+<tr><td><code>!</code> (HTML5)</td><td>HTML5 テンプレート全体</td></tr>
+<tr><td><code>table>tr*3>td*4</code></td><td>3行4列のテーブル</td></tr>
+</table>
+<div class="card" style="margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#00d2ff">使い方:</strong> 略記を入力 &rarr; <code>Tab</code> で展開。HTML/CSS ファイルで自動有効。<br>
+<strong style="color:#7fdbca">設定:</strong> <code>"emmet.includeLanguages": {"javascript": "html"}</code> で他の言語でもEmmet有効。</p>
+</div></div></div>
 
+<!-- Slide 12: tasks.json intro -->
+<div class="slide"><h2>tasks.json — タスクの自動化</h2>
+<div class="flow" style="margin-bottom:1.5rem">
+<div class="flow-box active-box"><span style="font-size:.85rem">tasks.json<br><span style="font-size:.75rem;color:#888">タスク定義</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">Cmd+Shift+B<br><span style="font-size:.75rem;color:#888">ビルドタスク実行</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">Terminal<br><span style="font-size:.75rem;color:#888">結果を表示</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.85rem">Problems<br><span style="font-size:.75rem;color:#888">エラーを検出</span></span></div>
+</div>
+<div class="card" style="max-width:700px">
+<h3>何が嬉しいのか</h3>
+<ul class="feature-list">
+<li>毎回ターミナルでコマンドを打たなくていい</li>
+<li>ショートカット1つでテスト・リント・ビルドを実行</li>
+<li>エラー出力を Problems パネルに自動表示</li>
+<li>チームメンバーと同じタスクを共有</li>
+</ul>
+</div></div>
 
-<div class="progress"></div><div class="nav-hint">← → / j k / Space</div>
+<!-- Slide 13: tasks.json structure -->
+<div class="slide"><h2>tasks.json の基本構造</h2>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>.vscode/tasks.json</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"version"</span>: <span style="color:#c792ea">"2.0.0"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"tasks"</span>: [</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"label"</span>: <span style="color:#c792ea">"pytest"</span>,</span><span class="output"> // タスク名</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"type"</span>: <span style="color:#c792ea">"shell"</span>,</span><span class="output"> // shell or process</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"command"</span>: <span style="color:#c792ea">"python -m pytest tests/ -v"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"group"</span>: {</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"kind"</span>: <span style="color:#c792ea">"test"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"isDefault"</span>: <span style="color:#ffcb6b">true</span></span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"presentation"</span>: { <span style="color:#ff5370">"reveal"</span>: <span style="color:#c792ea">"always"</span> }</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;}</span></div>
+<div><span class="cmd">&nbsp;&nbsp;]</span></div>
+<div><span class="cmd">}</span></div>
+</div></div></div>
+
+<!-- Slide 14: Task examples -->
+<div class="slide"><h2>タスクの実例</h2>
+<div class="cols" style="max-width:950px">
+<div class="card"><h3 style="color:#00d2ff;font-size:1.1rem">pytest</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.75rem;background:#0a0a15;padding:.5rem;border-radius:6px">
+"label": "Run Tests",<br>
+"type": "shell",<br>
+"command": "python -m pytest -v",<br>
+"group": "test"
+</div></div>
+<div class="card"><h3 style="color:#7fdbca;font-size:1.1rem">ruff check</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.75rem;background:#0a0a15;padding:.5rem;border-radius:6px">
+"label": "Lint",<br>
+"type": "shell",<br>
+"command": "ruff check .",<br>
+"problemMatcher": []
+</div></div>
+<div class="card"><h3 style="color:#c792ea;font-size:1.1rem">ruff format</h3>
+<div style="font-family:'Fira Code',monospace;font-size:.75rem;background:#0a0a15;padding:.5rem;border-radius:6px">
+"label": "Format",<br>
+"type": "shell",<br>
+"command": "ruff format .",<br>
+"group": "build"
+</div></div>
+</div>
+<div class="card" style="max-width:950px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#00d2ff">実行方法:</strong> <code>Cmd+Shift+P</code> &rarr; "Tasks: Run Task" &rarr; タスク選択<br>
+<strong style="color:#7fdbca">ショートカット:</strong> <code>Cmd+Shift+B</code> でデフォルトビルドタスクを実行</p>
+</div></div>
+
+<!-- Slide 15: Problem Matcher -->
+<div class="slide"><h2>Problem Matcher — エラーを自動検出</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#ff5370">Terminal 出力</h3>
+<div class="terminal" style="max-width:100%"><div class="terminal-body" style="min-height:auto;font-size:.78rem">
+<div><span class="error">src/main.py:23:5: E302 expected 2 blank</span></div>
+<div><span class="error">&nbsp;lines before function</span></div>
+<div><span class="error">src/utils.py:45:1: F401 'os' imported</span></div>
+<div><span class="error">&nbsp;but unused</span></div>
+</div></div>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">Problems パネル</h3>
+<div style="font-size:.85rem;margin-top:.5rem">
+<div style="padding:.3rem;border-left:3px solid #ff5370;margin-bottom:.3rem;background:#1e1e30;border-radius:0 4px 4px 0"><span style="color:#ff5370">E302</span> main.py:23 — expected 2 blank lines</div>
+<div style="padding:.3rem;border-left:3px solid #ffcb6b;background:#1e1e30;border-radius:0 4px 4px 0"><span style="color:#ffcb6b">F401</span> utils.py:45 — 'os' imported but unused</div>
+</div>
+<p style="font-size:.8rem;margin-top:.5rem;color:#888">クリックで該当行にジャンプ!</p>
+</div></div>
+<div class="card" style="max-width:900px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#00d2ff">組み込みマッチャー:</strong> <code>"problemMatcher": "$eslint-stylish"</code>, <code>"$tsc"</code>, <code>"$gcc"</code> など。Pythonは <code>[]</code>（なし）で OK。</p>
+</div></div>
+
+<!-- Slide 16: Compound tasks -->
+<div class="slide"><h2>複合タスク (Compound Tasks)</h2>
+<div class="terminal" style="max-width:850px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>tasks.json</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">{</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"label"</span>: <span style="color:#c792ea">"Check All"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"dependsOn"</span>: [<span style="color:#c792ea">"Lint"</span>, <span style="color:#c792ea">"Run Tests"</span>, <span style="color:#c792ea">"Format"</span>],</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"dependsOrder"</span>: <span style="color:#c792ea">"sequence"</span>,</span><span class="output"> // 順番に実行</span></div>
+<div><span class="cmd">&nbsp;&nbsp;<span style="color:#ff5370">"group"</span>: {</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"kind"</span>: <span style="color:#c792ea">"build"</span>,</span></div>
+<div><span class="cmd">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff5370">"isDefault"</span>: <span style="color:#ffcb6b">true</span></span></div>
+<div><span class="cmd">&nbsp;&nbsp;}</span></div>
+<div><span class="cmd">}</span></div>
+</div></div>
+<div class="cols" style="max-width:850px;margin-top:1rem">
+<div class="card"><h3 style="color:#00d2ff">sequence</h3><p style="font-size:.9rem">Lint &rarr; Tests &rarr; Format の順番で実行。前が失敗しても次に進む。</p></div>
+<div class="card"><h3 style="color:#7fdbca">parallel</h3><p style="font-size:.9rem">全タスクを同時実行。サーバー+クライアントの同時起動などに。</p></div>
+</div></div>
+
+<!-- Slide 17: Running tasks -->
+<div class="slide"><h2>タスクの実行方法</h2>
+<table style="max-width:850px">
+<tr><th>方法</th><th>ショートカット</th><th>説明</th></tr>
+<tr><td>Run Task</td><td><code>Cmd+Shift+P</code> &rarr; "Run Task"</td><td>全タスク一覧から選択</td></tr>
+<tr><td>Build Task</td><td><code>Cmd+Shift+B</code></td><td>デフォルトビルドタスクを実行</td></tr>
+<tr><td>Test Task</td><td><code>Cmd+Shift+P</code> &rarr; "Run Test Task"</td><td>デフォルトテストタスクを実行</td></tr>
+<tr><td>Rerun Last</td><td><code>Cmd+Shift+P</code> &rarr; "Rerun Last Task"</td><td>直前のタスクを再実行</td></tr>
+<tr><td>Terminal から</td><td>ターミナルで直接入力</td><td>一回限りのコマンド</td></tr>
+</table>
+<div class="card" style="max-width:850px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#ffcb6b">Tips:</strong> よく使うタスクにはキーバインドを割り当てよう。<br>
+<code>keybindings.json</code> で <code>"command": "workbench.action.tasks.runTask"</code> + <code>"args": "Run Tests"</code></p>
+</div></div>
+
+<!-- Slide 18: Workspace snippet files -->
+<div class="slide"><h2>ワークスペーススニペット</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">グローバル vs ワークスペース</h3>
+<table style="max-width:100%">
+<tr><th>種類</th><th>保存先</th><th>適用範囲</th></tr>
+<tr><td style="color:#00d2ff">Global</td><td>~/Library/.../snippets/</td><td>全プロジェクト</td></tr>
+<tr><td style="color:#7fdbca">Workspace</td><td>.vscode/*.code-snippets</td><td>プロジェクト内</td></tr>
+</table>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">プロジェクト専用スニペット</h3>
+<p style="font-size:.9rem"><code>Cmd+Shift+P</code> &rarr; "Snippets: Configure Snippets" &rarr; "New Snippets file for 'project'..."<br><br>
+プロジェクト固有のテンプレートをチームで共有。Git にコミット可能。</p>
+</div></div></div>
+
+<!-- Slide 19: Workspace trust -->
+<div class="slide"><h2>Workspace Trust — セキュリティ機能</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b">信頼されたワークスペース</h3>
+<ul class="feature-list">
+<li>全ての拡張機能が有効</li>
+<li>tasks.json のコマンド実行可能</li>
+<li>launch.json のデバッグ可能</li>
+<li>全ての設定が反映される</li>
+</ul>
+</div>
+<div class="card" style="border-left:3px solid #ff5370">
+<h3 style="color:#ff5370">制限モード</h3>
+<ul class="feature-list">
+<li>一部の拡張機能が無効</li>
+<li>タスク実行が制限される</li>
+<li>デバッグが制限される</li>
+<li>悪意あるコードからの保護</li>
+</ul>
+</div></div>
+<div class="card" style="max-width:900px;margin-top:1rem;text-align:center">
+<p style="font-size:.9rem">不明なリポジトリを開いた時の安全装置。自分のプロジェクトなら「Trust」を選択。</p>
+</div></div>
+
+<!-- Slide 20: File nesting -->
+<div class="slide"><h2>ファイルネスト (Explorer の表示整理)</h2>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#ff5370">Before (ネストなし)</h3>
+<div class="terminal" style="max-width:100%"><div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">package.json</span></div>
+<div><span class="cmd">package-lock.json</span></div>
+<div><span class="cmd">tsconfig.json</span></div>
+<div><span class="cmd">tsconfig.node.json</span></div>
+<div><span class="cmd">.eslintrc.js</span></div>
+<div><span class="cmd">.prettierrc</span></div>
+<div><span class="cmd">vite.config.ts</span></div>
+</div></div>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">After (ネストあり)</h3>
+<div class="terminal" style="max-width:100%"><div class="terminal-body" style="min-height:auto;font-size:.82rem">
+<div><span class="cmd">&#9660; package.json</span></div>
+<div><span class="output">&nbsp;&nbsp;&nbsp;package-lock.json</span></div>
+<div><span class="cmd">&#9660; tsconfig.json</span></div>
+<div><span class="output">&nbsp;&nbsp;&nbsp;tsconfig.node.json</span></div>
+<div><span class="cmd">.eslintrc.js</span></div>
+<div><span class="cmd">.prettierrc</span></div>
+<div><span class="cmd">vite.config.ts</span></div>
+</div></div>
+</div></div>
+<div class="card" style="max-width:900px;margin-top:1rem">
+<p style="font-size:.9rem"><code>"explorer.fileNesting.enabled": true</code> で有効化。関連ファイルを親ファイルの下にまとめて表示。</p>
+</div></div>
+
+<!-- Slide 21: Exercise 1 -->
+<div class="slide"><h2>演習1: スニペットを作成</h2>
+<p class="label green">HANDS-ON (15分)</p>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="color:#00d2ff">Python スニペットを作る</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>Cmd+Shift+P</code> &rarr; "Configure Snippets"</li>
+<li>"python.json" を選択</li>
+<li>以下のスニペットを追加:
+<ul style="list-style:disc;padding-left:1rem;margin-top:.3rem">
+<li><code>ifmain</code> &rarr; if __name__ ブロック</li>
+<li><code>doc</code> &rarr; docstring テンプレート</li>
+</ul></li>
+<li>Python ファイルで prefix を入力してテスト</li>
+</ol>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">Emmet を試す</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li>HTML ファイルを新規作成</li>
+<li><code>!</code> + Tab でテンプレート展開</li>
+<li><code>ul>li.item*5</code> + Tab を試す</li>
+<li><code>div.container>h1+p*3</code> を試す</li>
+</ol>
+</div></div></div>
+
+<!-- Slide 22: Exercise 2 -->
+<div class="slide"><h2>演習2: タスクを定義</h2>
+<p class="label green">HANDS-ON (15分)</p>
+<div style="max-width:800px;width:100%">
+<div class="card" style="margin-bottom:1rem">
+<h3 style="color:#00d2ff">tasks.json を作成</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>.vscode/tasks.json</code> を作成（またはCmd+Shift+P &rarr; "Configure Task"）</li>
+<li>pytest タスクを追加: <code>"command": "python -m pytest -v"</code></li>
+<li>ruff check タスクを追加: <code>"command": "ruff check ."</code></li>
+<li>両方を実行する複合タスク "Check All" を作成</li>
+<li><code>Cmd+Shift+B</code> で実行テスト</li>
+</ol>
+</div>
+<div class="card">
+<h3 style="color:#7fdbca">extensions.json を作成</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>.vscode/extensions.json</code> を作成</li>
+<li>Python 開発に必要な拡張を recommendations に追加</li>
+<li>ファイルを保存して効果を確認</li>
+</ol>
+</div></div></div>
+
+<!-- Slide 23: Exercise 3 -->
+<div class="slide"><h2>演習3: .vscode/ を完成させる</h2>
+<p class="label green">HANDS-ON (10分)</p>
+<div class="terminal" style="max-width:700px">
+<div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>完成形: .vscode/</span></div>
+<div class="terminal-body" style="min-height:auto;font-size:.85rem">
+<div><span class="warn">.vscode/</span></div>
+<div><span class="cmd">├── settings.json</span><span class="output">&nbsp;&nbsp;&nbsp;# Python + Ruff 設定</span></div>
+<div><span class="cmd">├── launch.json</span><span class="output">&nbsp;&nbsp;&nbsp;&nbsp;# Current File + pytest</span></div>
+<div><span class="cmd">├── tasks.json</span><span class="output">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# pytest + ruff + Check All</span></div>
+<div><span class="cmd">├── extensions.json</span><span class="output"># 推奨拡張リスト</span></div>
+<div><span class="cmd">└── python.code-snippets</span><span class="output"># プロジェクト用スニペット</span></div>
+</div></div>
+<div class="card" style="max-width:700px;margin-top:1rem">
+<p style="font-size:.9rem"><strong style="color:#ffcb6b">チャレンジ:</strong> この .vscode/ ディレクトリを Git にコミットして、チームメンバーが clone したら即座に開発を始められる状態を目指そう。</p>
+</div></div>
+
+<!-- Slide 24: Summary -->
+<div class="slide"><h2>まとめ</h2>
+<div style="max-width:750px;width:100%">
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #00d2ff">
+<h3 style="color:#00d2ff">.vscode/ はチーム開発の基盤</h3>
+<p style="font-size:.9rem">settings / launch / tasks / extensions を Git にコミットして共有。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #7fdbca">
+<h3 style="color:#7fdbca">スニペットで定型コードを自動化</h3>
+<p style="font-size:.9rem">prefix + Tab で展開。Tab ストップで入力位置を制御。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #c792ea">
+<h3 style="color:#c792ea">タスクでテスト・リントをワンタッチ実行</h3>
+<p style="font-size:.9rem">Cmd+Shift+B でビルドタスク。複合タスクで一括チェック。</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b">
+<h3 style="color:#ffcb6b">マルチルートワークスペースで複数プロジェクト管理</h3>
+<p style="font-size:.9rem">.code-workspace ファイルで定義。各フォルダに独立した設定。</p></div>
+</div></div>
+
+<!-- Slide 25: Next session -->
+<div class="slide"><h2>次回予告</h2>
+<div style="text-align:center;max-width:600px">
+<p class="label purple">SESSION 14</p>
+<h1 style="font-size:2rem;margin-bottom:1rem">AI支援 & 生産性：最新ツールを活用する</h1>
+<p style="font-size:1.1rem;color:#888;margin-bottom:2rem">GitHub Copilot、AI拡張、<br>Zen Mode や Quick Fix などの生産性機能。</p>
+</div></div>
+
+<div class="progress"></div><div class="nav-hint">&larr; &rarr; / j k / Space</div>
 <script>const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');let cur=0,busy=false;function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}prog.textContent='1 / '+slides.length;document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});</script>
 <style>._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}._ts-gallery-info{padding:.8rem 1rem}._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}</style>
 <script>(function(){var _slides=document.querySelectorAll('.slide');if(_slides.length<2)return;function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}var oldHint=document.querySelector('.nav-hint');if(oldHint)oldHint.style.display='none';function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}var toolbar=document.createElement('div');toolbar.className='_ts-toolbar';toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';document.body.appendChild(toolbar);var counterBtn=toolbar.querySelector('._ts-counter-btn');var gridBtn=toolbar.querySelector('._ts-grid-btn');var jumpEl=document.createElement('div');jumpEl.className='_ts-jump';var jumpGrid=document.createElement('div');jumpGrid.className='_ts-jump-grid';for(var i=0;i<_slides.length;i++){var item=document.createElement('div');item.className='_ts-jump-item';item.textContent=i+1;item.dataset.idx=i;item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});jumpGrid.appendChild(item)}jumpEl.appendChild(jumpGrid);document.body.appendChild(jumpEl);var jumpOpen=false;function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});var gallery=document.createElement('div');gallery.className='_ts-gallery-overlay';var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';for(var i=0;i<_slides.length;i++){var title=_getTitle(_slides[i])||'Slide '+(i+1);galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>'}galleryHTML+='</div>';gallery.innerHTML=galleryHTML;document.body.appendChild(gallery);var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');for(var i=0;i<previews.length;i++){var idx=parseInt(previews[i].dataset.slideIdx);var clone=_slides[idx].cloneNode(true);clone.style.display='flex';clone.style.position='static';clone.style.animation='none';clone.classList.remove('out-left','out-right');clone.classList.add('active');previews[i].appendChild(clone)}var cards=gallery.querySelectorAll('._ts-gallery-card');for(var i=0;i<cards.length;i++){cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()})}var galleryOpen=false;function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}}},true);document.addEventListener('click',function(e){if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump()});function _tsUpdateUI(){var c=_tsCurIdx();counterBtn.textContent=(c+1)+' / '+_slides.length;if(jumpOpen)highlightJumpCurrent();if(galleryOpen)highlightGalleryCard()}var _lastIdx=_tsCurIdx();setInterval(function(){var c=_tsCurIdx();if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}},200);_tsUpdateUI()})();</script>
