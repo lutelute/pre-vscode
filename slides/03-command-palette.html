@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Session 3 — コマンドパレット：全ての操作の入口</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}
+.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}
+.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}
+h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}
+h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}
+p{font-size:1.05rem;line-height:1.7;color:#bbb}
+code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}
+.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}
+.label.green{background:#7fdbca22;color:#7fdbca}
+.label.purple{background:#c792ea22;color:#c792ea}
+.label.orange{background:#f78c6c22;color:#f78c6c}
+.label.red{background:#ff537022;color:#ff5370}
+.label.yellow{background:#ffcb6b22;color:#ffcb6b}
+.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}
+.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}
+.cols{display:flex;gap:2rem;width:100%;max-width:1100px}
+.cols>*{flex:1}
+.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}
+.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.terminal-bar .dot{width:10px;height:10px;border-radius:50%}
+.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}
+.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}
+.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}
+.terminal-body .prompt{color:#7fdbca}
+.terminal-body .cmd{color:#e0e0e0}
+.terminal-body .output{color:#888}
+.terminal-body .success{color:#27c93f}
+.terminal-body .error{color:#ff5370}
+.terminal-body .info{color:#00d2ff}
+.terminal-body .warn{color:#ffcb6b}
+.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}
+.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}
+.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}
+ul.feature-list{list-style:none;max-width:700px}
+ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}
+ul.feature-list li::before{content:'▸ ';color:#00d2ff}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}
+table{border-collapse:collapse;width:100%;max-width:900px}
+th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}
+th{color:#00d2ff;font-weight:600;background:#1a1a2e}
+td{color:#bbb}
+tr:hover td{background:#1a1a2e55}
+.gif-container{border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;max-width:700px;width:100%}
+.gif-container img{width:100%;display:block}
+</style></head><body>
+
+<!-- Slide 1: Title -->
+<div class="slide active">
+  <div style="text-align:center">
+    <p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p>
+    <p class="label">SESSION 03</p>
+    <h1 style="font-size:2.8rem;margin-bottom:1rem">コマンドパレット</h1>
+    <p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">全ての操作の入口</p>
+    <span class="ai-badge">90分 / 全15回の第3回</span>
+    <p style="margin-top:3rem;color:#555;font-size:.9rem">→ / Space で次へ</p>
+  </div>
+</div>
+
+<!-- Slide 2: Objectives -->
+<div class="slide">
+  <h2>今日のゴール</h2>
+  <div style="max-width:700px;width:100%">
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
+      <h3 style="color:#00d2ff">1. Cmd+Shift+P を自然に使えるようになる</h3>
+      <p style="font-size:.95rem">「何かしたい」→ まずコマンドパレット、という習慣</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+      <h3 style="color:#7fdbca">2. プレフィックスの使い分けを覚える</h3>
+      <p style="font-size:.95rem">>, @, #, : の違いを理解する</p>
+    </div>
+    <div class="card" style="border-left:3px solid #c792ea">
+      <h3 style="color:#c792ea">3. Cmd+P でファイルを瞬時に開ける</h3>
+      <p style="font-size:.95rem">あいまいマッチでファイルジャンプ</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: What is Command Palette -->
+<div class="slide">
+  <h2>コマンドパレットとは</h2>
+  <div style="max-width:800px;width:100%;text-align:center">
+    <div class="card" style="margin-bottom:1.5rem;border:2px solid #00d2ff44;padding:2rem">
+      <h3 style="font-size:1.8rem;color:#00d2ff;margin-bottom:.5rem">Cmd+Shift+P</h3>
+      <p style="font-size:1.1rem;color:#888">(Windows/Linux: <code>Ctrl+Shift+P</code>)</p>
+      <p style="font-size:1.1rem;margin-top:1rem">VS Code の全ての機能にアクセスできる<strong style="color:#00d2ff">検索窓</strong></p>
+    </div>
+    <p style="color:#bbb;font-size:1rem">
+      メニューバーを探す必要なし。設定を探す必要なし。<br>
+      <strong style="color:#ffcb6b">やりたいことを文字で打つだけ</strong>で見つかる。
+    </p>
+  </div>
+</div>
+
+<!-- Slide 4: GIF Demo -->
+<div class="slide">
+  <h2>デモ：コマンドパレット</h2>
+  <div class="gif-container">
+    <img src="../assets/command-palette.gif" alt="Command Palette Demo" style="max-height:50vh;object-fit:contain;background:#1e1e1e">
+  </div>
+  <p style="margin-top:1rem;color:#888;font-size:.9rem">
+    <code>Cmd+Shift+P</code> → キーワードを入力 → 候補を選択 → 実行
+  </p>
+</div>
+
+<!-- Slide 5: Prefixes -->
+<div class="slide">
+  <h2>プレフィックスで絞り込む</h2>
+  <table style="max-width:850px">
+    <tr><th>プレフィックス</th><th>起動方法</th><th>機能</th><th>例</th></tr>
+    <tr><td style="color:#00d2ff;font-size:1.3rem;font-weight:700">></td><td><code>Cmd+Shift+P</code></td><td>コマンド実行</td><td>> Toggle Minimap</td></tr>
+    <tr><td style="color:#7fdbca;font-size:1.3rem;font-weight:700">なし</td><td><code>Cmd+P</code></td><td>ファイル検索</td><td>main.py</td></tr>
+    <tr><td style="color:#c792ea;font-size:1.3rem;font-weight:700">@</td><td><code>Cmd+P</code> → @</td><td>シンボル検索（現ファイル）</td><td>@calculate</td></tr>
+    <tr><td style="color:#f78c6c;font-size:1.3rem;font-weight:700">#</td><td><code>Cmd+P</code> → #</td><td>シンボル検索（全ファイル）</td><td>#MyClass</td></tr>
+    <tr><td style="color:#ffcb6b;font-size:1.3rem;font-weight:700">:</td><td><code>Cmd+P</code> → :</td><td>行番号ジャンプ</td><td>:42</td></tr>
+  </table>
+  <p style="margin-top:1rem;color:#888;font-size:.9rem">
+    <code>Cmd+Shift+P</code> は <code>Cmd+P</code> に <code>></code> が入った状態と同じ
+  </p>
+</div>
+
+<!-- Slide 6: Cmd+P File Search -->
+<div class="slide">
+  <h2>Cmd+P：ファイル検索</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>あいまいマッチ（Fuzzy Match）</h3>
+      <p style="font-size:.95rem">
+        完全一致しなくてもOK。頭文字や部分文字列で検索できる。
+      </p>
+      <div style="margin-top:.8rem;font-family:'Fira Code',monospace;font-size:.9rem">
+        <div style="color:#888">入力: <span style="color:#00d2ff">mp</span> → マッチ: <span style="color:#e0e0e0"><strong style="color:#00d2ff">m</strong>ain.<strong style="color:#00d2ff">p</strong>y</span></div>
+        <div style="color:#888">入力: <span style="color:#00d2ff">utpy</span> → マッチ: <span style="color:#e0e0e0"><strong style="color:#00d2ff">ut</strong>ils.<strong style="color:#00d2ff">py</strong></span></div>
+        <div style="color:#888">入力: <span style="color:#00d2ff">tst</span> → マッチ: <span style="color:#e0e0e0"><strong style="color:#00d2ff">t</strong>e<strong style="color:#00d2ff">st</strong>_main.py</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>便利な使い方</h3>
+      <ul class="feature-list">
+        <li><code>Cmd+P</code> → ファイル名 → <code>Enter</code> で開く</li>
+        <li><code>Cmd+P</code> → ファイル名 → <code>Cmd+Enter</code> で横に分割して開く</li>
+        <li><code>Cmd+P</code> → ファイル名 → <code>→</code> でプレビュー</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: @ Symbol Search -->
+<div class="slide">
+  <h2>@：シンボル検索（現在のファイル）</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>使い方</h3>
+      <p style="font-size:.95rem"><code>Cmd+Shift+O</code> または <code>Cmd+P</code> → <code>@</code> を入力</p>
+      <p style="font-size:.85rem;color:#888;margin-top:.3rem">
+        <code>@:</code> とコロンを付けると、種類別にグルーピングされる
+      </p>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <h3>Python での表示例</h3>
+        <div style="font-family:'Fira Code',monospace;font-size:.85rem;color:#888;line-height:1.8">
+          <div><span style="color:#c792ea">class</span> <span style="color:#dcdcaa">DataProcessor</span></div>
+          <div>&nbsp;&nbsp;<span style="color:#569cd6">def</span> <span style="color:#dcdcaa">__init__</span></div>
+          <div>&nbsp;&nbsp;<span style="color:#569cd6">def</span> <span style="color:#dcdcaa">load_data</span></div>
+          <div>&nbsp;&nbsp;<span style="color:#569cd6">def</span> <span style="color:#dcdcaa">process</span></div>
+          <div>&nbsp;&nbsp;<span style="color:#569cd6">def</span> <span style="color:#dcdcaa">save_results</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>こんな時に便利</h3>
+        <ul class="feature-list">
+          <li>長いファイルで関数を探す</li>
+          <li>クラスのメソッド一覧を見る</li>
+          <li>Outline ビューの代わりに</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: : Line Jump -->
+<div class="slide">
+  <h2>:（コロン）：行番号ジャンプ</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem;text-align:center;padding:2rem">
+      <h3 style="font-size:1.5rem;color:#ffcb6b">Ctrl+G &nbsp;or&nbsp; Cmd+P → :42</h3>
+      <p style="font-size:1rem;margin-top:.8rem">エラーメッセージに「line 42」と出たら → <code>Ctrl+G</code> → <code>42</code> → Enter</p>
+    </div>
+    <div class="card">
+      <h3>実践例</h3>
+      <div class="terminal" style="max-width:100%">
+        <div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>Terminal</span></div>
+        <div class="terminal-body" style="min-height:auto">
+          <div><span class="prompt">$ </span><span class="cmd">python main.py</span></div>
+          <div><span class="error">Traceback (most recent call last):</span></div>
+          <div><span class="error">&nbsp;&nbsp;File "main.py", line 42, in calculate</span></div>
+          <div><span class="error">TypeError: unsupported operand type(s)</span></div>
+          <div><span class="output"></span></div>
+          <div><span class="info"># → Ctrl+G → 42 → Enter でジャンプ！</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: # Global Symbol -->
+<div class="slide">
+  <h2>#：グローバルシンボル検索</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>プロジェクト全体のシンボルを検索</h3>
+      <p style="font-size:.95rem"><code>Cmd+P</code> → <code>#</code> → シンボル名を入力</p>
+      <p style="font-size:.85rem;color:#888;margin-top:.3rem">
+        関数名、クラス名、変数名など — どのファイルにあるか関係なく検索
+      </p>
+    </div>
+    <div class="card">
+      <h3>@ と # の違い</h3>
+      <table style="max-width:100%">
+        <tr><th></th><th>@</th><th>#</th></tr>
+        <tr><td>範囲</td><td style="color:#7fdbca">現在のファイルのみ</td><td style="color:#c792ea">プロジェクト全体</td></tr>
+        <tr><td>速度</td><td>非常に速い</td><td>やや遅い（初回）</td></tr>
+        <tr><td>用途</td><td>今見ているファイル内を移動</td><td>「あの関数どこだっけ？」</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Common Commands -->
+<div class="slide">
+  <h2>よく使うコマンド10選</h2>
+  <p style="text-align:center;color:#888;margin-bottom:1rem"><code>Cmd+Shift+P</code> → 以下を入力</p>
+  <table style="max-width:850px">
+    <tr><th>#</th><th>入力（一部でOK）</th><th>機能</th></tr>
+    <tr><td>1</td><td><code>theme</code></td><td>カラーテーマ変更</td></tr>
+    <tr><td>2</td><td><code>settings json</code></td><td>settings.json を開く</td></tr>
+    <tr><td>3</td><td><code>format document</code></td><td>コード整形</td></tr>
+    <tr><td>4</td><td><code>toggle word wrap</code></td><td>折り返し表示の切替</td></tr>
+    <tr><td>5</td><td><code>transform upper</code></td><td>選択テキストを大文字に</td></tr>
+    <tr><td>6</td><td><code>sort lines</code></td><td>行を昇順ソート</td></tr>
+    <tr><td>7</td><td><code>toggle minimap</code></td><td>ミニマップ表示切替</td></tr>
+    <tr><td>8</td><td><code>reload window</code></td><td>VS Code 再読み込み</td></tr>
+    <tr><td>9</td><td><code>install ext</code></td><td>拡張機能インストール</td></tr>
+    <tr><td>10</td><td><code>keyboard shortcuts</code></td><td>キーバインド設定</td></tr>
+  </table>
+</div>
+
+<!-- Slide 11: File Operations -->
+<div class="slide">
+  <h2>ファイル操作ショートカット</h2>
+  <table style="max-width:850px">
+    <tr><th>操作</th><th>macOS</th><th>Win/Linux</th></tr>
+    <tr><td>ファイルを開く（Quick Open）</td><td><code>Cmd+P</code></td><td><code>Ctrl+P</code></td></tr>
+    <tr><td>新規ファイル</td><td><code>Cmd+N</code></td><td><code>Ctrl+N</code></td></tr>
+    <tr><td>ファイルを保存</td><td><code>Cmd+S</code></td><td><code>Ctrl+S</code></td></tr>
+    <tr><td>ファイルを閉じる</td><td><code>Cmd+W</code></td><td><code>Ctrl+W</code></td></tr>
+    <tr><td>閉じたタブを再開</td><td><code>Cmd+Shift+T</code></td><td><code>Ctrl+Shift+T</code></td></tr>
+    <tr><td>最近のタブを切替</td><td><code>Ctrl+Tab</code></td><td><code>Ctrl+Tab</code></td></tr>
+    <tr><td>エディタを分割</td><td><code>Cmd+\</code></td><td><code>Ctrl+\</code></td></tr>
+    <tr><td>分割先を移動</td><td><code>Cmd+1/2/3</code></td><td><code>Ctrl+1/2/3</code></td></tr>
+  </table>
+</div>
+
+<!-- Slide 12: Quick Open Tips -->
+<div class="slide">
+  <h2>Quick Open の上級テクニック</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>チェーン検索</h3>
+      <p style="font-size:.95rem"><code>Cmd+P</code> でファイルを選んだ後、<code>Cmd+P</code> をもう一度押すと続けて別ファイルを開ける。</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <h3>最近のファイル</h3>
+      <p style="font-size:.95rem"><code>Cmd+P</code> を開いて何も入力しなければ、最近開いたファイルの一覧が表示される。</p>
+    </div>
+    <div class="card">
+      <h3>パスで絞り込み</h3>
+      <p style="font-size:.95rem">
+        <code>src/main</code> のようにパスの一部を含めると精度UP。<br>
+        <code>tests/ test_api</code> のようにスペースで区切っても検索可能。
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Command Palette vs Menu -->
+<div class="slide">
+  <h2>コマンドパレット vs メニューバー</h2>
+  <div class="cols" style="max-width:900px">
+    <div class="card" style="border-color:#ff537044">
+      <p class="label red">メニューバーで操作</p>
+      <ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.5rem">
+        <li>File メニューを開く</li>
+        <li>Preferences を探す</li>
+        <li>Settings をクリック</li>
+        <li>検索バーに入力...</li>
+      </ol>
+      <p style="font-size:.85rem;color:#888;margin-top:.5rem">4ステップ、5秒以上</p>
+    </div>
+    <div class="card" style="border-color:#7fdbca44">
+      <p class="label green">コマンドパレットで操作</p>
+      <ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.5rem">
+        <li><code>Cmd+Shift+P</code></li>
+        <li><code>settings</code> と入力</li>
+        <li>Enter</li>
+      </ol>
+      <p style="font-size:.85rem;color:#7fdbca;margin-top:.5rem">3ステップ、2秒以下</p>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem;color:#ffcb6b;text-align:center;font-size:1rem">
+    メニューの場所を覚える必要なし。<strong style="color:#ffcb6b">やりたいことの英語を打つだけ。</strong>
+  </p>
+</div>
+
+<!-- Slide 14: Settings Search -->
+<div class="slide">
+  <h2>設定の検索</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>GUI設定 vs JSON設定</h3>
+      <p style="font-size:.95rem">
+        <code>Cmd+,</code> → GUI設定画面（検索バーで絞り込み）<br>
+        <code>Cmd+Shift+P</code> → "Open Settings (JSON)" → 直接編集
+      </p>
+    </div>
+    <div class="card">
+      <h3>設定の探し方</h3>
+      <ul class="feature-list">
+        <li><code>Cmd+,</code> で設定を開く → 検索バーにキーワード入力</li>
+        <li>例: 「font size」と入力 → フォントサイズ関連の設定が全て表示</li>
+        <li>例: 「auto save」と入力 → 自動保存の設定項目が表示</li>
+        <li>「Modified」フィルタ → 変更済み設定だけ表示</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Exercise 1 -->
+<div class="slide">
+  <h2>練習タイム（前半）</h2>
+  <p class="label green">HANDS-ON</p>
+  <div style="max-width:700px;width:100%">
+    <div class="card">
+      <h3>コマンドパレット基本（10分）</h3>
+      <ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem">
+        <li><code>Cmd+Shift+P</code> → <code>theme</code> → テーマを変更</li>
+        <li><code>Cmd+Shift+P</code> → <code>toggle minimap</code> → ミニマップON/OFF</li>
+        <li><code>Cmd+Shift+P</code> → <code>toggle word wrap</code> → 折り返し切替</li>
+        <li><code>Cmd+Shift+P</code> → <code>format document</code> → コード整形</li>
+        <li><code>Cmd+,</code> → <code>font size</code> で検索 → フォントサイズ変更</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16: Exercise 2 -->
+<div class="slide">
+  <h2>練習タイム（後半）</h2>
+  <p class="label green">HANDS-ON</p>
+  <div style="max-width:700px;width:100%">
+    <div class="card">
+      <h3>ファイルジャンプ（10分）</h3>
+      <ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem">
+        <li>3つ以上のPythonファイルを作成（main.py, utils.py, config.py）</li>
+        <li><code>Cmd+P</code> → <code>main</code> で main.py にジャンプ</li>
+        <li><code>Cmd+P</code> → <code>ut</code> で utils.py にジャンプ</li>
+        <li>関数を書いて <code>Cmd+Shift+O</code> → <code>@</code> でシンボル検索</li>
+        <li><code>Ctrl+G</code> → <code>10</code> で10行目にジャンプ</li>
+        <li><code>Ctrl+Tab</code> で最近のタブを切替</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Recap Prefix Table -->
+<div class="slide">
+  <h2>プレフィックス早見表</h2>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;max-width:1000px;width:100%">
+    <div class="card" style="text-align:center;border-top:3px solid #00d2ff">
+      <div style="font-size:2rem;color:#00d2ff;font-weight:700;font-family:'Fira Code',monospace">></div>
+      <h3 style="font-size:.9rem">コマンド</h3>
+      <p style="font-size:.8rem">Cmd+Shift+P</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid #7fdbca">
+      <div style="font-size:2rem;color:#7fdbca;font-weight:700;font-family:'Fira Code',monospace">(なし)</div>
+      <h3 style="font-size:.9rem">ファイル</h3>
+      <p style="font-size:.8rem">Cmd+P</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid #c792ea">
+      <div style="font-size:2rem;color:#c792ea;font-weight:700;font-family:'Fira Code',monospace">@</div>
+      <h3 style="font-size:.9rem">シンボル(ファイル)</h3>
+      <p style="font-size:.8rem">Cmd+Shift+O</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid #f78c6c">
+      <div style="font-size:2rem;color:#f78c6c;font-weight:700;font-family:'Fira Code',monospace">#</div>
+      <h3 style="font-size:.9rem">シンボル(全体)</h3>
+      <p style="font-size:.8rem">Cmd+T</p>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid #ffcb6b">
+      <div style="font-size:2rem;color:#ffcb6b;font-weight:700;font-family:'Fira Code',monospace">:</div>
+      <h3 style="font-size:.9rem">行番号</h3>
+      <p style="font-size:.8rem">Ctrl+G</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Summary -->
+<div class="slide">
+  <h2>まとめ</h2>
+  <div style="max-width:700px;width:100%">
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
+      <h3 style="color:#00d2ff">コマンドパレットは VS Code の心臓</h3>
+      <p style="font-size:.9rem"><code>Cmd+Shift+P</code> で全機能にアクセス。メニューを探す時代は終わり。</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+      <h3 style="color:#7fdbca">Cmd+P でファイルを瞬時に開く</h3>
+      <p style="font-size:.9rem">あいまいマッチで2-3文字入力するだけ。Explorer をクリックしない。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #c792ea">
+      <h3 style="color:#c792ea">プレフィックスで操作を使い分け</h3>
+      <p style="font-size:.9rem">>, @, #, : を覚えれば、コード内のどこにでも瞬時にジャンプ。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 19: Next Session -->
+<div class="slide">
+  <h2>次回予告</h2>
+  <div style="text-align:center;max-width:600px">
+    <p class="label purple">SESSION 04</p>
+    <h1 style="font-size:2rem;margin-bottom:1rem">ショートカット：マウスに頼らない操作</h1>
+    <p style="font-size:1.1rem;color:#888;margin-bottom:2rem">
+      必須ショートカット12選を覚えて、作業効率を3倍にしましょう。
+    </p>
+    <div class="card" style="text-align:left">
+      <h3>予習</h3>
+      <ul class="feature-list">
+        <li>今日覚えた <code>Cmd+Shift+P</code> と <code>Cmd+P</code> を使い続ける</li>
+        <li><code>Cmd+Shift+P</code> → "Keyboard Shortcuts" を開いてみる</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="progress"></div>
+<div class="nav-hint">← → / j k / Space</div>
+
+<script>
+const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');
+let cur=0,busy=false;
+function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}
+prog.textContent='1 / '+slides.length;
+document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});
+</script>
+<style>._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}._ts-gallery-info{padding:.8rem 1rem}._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}</style>
+<script>
+(function(){var _slides=document.querySelectorAll('.slide');if(_slides.length<2)return;function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}var oldHint=document.querySelector('.nav-hint');if(oldHint)oldHint.style.display='none';function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}var toolbar=document.createElement('div');toolbar.className='_ts-toolbar';toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';document.body.appendChild(toolbar);var counterBtn=toolbar.querySelector('._ts-counter-btn');var gridBtn=toolbar.querySelector('._ts-grid-btn');var jumpEl=document.createElement('div');jumpEl.className='_ts-jump';var jumpGrid=document.createElement('div');jumpGrid.className='_ts-jump-grid';for(var i=0;i<_slides.length;i++){var item=document.createElement('div');item.className='_ts-jump-item';item.textContent=i+1;item.dataset.idx=i;item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});jumpGrid.appendChild(item)}jumpEl.appendChild(jumpGrid);document.body.appendChild(jumpEl);var jumpOpen=false;function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});var gallery=document.createElement('div');gallery.className='_ts-gallery-overlay';var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';for(var i=0;i<_slides.length;i++){var title=_getTitle(_slides[i])||'Slide '+(i+1);galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>'}galleryHTML+='</div>';gallery.innerHTML=galleryHTML;document.body.appendChild(gallery);var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');for(var i=0;i<previews.length;i++){var idx=parseInt(previews[i].dataset.slideIdx);var clone=_slides[idx].cloneNode(true);clone.style.display='flex';clone.style.position='static';clone.style.animation='none';clone.classList.remove('out-left','out-right');clone.classList.add('active');previews[i].appendChild(clone)}var cards=gallery.querySelectorAll('._ts-gallery-card');for(var i=0;i<cards.length;i++){cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()})}var galleryOpen=false;function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}}},true);document.addEventListener('click',function(e){if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump()});function _tsUpdateUI(){var c=_tsCurIdx();counterBtn.textContent=(c+1)+' / '+_slides.length;if(jumpOpen)highlightJumpCurrent();if(galleryOpen)highlightGalleryCard()}var _lastIdx=_tsCurIdx();setInterval(function(){var c=_tsCurIdx();if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}},200);_tsUpdateUI()})();
+</script>
+</body></html>

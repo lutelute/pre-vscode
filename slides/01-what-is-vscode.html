@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Session 1 — VS Codeとは：エディタの選び方</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}
+.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}
+.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}
+h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}
+h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}
+p{font-size:1.05rem;line-height:1.7;color:#bbb}
+code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}
+.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}
+.label.green{background:#7fdbca22;color:#7fdbca}
+.label.purple{background:#c792ea22;color:#c792ea}
+.label.orange{background:#f78c6c22;color:#f78c6c}
+.label.red{background:#ff537022;color:#ff5370}
+.label.yellow{background:#ffcb6b22;color:#ffcb6b}
+.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}
+.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}
+.cols{display:flex;gap:2rem;width:100%;max-width:1100px}
+.cols>*{flex:1}
+.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}
+.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.terminal-bar .dot{width:10px;height:10px;border-radius:50%}
+.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}
+.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}
+.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}
+.terminal-body .prompt{color:#7fdbca}
+.terminal-body .cmd{color:#e0e0e0}
+.terminal-body .output{color:#888}
+.terminal-body .success{color:#27c93f}
+.terminal-body .error{color:#ff5370}
+.terminal-body .info{color:#00d2ff}
+.terminal-body .warn{color:#ffcb6b}
+.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}
+.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}
+.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}
+ul.feature-list{list-style:none;max-width:700px}
+ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}
+ul.feature-list li::before{content:'▸ ';color:#00d2ff}
+.bounce{animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.pulse{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.05)}}
+.step{opacity:.3;transition:opacity .5s,transform .5s;transform:translateX(-5px)}
+.step.visible{opacity:1;transform:translateX(0)}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}
+.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}
+.step-progress .sp-item{display:flex;align-items:center;gap:0}
+.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}
+.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}
+.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}
+.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}
+.step-progress .sp-arrow.sp-done{color:#00d2ff55}
+table{border-collapse:collapse;width:100%;max-width:900px}
+th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}
+th{color:#00d2ff;font-weight:600;background:#1a1a2e}
+td{color:#bbb}
+tr:hover td{background:#1a1a2e55}
+</style></head><body>
+
+<!-- ==================== Slide 1: Title ==================== -->
+<div class="slide active">
+  <div style="text-align:center">
+    <p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p>
+    <p class="label">SESSION 01</p>
+    <h1 style="font-size:3rem;margin-bottom:1rem">VS Codeとは：エディタの選び方</h1>
+    <p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">PWS Lab VS Code 入門講座</p>
+    <div style="display:flex;gap:1.5rem;justify-content:center;margin-top:1rem">
+      <span class="ai-badge">90分 / 全15回の第1回</span>
+    </div>
+    <p style="margin-top:3rem;color:#555;font-size:.9rem">→ / Space で次へ</p>
+  </div>
+</div>
+
+<!-- ==================== Slide 2: Objectives ==================== -->
+<div class="slide">
+  <h2>今日のゴール</h2>
+  <div style="max-width:700px;width:100%">
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
+      <h3 style="color:#00d2ff">1. VS Codeが何かを理解する</h3>
+      <p style="font-size:.95rem">なぜ多くの開発者がVS Codeを選ぶのか、その理由を知る</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+      <h3 style="color:#7fdbca">2. インストールして初回設定を完了する</h3>
+      <p style="font-size:.95rem">macOS / Linux / Windows それぞれの方法</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea">
+      <h3 style="color:#c792ea">3. 基本的な操作ができるようになる</h3>
+      <p style="font-size:.95rem">起動、テーマ変更、<code>code</code> コマンドの利用</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 3: What is VS Code ==================== -->
+<div class="slide">
+  <h2>VS Code とは？</h2>
+  <div class="cols" style="max-width:1000px">
+    <div class="card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:.8rem">📝</div>
+      <h3>コードエディタ</h3>
+      <p style="font-size:.9rem">Microsoftが開発する<strong style="color:#00d2ff">無料・オープンソース</strong>のコードエディタ。2015年リリース以来、最も人気のエディタに成長。</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:.8rem">🌍</div>
+      <h3>クロスプラットフォーム</h3>
+      <p style="font-size:.9rem">macOS / Windows / Linux で同じ体験。設定も同期可能。</p>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem;color:#888;max-width:700px;text-align:center">
+    Stack Overflow Developer Survey で<strong style="color:#00d2ff">73%以上</strong>の開発者が使用（2024年）
+  </p>
+</div>
+
+<!-- ==================== Slide 4: 4 Features ==================== -->
+<div class="slide">
+  <h2>VS Code の4つの特徴</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:900px;width:100%">
+    <div class="card" style="text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:.5rem">🪶</div>
+      <h3>軽量・高速</h3>
+      <p style="font-size:.9rem">Electron製だが起動が速い。大きなファイルも快適に編集。</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:.5rem">🧩</div>
+      <h3>拡張性</h3>
+      <p style="font-size:.9rem">5万以上の拡張機能。Python, Git, SSH, AI…何でも追加可能。</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:.5rem">🔓</div>
+      <h3>オープンソース</h3>
+      <p style="font-size:.9rem">GitHubで公開。コミュニティが活発に開発・改善。</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:.5rem">🤖</div>
+      <h3>AI統合</h3>
+      <p style="font-size:.9rem">GitHub Copilot など最新のAIツールが統合可能。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 5: Editor Comparison ==================== -->
+<div class="slide">
+  <h2>エディタ比較：VS Code vs 他のツール</h2>
+  <table>
+    <tr><th>エディタ</th><th>種類</th><th>長所</th><th>短所</th></tr>
+    <tr><td style="color:#00d2ff;font-weight:600">VS Code</td><td>エディタ</td><td>軽量・拡張豊富・無料</td><td>初期設定が必要</td></tr>
+    <tr><td>PyCharm</td><td>IDE</td><td>Python特化・デバッグ強力</td><td>重い・有料版あり</td></tr>
+    <tr><td>Vim / Neovim</td><td>エディタ</td><td>超軽量・SSH先で使える</td><td>学習コスト高い</td></tr>
+    <tr><td>Jupyter Notebook</td><td>ノートブック</td><td>対話的・可視化が簡単</td><td>大規模開発に不向き</td></tr>
+    <tr><td>Sublime Text</td><td>エディタ</td><td>超高速・軽量</td><td>拡張が少ない・有料</td></tr>
+    <tr><td>Cursor</td><td>エディタ</td><td>AI特化フォーク</td><td>有料・独自路線</td></tr>
+  </table>
+</div>
+
+<!-- ==================== Slide 6: Why VS Code for Lab ==================== -->
+<div class="slide">
+  <h2>なぜ PWS Lab で VS Code？</h2>
+  <div style="max-width:700px;width:100%">
+    <ul class="feature-list">
+      <li><strong style="color:#00d2ff">Remote-SSH</strong> で研究室サーバー (pws-160core, pws-gpu) に直接接続</li>
+      <li><strong style="color:#00d2ff">Python拡張</strong> が充実（Pylance, Ruff, Jupyter, Debugger）</li>
+      <li><strong style="color:#00d2ff">Git統合</strong> でバージョン管理がGUIで完結</li>
+      <li><strong style="color:#00d2ff">統合ターミナル</strong> でエディタ内からコマンド実行</li>
+      <li><strong style="color:#00d2ff">GitHub Copilot</strong> が学生は無料で使える</li>
+      <li><strong style="color:#00d2ff">設定同期</strong> で自宅PCとラボPCで同じ環境</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== Slide 7: IDE vs Editor ==================== -->
+<div class="slide">
+  <h2>IDE とエディタの違い</h2>
+  <div class="cols" style="max-width:900px">
+    <div class="card">
+      <p class="label orange">IDE（統合開発環境）</p>
+      <ul class="feature-list">
+        <li>全機能が最初から入っている</li>
+        <li>例: PyCharm, IntelliJ, Xcode</li>
+        <li>設定不要ですぐ使える</li>
+        <li>重い・メモリ消費大</li>
+        <li>言語ごとに別ツール</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:#00d2ff44">
+      <p class="label">エディタ + 拡張</p>
+      <ul class="feature-list">
+        <li>必要な機能だけ追加する</li>
+        <li>例: VS Code, Vim, Sublime</li>
+        <li>初期設定が必要</li>
+        <li>軽い・カスタマイズ自在</li>
+        <li>どの言語でも1つのツール</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem;color:#888;text-align:center">VS Code は<strong style="color:#00d2ff">「拡張で IDE 並みになるエディタ」</strong>という立ち位置</p>
+</div>
+
+<!-- ==================== Slide 8: Install macOS ==================== -->
+<div class="slide">
+  <h2>インストール：macOS</h2>
+  <div class="terminal" style="max-width:800px">
+    <div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>Terminal — zsh</span></div>
+    <div class="terminal-body">
+      <div><span class="info"># 方法1: Homebrew（推奨）</span></div>
+      <div><span class="prompt">$ </span><span class="cmd">brew install --cask visual-studio-code</span></div>
+      <div><span class="output"></span></div>
+      <div><span class="info"># 方法2: 公式サイトからダウンロード</span></div>
+      <div><span class="output">https://code.visualstudio.com/download</span></div>
+      <div><span class="output"></span></div>
+      <div><span class="info"># インストール確認</span></div>
+      <div><span class="prompt">$ </span><span class="cmd">code --version</span></div>
+      <div><span class="success">1.96.2</span></div>
+      <div><span class="success">5e805b7...</span></div>
+    </div>
+  </div>
+  <p style="margin-top:1rem;color:#888;font-size:.9rem">Homebrew が入っていない場合: <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></p>
+</div>
+
+<!-- ==================== Slide 9: Install Linux ==================== -->
+<div class="slide">
+  <h2>インストール：Linux</h2>
+  <div class="terminal" style="max-width:800px">
+    <div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>Terminal — bash</span></div>
+    <div class="terminal-body">
+      <div><span class="info"># Ubuntu / Debian: snap（推奨）</span></div>
+      <div><span class="prompt">$ </span><span class="cmd">sudo snap install code --classic</span></div>
+      <div><span class="output"></span></div>
+      <div><span class="info"># または apt</span></div>
+      <div><span class="prompt">$ </span><span class="cmd">sudo apt update && sudo apt install code</span></div>
+      <div><span class="output"></span></div>
+      <div><span class="info"># Fedora / RHEL</span></div>
+      <div><span class="prompt">$ </span><span class="cmd">sudo dnf install code</span></div>
+      <div><span class="output"></span></div>
+      <div><span class="info"># インストール確認</span></div>
+      <div><span class="prompt">$ </span><span class="cmd">code --version</span></div>
+      <div><span class="success">1.96.2</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 10: Install Windows ==================== -->
+<div class="slide">
+  <h2>インストール：Windows</h2>
+  <div class="terminal" style="max-width:800px">
+    <div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>PowerShell</span></div>
+    <div class="terminal-body">
+      <div><span class="info"># 方法1: winget（推奨）</span></div>
+      <div><span class="prompt">PS&gt; </span><span class="cmd">winget install Microsoft.VisualStudioCode</span></div>
+      <div><span class="output"></span></div>
+      <div><span class="info"># 方法2: 公式サイトからインストーラー</span></div>
+      <div><span class="output">https://code.visualstudio.com/download</span></div>
+      <div><span class="output"></span></div>
+      <div><span class="info"># ※「PATHに追加」を必ずチェック！</span></div>
+      <div><span class="warn">☑ Add to PATH (available after restart)</span></div>
+    </div>
+  </div>
+  <p style="margin-top:1rem;color:#888;font-size:.9rem">インストーラーで「PATHに追加」を忘れると <code>code</code> コマンドが使えません</p>
+</div>
+
+<!-- ==================== Slide 11: First Launch ==================== -->
+<div class="slide">
+  <h2>初回起動</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="step-progress">
+      <div class="sp-item"><span class="sp-node sp-done">インストール</span></div>
+      <div class="sp-item"><span class="sp-arrow sp-done">→</span><span class="sp-node sp-active">初回起動</span></div>
+      <div class="sp-item"><span class="sp-arrow">→</span><span class="sp-node">日本語化</span></div>
+      <div class="sp-item"><span class="sp-arrow">→</span><span class="sp-node">code コマンド</span></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <h3>Welcome タブが表示される</h3>
+      <p style="font-size:.9rem">初回起動時に Welcome タブが開く。ここから基本設定を確認できる。</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <h3>テーマ選択</h3>
+      <p style="font-size:.9rem">最初にカラーテーマを聞かれる。後からいつでも変更可能。<br>
+        <code>Cmd+K Cmd+T</code> (macOS) / <code>Ctrl+K Ctrl+T</code> (Win/Linux)</p>
+    </div>
+    <div class="card">
+      <h3>画面の見方</h3>
+      <p style="font-size:.9rem">左にアクティビティバー、中央にエディタ、下にステータスバー。<br>
+        詳しくは次回 Session 02 で解説。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 12: Japanese Pack ==================== -->
+<div class="slide">
+  <h2>日本語化</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="step-progress">
+      <div class="sp-item"><span class="sp-node sp-done">インストール</span></div>
+      <div class="sp-item"><span class="sp-arrow sp-done">→</span><span class="sp-node sp-done">初回起動</span></div>
+      <div class="sp-item"><span class="sp-arrow sp-done">→</span><span class="sp-node sp-active">日本語化</span></div>
+      <div class="sp-item"><span class="sp-arrow">→</span><span class="sp-node">code コマンド</span></div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <h3>手順</h3>
+      <ol style="color:#bbb;font-size:.95rem;line-height:2;padding-left:1.5rem">
+        <li><code>Cmd+Shift+P</code> でコマンドパレットを開く</li>
+        <li><code>Configure Display Language</code> と入力</li>
+        <li><code>日本語 (ja)</code> を選択</li>
+        <li>VS Code が再起動される</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>または拡張機能から</h3>
+      <p style="font-size:.9rem">サイドバーの拡張機能アイコン → <code>Japanese Language Pack</code> で検索 → インストール</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 13: code command ==================== -->
+<div class="slide">
+  <h2><code>code</code> コマンドの設定</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="step-progress">
+      <div class="sp-item"><span class="sp-node sp-done">インストール</span></div>
+      <div class="sp-item"><span class="sp-arrow sp-done">→</span><span class="sp-node sp-done">初回起動</span></div>
+      <div class="sp-item"><span class="sp-arrow sp-done">→</span><span class="sp-node sp-done">日本語化</span></div>
+      <div class="sp-item"><span class="sp-arrow sp-done">→</span><span class="sp-node sp-active">code コマンド</span></div>
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span>Terminal</span></div>
+      <div class="terminal-body">
+        <div><span class="info"># macOS: コマンドパレットから設定</span></div>
+        <div><span class="output">Cmd+Shift+P → "Shell Command: Install 'code' command in PATH"</span></div>
+        <div><span class="output"></span></div>
+        <div><span class="info"># 使い方</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">code .</span><span class="output">          # 現在のフォルダを開く</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">code file.py</span><span class="output">   # ファイルを開く</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">code -d a.py b.py</span><span class="output">  # 2ファイルのdiffを表示</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">code --install-extension ms-python.python</span></div>
+      </div>
+    </div>
+  </div>
+  <p style="margin-top:1rem;color:#ffcb6b;font-size:.95rem">重要: <code>code .</code> はこの講座で最も使うコマンドです！</p>
+</div>
+
+<!-- ==================== Slide 14: code . is powerful ==================== -->
+<div class="slide">
+  <h2><code>code .</code> が重要な理由</h2>
+  <div class="cols" style="max-width:900px">
+    <div class="card">
+      <p class="label red">ファイル単体を開く</p>
+      <ul class="feature-list">
+        <li>ファイルツリーが見えない</li>
+        <li>検索がそのファイルだけ</li>
+        <li>Git連携が効かない</li>
+        <li>拡張機能の動作が不完全</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:#7fdbca44">
+      <p class="label green">フォルダごと開く ✓</p>
+      <ul class="feature-list">
+        <li>プロジェクト全体が見える</li>
+        <li>全ファイル横断検索</li>
+        <li>Git差分が表示される</li>
+        <li>全拡張機能がフル機能動作</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem;color:#888;text-align:center">
+    ターミナルでプロジェクトフォルダに移動 → <code>code .</code> が基本の流れ
+  </p>
+</div>
+
+<!-- ==================== Slide 15: Theme Change ==================== -->
+<div class="slide">
+  <h2>テーマを変更してみよう</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1.5rem">
+      <h3>変更方法</h3>
+      <p style="font-size:.95rem"><code>Cmd+K Cmd+T</code> → テーマ一覧が表示 → ↑↓ で切り替え → Enter で確定</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+      <div class="card" style="text-align:center;background:#1e1e1e;border-color:#333">
+        <p style="color:#569cd6;font-weight:600;font-size:.9rem">Dark+（デフォルト）</p>
+        <p style="font-size:.8rem;color:#888">VS Codeの標準ダークテーマ</p>
+      </div>
+      <div class="card" style="text-align:center;background:#282c34;border-color:#333">
+        <p style="color:#e06c75;font-weight:600;font-size:.9rem">One Dark Pro</p>
+        <p style="font-size:.8rem;color:#888">Atom由来の人気テーマ</p>
+      </div>
+      <div class="card" style="text-align:center;background:#282a36;border-color:#333">
+        <p style="color:#bd93f9;font-weight:600;font-size:.9rem">Dracula</p>
+        <p style="font-size:.8rem;color:#888">鮮やかな紫系テーマ</p>
+      </div>
+    </div>
+    <p style="margin-top:1rem;color:#888;font-size:.9rem;text-align:center">
+      テーマは<strong style="color:#7fdbca">見た目の好み</strong>で選べばOK。生産性への影響は少ない。
+    </p>
+  </div>
+</div>
+
+<!-- ==================== Slide 16: Settings Sync ==================== -->
+<div class="slide">
+  <h2>設定の同期 (Settings Sync)</h2>
+  <div style="max-width:700px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>Settings Sync とは</h3>
+      <p style="font-size:.95rem">GitHubアカウントでログインすると、設定・拡張機能・テーマなどが<strong style="color:#00d2ff">クラウド同期</strong>される。</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <h3>有効化する方法</h3>
+      <ol style="color:#bbb;font-size:.95rem;line-height:2;padding-left:1.5rem">
+        <li>左下の歯車アイコン → <code>設定の同期をオンにする</code></li>
+        <li>GitHub アカウントでサインイン</li>
+        <li>同期する項目を選択（全てONで OK）</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>これで何が便利？</h3>
+      <p style="font-size:.95rem">自宅のMac、大学のPC、サーバー接続…<br>
+        どこでも<strong style="color:#7fdbca">同じ設定・テーマ・拡張機能</strong>で作業できる。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 17: Key Shortcuts Preview ==================== -->
+<div class="slide">
+  <h2>最低限覚えるショートカット（今日分）</h2>
+  <table>
+    <tr><th>操作</th><th>macOS</th><th>Windows / Linux</th></tr>
+    <tr><td>コマンドパレット</td><td><code>Cmd+Shift+P</code></td><td><code>Ctrl+Shift+P</code></td></tr>
+    <tr><td>テーマ変更</td><td><code>Cmd+K Cmd+T</code></td><td><code>Ctrl+K Ctrl+T</code></td></tr>
+    <tr><td>設定を開く</td><td><code>Cmd+,</code></td><td><code>Ctrl+,</code></td></tr>
+    <tr><td>ターミナルを開く</td><td><code>Ctrl+`</code></td><td><code>Ctrl+`</code></td></tr>
+    <tr><td>ファイル検索</td><td><code>Cmd+P</code></td><td><code>Ctrl+P</code></td></tr>
+  </table>
+  <p style="margin-top:1rem;color:#888;font-size:.9rem">全ショートカットは Session 04 で詳しく解説</p>
+</div>
+
+<!-- ==================== Slide 18: Exercise ==================== -->
+<div class="slide">
+  <h2>練習タイム</h2>
+  <p class="label green">HANDS-ON</p>
+  <div style="max-width:700px;width:100%">
+    <div class="card">
+      <h3>やってみよう（15分）</h3>
+      <ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem">
+        <li>VS Code をインストールする（まだの人）</li>
+        <li>VS Code を起動する</li>
+        <li><code>Cmd+K Cmd+T</code> でテーマを変更する</li>
+        <li>コマンドパレット (<code>Cmd+Shift+P</code>) を開いてみる</li>
+        <li>日本語化を設定する（英語のままでもOK）</li>
+        <li><code>code</code> コマンドをPATHに追加する（macOS）</li>
+        <li>ターミナルで <code>mkdir ~/test-project && cd ~/test-project && code .</code></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 19: Exercise 2 ==================== -->
+<div class="slide">
+  <h2>練習タイム（つづき）</h2>
+  <p class="label green">HANDS-ON</p>
+  <div style="max-width:700px;width:100%">
+    <div class="card">
+      <h3>確認しよう</h3>
+      <ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem">
+        <li>VS Code でフォルダが開けたか？（左サイドバーにフォルダ名表示）</li>
+        <li>新規ファイルを作成: <code>Cmd+N</code> → <code>hello.py</code> として保存</li>
+        <li><code>print("Hello, PWS Lab!")</code> と入力</li>
+        <li>ターミナル (<code>Ctrl+`</code>) を開いて <code>python hello.py</code> を実行</li>
+        <li>出力を確認できたらOK！</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 20: VS Code Ecosystem ==================== -->
+<div class="slide">
+  <h2>VS Code のエコシステム</h2>
+  <div class="flow">
+    <div class="flow-box">
+      <div style="font-size:1.5rem">🖥️</div>
+      <div style="color:#00d2ff;font-size:.85rem;font-weight:600">VS Code</div>
+      <div style="color:#888;font-size:.75rem">デスクトップ版</div>
+    </div>
+    <span class="flow-arrow">―</span>
+    <div class="flow-box">
+      <div style="font-size:1.5rem">🌐</div>
+      <div style="color:#7fdbca;font-size:.85rem;font-weight:600">vscode.dev</div>
+      <div style="color:#888;font-size:.75rem">ブラウザ版</div>
+    </div>
+    <span class="flow-arrow">―</span>
+    <div class="flow-box">
+      <div style="font-size:1.5rem">☁️</div>
+      <div style="color:#c792ea;font-size:.85rem;font-weight:600">GitHub Codespaces</div>
+      <div style="color:#888;font-size:.75rem">クラウド開発環境</div>
+    </div>
+    <span class="flow-arrow">―</span>
+    <div class="flow-box">
+      <div style="font-size:1.5rem">🔌</div>
+      <div style="color:#f78c6c;font-size:.85rem;font-weight:600">code-server</div>
+      <div style="color:#888;font-size:.75rem">自前ホスティング</div>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem;color:#888;font-size:.9rem;text-align:center">
+    全て同じ操作感。PWS Lab の OptiPlex サーバーでは code-server も利用可能。
+  </p>
+</div>
+
+<!-- ==================== Slide 21: Common Mistakes ==================== -->
+<div class="slide">
+  <h2>よくある間違い（初心者向け）</h2>
+  <div style="max-width:800px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card" style="border-left:3px solid #ff5370">
+      <p class="label red">NG</p>
+      <p style="font-size:.9rem;color:#ff5370">ファイルをダブルクリックで1つずつ開く</p>
+      <p style="font-size:.8rem;color:#888">→ プロジェクト全体が見えない</p>
+    </div>
+    <div class="card" style="border-left:3px solid #27c93f">
+      <p class="label green">OK</p>
+      <p style="font-size:.9rem;color:#7fdbca"><code>code .</code> でフォルダごと開く</p>
+      <p style="font-size:.8rem;color:#888">→ 全機能が使える</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ff5370">
+      <p class="label red">NG</p>
+      <p style="font-size:.9rem;color:#ff5370">設定を何も変えずにデフォルトのまま使う</p>
+      <p style="font-size:.8rem;color:#888">→ 便利な機能を見逃す</p>
+    </div>
+    <div class="card" style="border-left:3px solid #27c93f">
+      <p class="label green">OK</p>
+      <p style="font-size:.9rem;color:#7fdbca">autoSave, formatOnSave を設定する</p>
+      <p style="font-size:.8rem;color:#888">→ Session 12 で詳しく解説</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 22: Summary ==================== -->
+<div class="slide">
+  <h2>まとめ</h2>
+  <div style="max-width:700px;width:100%">
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
+      <h3 style="color:#00d2ff">VS Code = 無料・軽量・拡張性抜群のエディタ</h3>
+      <p style="font-size:.9rem">世界で最も人気のコードエディタ。研究室の開発に最適。</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+      <h3 style="color:#7fdbca">インストールは簡単</h3>
+      <p style="font-size:.9rem">brew / snap / winget で1コマンド。<code>code</code> コマンドをPATHに追加。</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea">
+      <h3 style="color:#c792ea"><code>code .</code> でフォルダを開く</h3>
+      <p style="font-size:.9rem">ファイル単体ではなく、プロジェクトフォルダごと開くのが鉄則。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ffcb6b">
+      <h3 style="color:#ffcb6b">Settings Sync で環境統一</h3>
+      <p style="font-size:.9rem">GitHubアカウントで設定を同期。どのPCでも同じ環境。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Slide 23: Next Session ==================== -->
+<div class="slide">
+  <h2>次回予告</h2>
+  <div style="text-align:center;max-width:600px">
+    <p class="label purple">SESSION 02</p>
+    <h1 style="font-size:2rem;margin-bottom:1rem">画面構成：UIを理解する</h1>
+    <p style="font-size:1.1rem;color:#888;margin-bottom:2rem">
+      VS Code の5つの領域（Activity Bar, Side Bar, Editor, Panel, Status Bar）を学び、<br>
+      効率的な画面操作を身につけます。
+    </p>
+    <div class="card" style="text-align:left">
+      <h3>予習（やらなくてもOK）</h3>
+      <ul class="feature-list">
+        <li>VS Code を起動して、画面の各部分をクリックしてみる</li>
+        <li>左のアイコンバー（Activity Bar）を触ってみる</li>
+        <li><code>Cmd+B</code> でサイドバーを開閉してみる</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="progress"></div>
+<div class="nav-hint">← → / j k / Space</div>
+
+<script>
+const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');
+let cur=0,busy=false;
+function go(i){
+  if(busy||i===cur)return;
+  var next=Math.max(0,Math.min(i,slides.length-1));
+  if(next===cur)return;
+  busy=true;
+  slides[cur].classList.remove('active');
+  slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';
+  slides[next].classList.add('active');
+  cur=next;
+  prog.textContent=(cur+1)+' / '+slides.length;
+  setTimeout(function(){busy=false},350);
+}
+prog.textContent='1 / '+slides.length;
+document.addEventListener('keydown',function(e){
+  if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;
+  if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}
+  else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}
+  else if(e.key==='g')go(0);
+  else if(e.key==='G')go(slides.length-1);
+});
+</script>
+<!-- Gallery / Jump Grid -->
+<style>
+._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}
+._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}
+._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}
+._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}
+._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}
+._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}
+._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}
+._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}
+._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}
+._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}
+._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}
+._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}
+._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}
+._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}
+._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}
+._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}
+._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}
+._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}
+._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}
+._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}
+._ts-gallery-info{padding:.8rem 1rem}
+._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}
+@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}
+</style>
+<script>
+(function(){
+  var _slides=document.querySelectorAll('.slide');
+  if(_slides.length<2)return;
+  function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}
+  var oldHint=document.querySelector('.nav-hint');
+  if(oldHint)oldHint.style.display='none';
+  function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}
+  var toolbar=document.createElement('div');
+  toolbar.className='_ts-toolbar';
+  toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';
+  document.body.appendChild(toolbar);
+  var counterBtn=toolbar.querySelector('._ts-counter-btn');
+  var gridBtn=toolbar.querySelector('._ts-grid-btn');
+  var jumpEl=document.createElement('div');
+  jumpEl.className='_ts-jump';
+  var jumpGrid=document.createElement('div');
+  jumpGrid.className='_ts-jump-grid';
+  for(var i=0;i<_slides.length;i++){
+    var item=document.createElement('div');
+    item.className='_ts-jump-item';
+    item.textContent=i+1;
+    item.dataset.idx=i;
+    item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});
+    jumpGrid.appendChild(item);
+  }
+  jumpEl.appendChild(jumpGrid);
+  document.body.appendChild(jumpEl);
+  var jumpOpen=false;
+  function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}
+  function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}
+  function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}
+  counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});
+  var gallery=document.createElement('div');
+  gallery.className='_ts-gallery-overlay';
+  var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';
+  for(var i=0;i<_slides.length;i++){
+    var title=_getTitle(_slides[i])||'Slide '+(i+1);
+    galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>';
+  }
+  galleryHTML+='</div>';
+  gallery.innerHTML=galleryHTML;
+  document.body.appendChild(gallery);
+  var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');
+  for(var i=0;i<previews.length;i++){
+    var idx=parseInt(previews[i].dataset.slideIdx);
+    var clone=_slides[idx].cloneNode(true);
+    clone.style.display='flex';clone.style.position='static';clone.style.animation='none';
+    clone.classList.remove('out-left','out-right');clone.classList.add('active');
+    previews[i].appendChild(clone);
+  }
+  var cards=gallery.querySelectorAll('._ts-gallery-card');
+  for(var i=0;i<cards.length;i++){
+    cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()});
+  }
+  var galleryOpen=false;
+  function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}
+  function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}
+  function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}
+  gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});
+  gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}
+      else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}
+    }
+  },true);
+  document.addEventListener('click',function(e){
+    if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump();
+  });
+  function _tsUpdateUI(){
+    var c=_tsCurIdx();
+    counterBtn.textContent=(c+1)+' / '+_slides.length;
+    if(jumpOpen)highlightJumpCurrent();
+    if(galleryOpen)highlightGalleryCard();
+  }
+  var _lastIdx=_tsCurIdx();
+  setInterval(function(){
+    var c=_tsCurIdx();
+    if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}
+  },200);
+  _tsUpdateUI();
+})();
+</script>
+
+</body></html>

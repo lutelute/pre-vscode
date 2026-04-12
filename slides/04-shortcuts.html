@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Session 4 — ショートカット：マウスに頼らない操作</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}p{font-size:1.05rem;line-height:1.7;color:#bbb}code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}.label.green{background:#7fdbca22;color:#7fdbca}.label.purple{background:#c792ea22;color:#c792ea}.label.orange{background:#f78c6c22;color:#f78c6c}.label.red{background:#ff537022;color:#ff5370}.label.yellow{background:#ffcb6b22;color:#ffcb6b}.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}.cols{display:flex;gap:2rem;width:100%;max-width:1100px}.cols>*{flex:1}.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}.terminal-bar .dot{width:10px;height:10px;border-radius:50%}.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}.terminal-body .prompt{color:#7fdbca}.terminal-body .cmd{color:#e0e0e0}.terminal-body .output{color:#888}.terminal-body .success{color:#27c93f}.terminal-body .error{color:#ff5370}.terminal-body .info{color:#00d2ff}.terminal-body .warn{color:#ffcb6b}ul.feature-list{list-style:none;max-width:700px}ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}ul.feature-list li::before{content:'▸ ';color:#00d2ff}.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}table{border-collapse:collapse;width:100%;max-width:900px}th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}th{color:#00d2ff;font-weight:600;background:#1a1a2e}td{color:#bbb}tr:hover td{background:#1a1a2e55}
+</style></head><body>
+
+<!-- Slide 1: Title -->
+<div class="slide active">
+  <div style="text-align:center">
+    <p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p>
+    <p class="label">SESSION 04</p>
+    <h1 style="font-size:2.8rem;margin-bottom:1rem">ショートカット</h1>
+    <p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">マウスに頼らない操作</p>
+    <span class="ai-badge">90分 / 全15回の第4回</span>
+    <p style="margin-top:3rem;color:#555;font-size:.9rem">→ / Space で次へ</p>
+  </div>
+</div>
+
+<!-- Slide 2: Objectives -->
+<div class="slide">
+  <h2>今日のゴール</h2>
+  <div style="max-width:700px;width:100%">
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
+      <h3 style="color:#00d2ff">1. 必須ショートカット12選を覚える</h3>
+      <p style="font-size:.95rem">毎日使う基本操作をキーボードだけで</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+      <h3 style="color:#7fdbca">2. 行操作を自在にできる</h3>
+      <p style="font-size:.95rem">行の移動、複製、削除、コメントアウト</p>
+    </div>
+    <div class="card" style="border-left:3px solid #c792ea">
+      <h3 style="color:#c792ea">3. 覚え方のコツを知る</h3>
+      <p style="font-size:.95rem">一度に全部は無理。毎日2-3個ずつ</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: Why Shortcuts -->
+<div class="slide">
+  <h2>なぜショートカットを覚えるのか</h2>
+  <div class="cols" style="max-width:900px">
+    <div class="card" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:.5rem">🐌</div>
+      <h3>マウス操作</h3>
+      <p style="font-size:.9rem">
+        メニュー → クリック → サブメニュー...<br>
+        <strong style="color:#ff5370">1回の操作に3-5秒</strong><br>
+        1日に何百回もやると大きな差に
+      </p>
+    </div>
+    <div class="card" style="text-align:center;border-color:#00d2ff44">
+      <div style="font-size:3rem;margin-bottom:.5rem">⚡</div>
+      <h3>キーボード操作</h3>
+      <p style="font-size:.9rem">
+        ショートカット一発<br>
+        <strong style="color:#7fdbca">1回の操作に0.5秒</strong><br>
+        思考の流れを止めない
+      </p>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem;color:#888;text-align:center">
+    1日500回の操作 × 3秒短縮 = <strong style="color:#ffcb6b">1日25分の節約</strong>
+  </p>
+</div>
+
+<!-- Slide 4: Essential 12 -->
+<div class="slide">
+  <h2>必須ショートカット12選</h2>
+  <table style="max-width:950px;font-size:.9rem">
+    <tr><th>#</th><th>操作</th><th>macOS</th><th>Win/Linux</th></tr>
+    <tr><td>1</td><td>コマンドパレット</td><td><code>Cmd+Shift+P</code></td><td><code>Ctrl+Shift+P</code></td></tr>
+    <tr><td>2</td><td>ファイル検索</td><td><code>Cmd+P</code></td><td><code>Ctrl+P</code></td></tr>
+    <tr><td>3</td><td>保存</td><td><code>Cmd+S</code></td><td><code>Ctrl+S</code></td></tr>
+    <tr><td>4</td><td>元に戻す / やり直し</td><td><code>Cmd+Z</code> / <code>Cmd+Shift+Z</code></td><td><code>Ctrl+Z</code> / <code>Ctrl+Y</code></td></tr>
+    <tr><td>5</td><td>行の移動</td><td><code>Alt+↑↓</code></td><td><code>Alt+↑↓</code></td></tr>
+    <tr><td>6</td><td>行の複製</td><td><code>Shift+Alt+↓</code></td><td><code>Shift+Alt+↓</code></td></tr>
+    <tr><td>7</td><td>行の削除</td><td><code>Cmd+Shift+K</code></td><td><code>Ctrl+Shift+K</code></td></tr>
+    <tr><td>8</td><td>コメントトグル</td><td><code>Cmd+/</code></td><td><code>Ctrl+/</code></td></tr>
+    <tr><td>9</td><td>検索</td><td><code>Cmd+F</code></td><td><code>Ctrl+F</code></td></tr>
+    <tr><td>10</td><td>ターミナル</td><td><code>Ctrl+`</code></td><td><code>Ctrl+`</code></td></tr>
+    <tr><td>11</td><td>サイドバー</td><td><code>Cmd+B</code></td><td><code>Ctrl+B</code></td></tr>
+    <tr><td>12</td><td>定義へジャンプ</td><td><code>F12</code></td><td><code>F12</code></td></tr>
+  </table>
+</div>
+
+<!-- Slide 5: Line Move -->
+<div class="slide">
+  <h2>行の移動: Alt+↑↓</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>行を上下に移動</h3>
+      <p style="font-size:.95rem">カーソルがある行（or 選択した複数行）をそのまま上下に移動。<br>
+        コピー&ペーストより圧倒的に速い。</p>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <p class="label red">Before</p>
+        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+          <div style="color:#888">1 | def process():</div>
+          <div style="color:#888">2 |     load_data()</div>
+          <div style="color:#ffcb6b;background:#ffcb6b11;padding:0 .3rem">3 |     validate()  ← カーソル</div>
+          <div style="color:#888">4 |     transform()</div>
+        </div>
+      </div>
+      <div class="card">
+        <p class="label green">After (Alt+↑)</p>
+        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+          <div style="color:#888">1 | def process():</div>
+          <div style="color:#7fdbca;background:#7fdbca11;padding:0 .3rem">2 |     validate()  ← 移動した！</div>
+          <div style="color:#888">3 |     load_data()</div>
+          <div style="color:#888">4 |     transform()</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: Line Duplicate -->
+<div class="slide">
+  <h2>行の複製: Shift+Alt+↓</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>行を瞬時にコピー</h3>
+      <p style="font-size:.95rem">選択不要。カーソル行がそのまま下に複製される。<br>
+        似たコードを書く時に非常に便利。</p>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <p class="label red">Before</p>
+        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+          <div style="color:#ffcb6b">print("name:", name)</div>
+        </div>
+      </div>
+      <div class="card">
+        <p class="label green">After (Shift+Alt+↓)</p>
+        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+          <div style="color:#888">print("name:", name)</div>
+          <div style="color:#7fdbca">print("name:", name)  ← 編集</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:1rem;color:#888;font-size:.9rem;text-align:center">
+      複製 → 変数名だけ変える、という流れが最速
+    </p>
+  </div>
+</div>
+
+<!-- Slide 7: Line Delete -->
+<div class="slide">
+  <h2>行の削除: Cmd+Shift+K</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>行ごと消す</h3>
+      <p style="font-size:.95rem">
+        行を選択 → Delete ではなく、カーソルがある行を丸ごと削除。<br>
+        複数行選択した状態なら、選択行を全て削除。
+      </p>
+    </div>
+    <div class="card">
+      <h3>比較</h3>
+      <table style="max-width:100%">
+        <tr><th>方法</th><th>手順</th><th>時間</th></tr>
+        <tr><td style="color:#ff5370">マウス</td><td>行頭クリック → Shift+行末 → Delete</td><td>3秒</td></tr>
+        <tr><td style="color:#7fdbca">ショートカット</td><td><code>Cmd+Shift+K</code></td><td>0.3秒</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: Comment Toggle -->
+<div class="slide">
+  <h2>コメントトグル: Cmd+/</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>最も使うショートカットの一つ</h3>
+      <p style="font-size:.95rem">
+        カーソル行、または選択した複数行を一括コメント/アンコメント。<br>
+        言語に応じて適切なコメント記号が使われる。
+      </p>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <p class="label">Python</p>
+        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+          <div style="color:#6a9955"># print("debug")</div>
+          <div style="color:#6a9955"># x = calculate()</div>
+        </div>
+      </div>
+      <div class="card">
+        <p class="label">HTML</p>
+        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+          <div style="color:#6a9955">&lt;!-- &lt;div&gt; --&gt;</div>
+        </div>
+      </div>
+      <div class="card">
+        <p class="label">JavaScript</p>
+        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
+          <div style="color:#6a9955">// const x = 42;</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:1rem;color:#888;font-size:.9rem;text-align:center">
+      ブロックコメント: <code>Shift+Alt+A</code> （/* ... */ 形式）
+    </p>
+  </div>
+</div>
+
+<!-- Slide 9: Selection Shortcuts -->
+<div class="slide">
+  <h2>選択系ショートカット</h2>
+  <table style="max-width:850px">
+    <tr><th>操作</th><th>macOS</th><th>Win/Linux</th></tr>
+    <tr><td>単語選択</td><td><code>Cmd+D</code></td><td><code>Ctrl+D</code></td></tr>
+    <tr><td>行選択</td><td><code>Cmd+L</code></td><td><code>Ctrl+L</code></td></tr>
+    <tr><td>選択範囲を拡張</td><td><code>Cmd+Shift+→</code></td><td><code>Ctrl+Shift+→</code></td></tr>
+    <tr><td>全選択</td><td><code>Cmd+A</code></td><td><code>Ctrl+A</code></td></tr>
+    <tr><td>括弧のマッチへジャンプ</td><td><code>Cmd+Shift+\</code></td><td><code>Ctrl+Shift+\</code></td></tr>
+    <tr><td>インデント追加</td><td><code>Cmd+]</code></td><td><code>Ctrl+]</code></td></tr>
+    <tr><td>インデント削除</td><td><code>Cmd+[</code></td><td><code>Ctrl+[</code></td></tr>
+  </table>
+  <p style="margin-top:1rem;color:#888;font-size:.9rem">
+    <code>Cmd+D</code> はマルチカーソルの入口。Session 05 で詳しく解説。
+  </p>
+</div>
+
+<!-- Slide 10: Cursor Movement -->
+<div class="slide">
+  <h2>カーソル移動の高速化</h2>
+  <table style="max-width:850px">
+    <tr><th>移動先</th><th>macOS</th><th>Win/Linux</th></tr>
+    <tr><td>単語単位で移動</td><td><code>Alt+←→</code></td><td><code>Ctrl+←→</code></td></tr>
+    <tr><td>行頭 / 行末</td><td><code>Cmd+←→</code> or <code>Home/End</code></td><td><code>Home/End</code></td></tr>
+    <tr><td>ファイル先頭 / 末尾</td><td><code>Cmd+↑↓</code></td><td><code>Ctrl+Home/End</code></td></tr>
+    <tr><td>指定行へジャンプ</td><td><code>Ctrl+G</code></td><td><code>Ctrl+G</code></td></tr>
+    <tr><td>定義へジャンプ</td><td><code>F12</code></td><td><code>F12</code></td></tr>
+    <tr><td>前の位置に戻る</td><td><code>Ctrl+-</code></td><td><code>Alt+←</code></td></tr>
+    <tr><td>次の位置に進む</td><td><code>Ctrl+Shift+-</code></td><td><code>Alt+→</code></td></tr>
+  </table>
+  <p style="margin-top:1rem;color:#ffcb6b;font-size:.95rem;text-align:center">
+    <code>Ctrl+-</code>（戻る）は「ジャンプした後に元の場所に戻る」最重要キー
+  </p>
+</div>
+
+<!-- Slide 11: Cheat Sheet -->
+<div class="slide">
+  <h2>ショートカット PDF</h2>
+  <div style="max-width:700px;width:100%">
+    <div class="card" style="text-align:center;padding:2rem">
+      <h3 style="font-size:1.3rem">公式チートシート（印刷推奨）</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1.5rem">
+        <div class="card" style="border-color:#00d2ff44">
+          <p style="font-size:.85rem;color:#00d2ff;font-weight:600">macOS</p>
+          <p style="font-size:.8rem;color:#888;margin-top:.3rem">code.visualstudio.com<br>/shortcuts/keyboard-shortcuts-macos.pdf</p>
+        </div>
+        <div class="card" style="border-color:#7fdbca44">
+          <p style="font-size:.85rem;color:#7fdbca;font-weight:600">Windows</p>
+          <p style="font-size:.8rem;color:#888;margin-top:.3rem">keyboard-shortcuts-windows.pdf</p>
+        </div>
+        <div class="card" style="border-color:#c792ea44">
+          <p style="font-size:.85rem;color:#c792ea;font-weight:600">Linux</p>
+          <p style="font-size:.8rem;color:#888;margin-top:.3rem">keyboard-shortcuts-linux.pdf</p>
+        </div>
+      </div>
+      <p style="margin-top:1.5rem;color:#888;font-size:.9rem">
+        <code>Cmd+Shift+P</code> → "Help: Keyboard Shortcuts Reference" でも開ける
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Learning Strategy -->
+<div class="slide">
+  <h2>覚え方のコツ</h2>
+  <div style="max-width:800px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+    <div class="card" style="border-left:3px solid #00d2ff">
+      <h3 style="color:#00d2ff;font-size:1.1rem">1. 毎日2-3個ずつ</h3>
+      <p style="font-size:.9rem">一度に全部覚えようとしない。<br>今日は「行移動」「行複製」「コメント」の3つだけ。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #7fdbca">
+      <h3 style="color:#7fdbca;font-size:1.1rem">2. マウスを禁止してみる</h3>
+      <p style="font-size:.9rem">30分だけマウス禁止タイム。<br>強制的にショートカットを使う。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #c792ea">
+      <h3 style="color:#c792ea;font-size:1.1rem">3. 付箋に書いて貼る</h3>
+      <p style="font-size:.9rem">モニターの端に今週覚えるショートカットを貼る。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #ffcb6b">
+      <h3 style="color:#ffcb6b;font-size:1.1rem">4. 10回使えば覚える</h3>
+      <p style="font-size:.9rem">意識して10回使えば、指が覚える。<br>最初の3回がつらいだけ。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Windows/Linux Mapping -->
+<div class="slide">
+  <h2>macOS → Windows/Linux 対応表</h2>
+  <div style="max-width:700px;width:100%">
+    <div class="card">
+      <h3>キーの読み替えルール</h3>
+      <table style="max-width:100%">
+        <tr><th>macOS</th><th>Windows / Linux</th><th>注意点</th></tr>
+        <tr><td><code>Cmd</code></td><td><code>Ctrl</code></td><td>ほぼ全てこの置き換え</td></tr>
+        <tr><td><code>Alt (Option)</code></td><td><code>Alt</code></td><td>同じキー</td></tr>
+        <tr><td><code>Ctrl</code></td><td><code>Ctrl</code></td><td>macOS固有の一部に注意</td></tr>
+        <tr><td><code>Cmd+Shift+P</code></td><td><code>Ctrl+Shift+P</code></td><td>コマンドパレット</td></tr>
+      </table>
+      <p style="font-size:.85rem;color:#888;margin-top:.8rem">
+        例外: macOS の <code>Ctrl+`</code>（ターミナル）は Windows でも <code>Ctrl+`</code>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 14: Exercise -->
+<div class="slide">
+  <h2>練習タイム：10回チャレンジ</h2>
+  <p class="label green">HANDS-ON</p>
+  <div style="max-width:700px;width:100%">
+    <div class="card">
+      <h3>各ショートカットを10回使おう（15分）</h3>
+      <ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem">
+        <li>Pythonファイルを開いて10行程度のコードを書く</li>
+        <li><code>Alt+↑↓</code> で行を10回移動する</li>
+        <li><code>Shift+Alt+↓</code> で行を5回複製する</li>
+        <li><code>Cmd+Shift+K</code> で不要な行を5回削除する</li>
+        <li><code>Cmd+/</code> で行を10回コメント/アンコメントする</li>
+        <li><code>Cmd+D</code> で同じ単語を5回選択する</li>
+        <li><code>Cmd+P</code> でファイルを10回切り替える</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Advanced Shortcuts -->
+<div class="slide">
+  <h2>中級者向けショートカット</h2>
+  <table style="max-width:850px;font-size:.9rem">
+    <tr><th>操作</th><th>macOS</th><th>説明</th></tr>
+    <tr><td>同じ単語を全選択</td><td><code>Cmd+Shift+L</code></td><td>全てにカーソル配置</td></tr>
+    <tr><td>名前変更（リファクタ）</td><td><code>F2</code></td><td>全参照を一括リネーム</td></tr>
+    <tr><td>Quick Fix</td><td><code>Cmd+.</code></td><td>エラー修正の提案</td></tr>
+    <tr><td>全ファイル検索</td><td><code>Cmd+Shift+F</code></td><td>プロジェクト横断検索</td></tr>
+    <tr><td>ファイルを閉じる</td><td><code>Cmd+W</code></td><td>現在のタブを閉じる</td></tr>
+    <tr><td>閉じたタブ復元</td><td><code>Cmd+Shift+T</code></td><td>間違って閉じた時</td></tr>
+    <tr><td>折りたたみ</td><td><code>Cmd+Shift+[</code></td><td>コードブロック折畳</td></tr>
+    <tr><td>展開</td><td><code>Cmd+Shift+]</code></td><td>折畳を展開</td></tr>
+  </table>
+</div>
+
+<!-- Slide 16: Customize Keybindings -->
+<div class="slide">
+  <h2>キーバインドのカスタマイズ</h2>
+  <div style="max-width:800px;width:100%">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>変更方法</h3>
+      <p style="font-size:.95rem"><code>Cmd+K Cmd+S</code> でキーバインド設定画面を開く</p>
+      <ul class="feature-list" style="margin-top:.5rem">
+        <li>検索バーでコマンド名を入力</li>
+        <li>左のアイコンをクリックして新しいキーを入力</li>
+        <li>「keybindings.json」でJSON直接編集も可能</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>キーマップ拡張</h3>
+      <p style="font-size:.9rem">
+        他のエディタから移行？ キーマップ拡張で慣れたキーバインドをそのまま使える。<br>
+        Vim, Sublime Text, IntelliJ, Atom 等に対応。
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17: Summary -->
+<div class="slide">
+  <h2>まとめ</h2>
+  <div style="max-width:700px;width:100%">
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
+      <h3 style="color:#00d2ff">行操作は最優先で覚える</h3>
+      <p style="font-size:.9rem"><code>Alt+↑↓</code>（移動）, <code>Shift+Alt+↓</code>（複製）, <code>Cmd+Shift+K</code>（削除）, <code>Cmd+/</code>（コメント）</p>
+    </div>
+    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+      <h3 style="color:#7fdbca">毎日2-3個ずつ、10回使う</h3>
+      <p style="font-size:.9rem">一度に全部は無理。継続して体に覚えさせる。</p>
+    </div>
+    <div class="card" style="border-left:3px solid #c792ea">
+      <h3 style="color:#c792ea">公式チートシートを印刷</h3>
+      <p style="font-size:.9rem">Cmd+Shift+P → "Keyboard Shortcuts Reference" で確認。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 18: Next Session -->
+<div class="slide">
+  <h2>次回予告</h2>
+  <div style="text-align:center;max-width:600px">
+    <p class="label purple">SESSION 05</p>
+    <h1 style="font-size:2rem;margin-bottom:1rem">マルチカーソル：一括編集の技術</h1>
+    <p style="font-size:1.1rem;color:#888;margin-bottom:2rem">
+      Cmd+D を使いこなすと、繰り返し作業が一瞬で終わります。
+    </p>
+    <div class="card" style="text-align:left">
+      <h3>予習</h3>
+      <ul class="feature-list">
+        <li><code>Cmd+D</code> で同じ単語を2-3個選択してみる</li>
+        <li><code>Alt+Click</code> で複数箇所にカーソルを置いてみる</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="progress"></div><div class="nav-hint">← → / j k / Space</div>
+<script>
+const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');let cur=0,busy=false;function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}prog.textContent='1 / '+slides.length;document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});
+</script>
+<style>._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}._ts-gallery-info{padding:.8rem 1rem}._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}</style>
+<script>(function(){var _slides=document.querySelectorAll('.slide');if(_slides.length<2)return;function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}var oldHint=document.querySelector('.nav-hint');if(oldHint)oldHint.style.display='none';function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}var toolbar=document.createElement('div');toolbar.className='_ts-toolbar';toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';document.body.appendChild(toolbar);var counterBtn=toolbar.querySelector('._ts-counter-btn');var gridBtn=toolbar.querySelector('._ts-grid-btn');var jumpEl=document.createElement('div');jumpEl.className='_ts-jump';var jumpGrid=document.createElement('div');jumpGrid.className='_ts-jump-grid';for(var i=0;i<_slides.length;i++){var item=document.createElement('div');item.className='_ts-jump-item';item.textContent=i+1;item.dataset.idx=i;item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});jumpGrid.appendChild(item)}jumpEl.appendChild(jumpGrid);document.body.appendChild(jumpEl);var jumpOpen=false;function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});var gallery=document.createElement('div');gallery.className='_ts-gallery-overlay';var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';for(var i=0;i<_slides.length;i++){var title=_getTitle(_slides[i])||'Slide '+(i+1);galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>'}galleryHTML+='</div>';gallery.innerHTML=galleryHTML;document.body.appendChild(gallery);var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');for(var i=0;i<previews.length;i++){var idx=parseInt(previews[i].dataset.slideIdx);var clone=_slides[idx].cloneNode(true);clone.style.display='flex';clone.style.position='static';clone.style.animation='none';clone.classList.remove('out-left','out-right');clone.classList.add('active');previews[i].appendChild(clone)}var cards=gallery.querySelectorAll('._ts-gallery-card');for(var i=0;i<cards.length;i++){cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()})}var galleryOpen=false;function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}}},true);document.addEventListener('click',function(e){if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump()});function _tsUpdateUI(){var c=_tsCurIdx();counterBtn.textContent=(c+1)+' / '+_slides.length;if(jumpOpen)highlightJumpCurrent();if(galleryOpen)highlightGalleryCard()}var _lastIdx=_tsCurIdx();setInterval(function(){var c=_tsCurIdx();if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}},200);_tsUpdateUI()})();</script>
+</body></html>
