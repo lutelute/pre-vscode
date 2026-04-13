@@ -105,25 +105,25 @@
 
 ## 全15回 カリキュラム
 
-| 回 | テーマ | 内容 | スライド |
-|:--:|--------|------|:--------:|
-| 1 | [VS Code とは](slides/01-what-is-vscode.html) | 特徴・他エディタ比較・インストール | 23枚 |
-| 2 | [画面構成](slides/02-ui-layout.html) | UI 5領域・Open Folder・サイドバー | 21枚 |
-| 3 | [コマンドパレット](slides/03-command-palette.html) | `⌘⇧P`・プレフィックス・ファイル検索 | 19枚 |
-| 4 | [ショートカット](slides/04-shortcuts.html) | 必須12選・行操作・ファイル操作 | 18枚 |
-| 5 | [マルチカーソル](slides/05-multi-cursor.html) | `⌘D`・`Alt+Click`・一括編集の実践 | 15枚 |
-| 6 | [検索・置換](slides/06-search-replace.html) | ファイル内/全体検索・正規表現 | 12枚 |
-| 7 | [拡張機能](slides/07-extensions.html) | Python必須6選・汎用6選・extensions.json | 11枚 |
-| 8 | [統合ターミナル](slides/08-terminal.html) | 表示・分割・エラージャンプ | 11枚 |
-| 9 | [Git 連携](slides/09-git.html) | Source Control・diff・ブランチ・GitLens | 11枚 |
-| 10 | [Remote SSH](slides/10-remote-ssh.html) | SSH config・研究室サーバー接続 | 11枚 |
-| 11 | [デバッグ](slides/11-debug.html) | ブレークポイント・ステップ実行・launch.json | 12枚 |
-| 12 | [設定・カスタマイズ](slides/12-settings.html) | User/Workspace Settings・テーマ・フォント | 10枚 |
-| 13 | [Workspace 活用](slides/13-workspace.html) | .vscode/・スニペット・タスク自動化 | 10枚 |
-| 14 | [AI 支援 & 生産性](slides/14-ai-productivity.html) | Copilot・Zen Mode・Quick Fix | 10枚 |
-| 15 | [総合演習 & Tips](slides/15-exercises.html) | キーバインド・まとめ・実践課題・Q&A | 12枚 |
+| # | 編 | 内容 |
+|:--:|------|------|
+| 1 | [エディタ入門編](slides/01-what-is-vscode.html) | VS Codeとは・他エディタ比較・インストール・初期設定 |
+| 2 | [画面構成編](slides/02-ui-layout.html) | UI 5領域・Open Folder・サイドバー・やってはいけないこと |
+| 3 | [コマンドパレット編](slides/03-command-palette.html) | `⌘⇧P`・プレフィックス・ファイル検索・定義ジャンプ |
+| 4 | [ショートカット編](slides/04-shortcuts.html) | 必須12選・行操作・ファイル操作 |
+| 5 | [テキスト編集編](slides/05-multi-cursor.html) | マルチカーソル・矩形選択・検索置換・正規表現 |
+| 6 | [検索・置換編](slides/06-search-replace.html) | ファイル内/全体検索・正規表現・定義ジャンプ |
+| 7 | [拡張機能編](slides/07-extensions.html) | Python必須6選・汎用6選・Pack・extensions.json |
+| 8 | [ターミナル編](slides/08-terminal.html) | Python実行・venv・エラージャンプ・プロファイル |
+| 9 | [Git連携編](slides/09-git.html) | Source Control・diff・ブランチ・GitLens・コンフリクト |
+| 10 | [Remote SSH編](slides/10-remote-ssh.html) | SSH config・研究室サーバー接続・リモート開発 |
+| 11 | [デバッグ編](slides/11-debug.html) | ブレークポイント・ステップ実行・launch.json・Watch |
+| 12 | [設定・カスタマイズ編](slides/12-settings.html) | settings.json・テーマ・フォント・キーバインド |
+| 13 | [ワークスペース編](slides/13-workspace.html) | .vscode/・スニペット・タスク自動化 |
+| 14 | [AI支援・生産性編](slides/14-ai-productivity.html) | Copilot・Zen Mode・Quick Fix |
+| 15 | [総合演習編](slides/15-exercises.html) | ショートカット総復習・実践課題・トラブルシューティング・Q&A |
 
-> **補足資料**: [フォルダ管理あるある](slides/folder-pitfalls.html) — 初心者6選 + 玄人5選（17枚）
+> **補足**: [フォルダ管理あるある編](slides/folder-pitfalls.html) — 初心者6選 + 玄人5選
 
 ---
 
