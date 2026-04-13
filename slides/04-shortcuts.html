@@ -1,417 +1,599 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Session 4 — ショートカット：マウスに頼らない操作</title>
+<html><head><meta charset="utf-8"><title>Session 4 — ショートカット編：マウスに頼らない操作</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}p{font-size:1.05rem;line-height:1.7;color:#bbb}code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}.label.green{background:#7fdbca22;color:#7fdbca}.label.purple{background:#c792ea22;color:#c792ea}.label.orange{background:#f78c6c22;color:#f78c6c}.label.red{background:#ff537022;color:#ff5370}.label.yellow{background:#ffcb6b22;color:#ffcb6b}.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}.cols{display:flex;gap:2rem;width:100%;max-width:1100px}.cols>*{flex:1}.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}.terminal-bar .dot{width:10px;height:10px;border-radius:50%}.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}.terminal-body .prompt{color:#7fdbca}.terminal-body .cmd{color:#e0e0e0}.terminal-body .output{color:#888}.terminal-body .success{color:#27c93f}.terminal-body .error{color:#ff5370}.terminal-body .info{color:#00d2ff}.terminal-body .warn{color:#ffcb6b}ul.feature-list{list-style:none;max-width:700px}ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}ul.feature-list li::before{content:'▸ ';color:#00d2ff}.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}table{border-collapse:collapse;width:100%;max-width:900px}th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}th{color:#00d2ff;font-weight:600;background:#1a1a2e}td{color:#bbb}tr:hover td{background:#1a1a2e55}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;background:#0f0f1a;color:#e0e0e0;overflow:hidden}
+.slide{display:none;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:2.5rem 4rem;position:absolute;top:0;left:0;width:100%}
+.slide.active{display:flex;animation:fadeIn .35s cubic-bezier(.33,1,.68,1)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:2.8rem;color:#00d2ff;margin-bottom:.5rem;text-align:center}
+h2{font-size:2rem;color:#00d2ff;margin-bottom:1.2rem;text-align:center;width:100%}
+h3{font-size:1.4rem;color:#7fdbca;margin-bottom:.8rem}
+p{font-size:1.05rem;line-height:1.7;color:#bbb}
+code{background:#1e1e30;padding:.15em .4em;border-radius:3px;font-family:'Fira Code','SF Mono',monospace;color:#7fdbca;font-size:.9em}
+.label{display:inline-block;background:#00d2ff22;color:#00d2ff;padding:.2em .7em;border-radius:4px;font-size:.85rem;margin-bottom:.8rem;font-weight:600}
+.label.green{background:#7fdbca22;color:#7fdbca}
+.label.purple{background:#c792ea22;color:#c792ea}
+.label.orange{background:#f78c6c22;color:#f78c6c}
+.label.red{background:#ff537022;color:#ff5370}
+.label.yellow{background:#ffcb6b22;color:#ffcb6b}
+.progress{position:fixed;bottom:1rem;right:1.5rem;font-size:.85rem;color:#555;z-index:100}
+.nav-hint{position:fixed;bottom:1rem;left:1.5rem;font-size:.8rem;color:#444;z-index:100}
+.card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:1.5rem}
+.cols{display:flex;gap:2rem;width:100%;max-width:1100px}
+.cols>*{flex:1}
+.terminal{background:#0a0a15;border:1px solid #2a2a4a;border-radius:10px;overflow:hidden;width:100%;max-width:900px}
+.terminal-bar{background:#1a1a2e;padding:8px 12px;display:flex;align-items:center;gap:6px}
+.terminal-bar .dot{width:10px;height:10px;border-radius:50%}
+.terminal-bar .dot.r{background:#ff5f56}.terminal-bar .dot.y{background:#ffbd2e}.terminal-bar .dot.g{background:#27c93f}
+.terminal-bar span{color:#666;font-size:.8rem;margin-left:8px}
+.terminal-body{padding:1.2rem 1.5rem;font-family:'Fira Code','SF Mono',monospace;font-size:.95rem;min-height:180px;max-height:55vh;overflow-y:auto;line-height:1.6}
+.terminal-body .prompt{color:#7fdbca}
+.terminal-body .cmd{color:#e0e0e0}
+.terminal-body .output{color:#888}
+.terminal-body .success{color:#27c93f}
+.terminal-body .error{color:#ff5370}
+.terminal-body .info{color:#00d2ff}
+.terminal-body .warn{color:#ffcb6b}
+.flow{display:flex;align-items:center;gap:0;justify-content:center;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #2a2a4a;border-radius:10px;padding:.8rem 1.2rem;text-align:center;min-width:120px;transition:all .5s}
+.flow-box.active-box{border-color:#00d2ff;box-shadow:0 0 20px rgba(0,210,255,.3)}
+.flow-arrow{color:#555;font-size:1.5rem;padding:0 .3rem}
+ul.feature-list{list-style:none;max-width:700px}
+ul.feature-list li{padding:.5rem 0;font-size:1.05rem;color:#bbb;border-bottom:1px solid #1a1a2e}
+ul.feature-list li::before{content:'&#9656; ';color:#00d2ff}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#c792ea33,#00d2ff33);border:1px solid #c792ea55;border-radius:20px;padding:4px 14px;font-size:.85rem;color:#c792ea}
+table{border-collapse:collapse;width:100%;max-width:900px}
+th,td{padding:.6rem 1rem;text-align:left;border-bottom:1px solid #2a2a4a;font-size:.95rem}
+th{color:#00d2ff;font-weight:600;background:#1a1a2e}
+td{color:#bbb}
+tr:hover td{background:#1a1a2e55}
+.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:1.2rem;width:100%;max-width:900px}
+.step-progress .sp-item{display:flex;align-items:center;gap:0}
+.step-progress .sp-node{padding:.3rem .7rem;border-radius:6px;font-size:.7rem;font-weight:600;background:#1a1a2e;border:1.5px solid #2a2a4a;color:#666;transition:all .3s;white-space:nowrap}
+.step-progress .sp-node.sp-done{background:#00d2ff15;border-color:#00d2ff55;color:#00d2ff}
+.step-progress .sp-node.sp-active{background:#ffcb6b22;border-color:#ffcb6b;color:#ffcb6b;box-shadow:0 0 10px rgba(255,203,107,.2)}
+.step-progress .sp-arrow{color:#333;font-size:.8rem;padding:0 .3rem}
+.step-progress .sp-arrow.sp-done{color:#00d2ff55}
+.key-card{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:10px;padding:1rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.key-card .key{font-family:'Fira Code',monospace;font-size:.85rem;color:#00d2ff;background:#0a0a15;padding:.3rem .6rem;border-radius:4px;border:1px solid #00d2ff33}
+.key-card .desc{font-size:.8rem;color:#bbb}
 </style></head><body>
 
 <!-- Slide 1: Title -->
-<div class="slide active">
-  <div style="text-align:center">
-    <p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">← トップに戻る</a></p>
-    <p class="label">SESSION 04</p>
-    <h1 style="font-size:2.8rem;margin-bottom:1rem">ショートカット</h1>
-    <p style="font-size:1.3rem;color:#888;margin-bottom:1.5rem">マウスに頼らない操作</p>
-    <span class="ai-badge">90分 / 全15回の第4回</span>
-    <p style="margin-top:3rem;color:#555;font-size:.9rem">→ / Space で次へ</p>
-  </div>
-</div>
+<div class="slide active"><div style="text-align:center">
+<p style="margin-bottom:1rem"><a href="../" style="color:#555;text-decoration:none;font-size:.85rem">&larr; トップに戻る</a></p>
+<p class="label">SESSION 4</p>
+<h1 style="font-size:2.8rem;margin-bottom:1rem">ショートカット編</h1>
+<p style="font-size:1.4rem;color:#888;margin-bottom:1.5rem">マウスに頼らない操作</p>
+<span class="ai-badge">90分 / 全15回の第4回</span>
+<p style="margin-top:3rem;color:#555;font-size:.9rem">&rarr; / Space で次へ</p>
+</div></div>
 
 <!-- Slide 2: Objectives -->
-<div class="slide">
-  <h2>今日のゴール</h2>
-  <div style="max-width:700px;width:100%">
-    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
-      <h3 style="color:#00d2ff">1. 必須ショートカット12選を覚える</h3>
-      <p style="font-size:.95rem">毎日使う基本操作をキーボードだけで</p>
-    </div>
-    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
-      <h3 style="color:#7fdbca">2. 行操作を自在にできる</h3>
-      <p style="font-size:.95rem">行の移動、複製、削除、コメントアウト</p>
-    </div>
-    <div class="card" style="border-left:3px solid #c792ea">
-      <h3 style="color:#c792ea">3. 覚え方のコツを知る</h3>
-      <p style="font-size:.95rem">一度に全部は無理。毎日2-3個ずつ</p>
-    </div>
-  </div>
+<div class="slide"><h2>今日のゴール</h2>
+<div style="max-width:700px;width:100%">
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">1. 必須12ショートカットを体で覚える</h3><p style="font-size:.95rem">毎日使う最重要キーバインド</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">2. 行操作・選択操作をマスター</h3><p style="font-size:.95rem">行の移動、コピー、削除、選択の高速化</p></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea"><h3 style="color:#c792ea">3. マルチカーソルを使いこなす</h3><p style="font-size:.95rem">Cmd+D, Alt+Click で複数箇所を同時編集</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b"><h3 style="color:#ffcb6b">4. ショートカットのカスタマイズ方法を知る</h3><p style="font-size:.95rem">キーバインド設定を自分好みに</p></div>
+</div></div>
+
+<!-- Slide 3: Why Shortcuts Matter -->
+<div class="slide"><h2>なぜキーボードショートカットが重要か</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="border:2px solid #ff5370;text-align:center">
+<p class="label red">マウス操作</p>
+<div style="font-size:2rem;color:#ff5370;margin:.5rem 0">5-10秒</div>
+<p style="font-size:.85rem">メニュー &rarr; サブメニュー &rarr; クリック<br>目で探す &rarr; マウスを動かす &rarr; クリック</p>
+<p style="font-size:.85rem;color:#ff5370;margin-top:.5rem">1日100回 = 15分のロス</p>
+</div>
+<div class="card" style="border:2px solid #7fdbca;text-align:center">
+<p class="label green">ショートカット</p>
+<div style="font-size:2rem;color:#7fdbca;margin:.5rem 0">0.5秒</div>
+<p style="font-size:.85rem">指が覚えている &rarr; 即実行<br>思考の流れを中断しない</p>
+<p style="font-size:.85rem;color:#7fdbca;margin-top:.5rem">1日100回 = 50秒で完了</p>
+</div>
+</div>
+<div class="card" style="max-width:600px;margin-top:1rem;text-align:center">
+<p style="font-size:1rem;color:#00d2ff;font-weight:600">10倍速い + コードから目を離さない = 集中力が維持される</p>
+</div></div>
+
+<!-- Slide 4: Essential 12 - Grid -->
+<div class="slide"><h2>必須12ショートカット</h2>
+<div style="max-width:1000px;width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem">
+<div class="key-card" style="border-top:3px solid #00d2ff"><span class="key">Cmd+Shift+P</span><span class="desc">コマンドパレット</span></div>
+<div class="key-card" style="border-top:3px solid #00d2ff"><span class="key">Cmd+P</span><span class="desc">ファイル検索</span></div>
+<div class="key-card" style="border-top:3px solid #00d2ff"><span class="key">Cmd+Shift+F</span><span class="desc">プロジェクト検索</span></div>
+<div class="key-card" style="border-top:3px solid #7fdbca"><span class="key">Cmd+D</span><span class="desc">次の一致を選択</span></div>
+<div class="key-card" style="border-top:3px solid #7fdbca"><span class="key">Cmd+/</span><span class="desc">コメントトグル</span></div>
+<div class="key-card" style="border-top:3px solid #7fdbca"><span class="key">Alt+&uarr;/&darr;</span><span class="desc">行を移動</span></div>
+<div class="key-card" style="border-top:3px solid #c792ea"><span class="key">Cmd+B</span><span class="desc">サイドバー切替</span></div>
+<div class="key-card" style="border-top:3px solid #c792ea"><span class="key">Ctrl+`</span><span class="desc">ターミナル切替</span></div>
+<div class="key-card" style="border-top:3px solid #ffcb6b"><span class="key">Cmd+Shift+K</span><span class="desc">行を削除</span></div>
+<div class="key-card" style="border-top:3px solid #ffcb6b"><span class="key">Shift+Alt+&darr;</span><span class="desc">行をコピー</span></div>
+<div class="key-card" style="border-top:3px solid #ff5370"><span class="key">Cmd+L</span><span class="desc">行を選択</span></div>
+<div class="key-card" style="border-top:3px solid #ff5370"><span class="key">Cmd+Shift+\</span><span class="desc">対応括弧へ</span></div>
+</div></div>
+
+<!-- Slide 5: Shortcut 1-3 Navigation -->
+<div class="slide"><h2>ナビゲーション系 (1-3)</h2>
+<div style="max-width:900px;width:100%">
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><h3 style="font-size:1.2rem;color:#00d2ff">1. Cmd+Shift+P &mdash; コマンドパレット</h3>
+<p style="font-size:.9rem">VS Code の全機能にアクセス。迷ったらまずこれ。Session 3 で詳しく学んだ。</p></div>
+<div class="key-card" style="border:none;min-width:150px"><span class="key" style="font-size:1rem">Cmd+Shift+P</span></div>
+</div></div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><h3 style="font-size:1.2rem;color:#7fdbca">2. Cmd+P &mdash; Quick Open</h3>
+<p style="font-size:.9rem">ファイル名のファジー検索。プロジェクト内のどこにあるファイルも即座に開く。</p></div>
+<div class="key-card" style="border:none;min-width:150px"><span class="key" style="font-size:1rem">Cmd+P</span></div>
+</div></div>
+<div class="card" style="border-left:3px solid #c792ea">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><h3 style="font-size:1.2rem;color:#c792ea">3. Cmd+Shift+F &mdash; プロジェクト検索</h3>
+<p style="font-size:.9rem">プロジェクト全体から文字列を検索。関数の使用箇所を見つけるのに最適。</p></div>
+<div class="key-card" style="border:none;min-width:150px"><span class="key" style="font-size:1rem">Cmd+Shift+F</span></div>
+</div></div>
+</div></div>
+
+<!-- Slide 6: Shortcut 4 - Cmd+D -->
+<div class="slide"><h2>4. Cmd+D &mdash; 次の一致を選択</h2>
+<div class="vscode-ui" style="max-width:700px;background:#1e1e2e">
+<div style="padding:1rem 1.5rem;font-family:'Fira Code',monospace;font-size:.9rem;line-height:2">
+<div><span style="color:#555">1</span> &nbsp;<span style="color:#c792ea">const</span> <span style="background:#264f78;color:#e0e0e0">userName</span> = <span style="color:#c3e88d">"Alice"</span>;</div>
+<div><span style="color:#555">2</span> &nbsp;console.log(<span style="background:#264f78;color:#e0e0e0">userName</span>);</div>
+<div><span style="color:#555">3</span> &nbsp;<span style="color:#c792ea">const</span> greeting = <span style="color:#c3e88d">`Hello, ${</span><span style="background:#264f78;color:#e0e0e0">userName</span><span style="color:#c3e88d">}`</span>;</div>
+<div><span style="color:#555">4</span> &nbsp;sendEmail(<span style="background:#264f78;color:#e0e0e0">userName</span>);</div>
+</div>
+</div>
+<div class="cols" style="max-width:700px;margin-top:1rem">
+<div class="card">
+<h3 style="font-size:1rem">使い方</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>userName</code> にカーソルを置く</li>
+<li><code>Cmd+D</code> で1つ目を選択</li>
+<li><code>Cmd+D</code> を連打で次の一致を追加</li>
+<li>一括でリネーム入力</li>
+</ol>
+</div>
+<div class="card">
+<h3 style="font-size:1rem">関連</h3>
+<p style="font-size:.85rem">
+<code>Cmd+Shift+L</code> &mdash; 全ての一致を一括選択<br>
+<code>Cmd+K Cmd+D</code> &mdash; 現在の選択をスキップして次へ
+</p>
+</div>
+</div></div>
+
+<!-- Slide 7: Shortcut 5 - Cmd+/ -->
+<div class="slide"><h2>5. Cmd+/ &mdash; コメントトグル</h2>
+<div class="cols" style="max-width:800px">
+<div class="card">
+<h3 style="font-size:1rem;color:#7fdbca">Before</h3>
+<div style="font-family:monospace;font-size:.85rem;line-height:1.8;margin-top:.5rem">
+<div><span style="color:#c792ea">def</span> <span style="color:#82aaff">calculate</span>(x, y):</div>
+<div>&nbsp;&nbsp;&nbsp;&nbsp;result = x + y</div>
+<div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c792ea">return</span> result</div>
+</div>
+</div>
+<div class="card">
+<h3 style="font-size:1rem;color:#00d2ff">After (Cmd+/ x3)</h3>
+<div style="font-family:monospace;font-size:.85rem;line-height:1.8;margin-top:.5rem">
+<div><span style="color:#888"># def calculate(x, y):</span></div>
+<div><span style="color:#888">#     result = x + y</span></div>
+<div><span style="color:#888">#     return result</span></div>
+</div>
+</div>
+</div>
+<div class="card" style="max-width:800px;margin-top:1rem;text-align:center">
+<p style="font-size:.9rem;color:#bbb">行を選択してから <code>Cmd+/</code> でまとめてコメント化。もう一度押すと解除。<br><span style="color:#ffcb6b">言語に応じてコメント記号が自動選択される（Python=#, JS=//, HTML=&lt;!-- --&gt;）</span></p>
+</div></div>
+
+<!-- Slide 8: Shortcut 6 - Alt+Up/Down -->
+<div class="slide"><h2>6. Alt+&uarr;/&darr; &mdash; 行を移動</h2>
+<div class="cols" style="max-width:800px">
+<div class="card">
+<h3 style="font-size:1rem">Before</h3>
+<div style="font-family:monospace;font-size:.85rem;line-height:1.8;margin-top:.5rem">
+<div><span style="color:#555">1</span> &nbsp;apple = <span style="color:#c3e88d">"red"</span></div>
+<div style="background:#264f7833;border-left:2px solid #00d2ff"><span style="color:#555">2</span> &nbsp;banana = <span style="color:#c3e88d">"yellow"</span> <span style="color:#888">&larr; カーソル</span></div>
+<div><span style="color:#555">3</span> &nbsp;cherry = <span style="color:#c3e88d">"red"</span></div>
+</div>
+</div>
+<div class="card">
+<h3 style="font-size:1rem">After (Alt+&uarr;)</h3>
+<div style="font-family:monospace;font-size:.85rem;line-height:1.8;margin-top:.5rem">
+<div style="background:#264f7833;border-left:2px solid #00d2ff"><span style="color:#555">1</span> &nbsp;banana = <span style="color:#c3e88d">"yellow"</span> <span style="color:#888">&larr; 上に移動!</span></div>
+<div><span style="color:#555">2</span> &nbsp;apple = <span style="color:#c3e88d">"red"</span></div>
+<div><span style="color:#555">3</span> &nbsp;cherry = <span style="color:#c3e88d">"red"</span></div>
+</div>
+</div>
+</div>
+<div class="card" style="max-width:800px;margin-top:1rem;text-align:center">
+<p style="font-size:.95rem;color:#bbb">カット&ペーストなしで行を上下に移動。<br>複数行を選択してからも使える。<span style="color:#00d2ff">コードの順序変更が一瞬。</span></p>
+</div></div>
+
+<!-- Slide 9: Shortcut 7-8 UI -->
+<div class="slide"><h2>UI操作系 (7-8)</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="border-left:3px solid #c792ea;text-align:center">
+<h3 style="color:#c792ea">7. Cmd+B &mdash; サイドバー切替</h3>
+<div style="font-size:2rem;margin:.5rem 0">&#9776;</div>
+<p style="font-size:.9rem">サイドバーの表示/非表示を切り替え。<br>コーディング中はOFFにしてエディタ領域を広く使う。<br>ファイルを探すときだけONに。</p>
+</div>
+<div class="card" style="border-left:3px solid #ffcb6b;text-align:center">
+<h3 style="color:#ffcb6b">8. Ctrl+` &mdash; ターミナル切替</h3>
+<div style="font-size:2rem;margin:.5rem 0">&#9000;</div>
+<p style="font-size:.9rem">統合ターミナルの表示/非表示。<br>コードを書く &rarr; ターミナルで実行 &rarr; 結果確認のループが爆速に。</p>
+</div>
+</div>
+<div class="card" style="max-width:600px;margin-top:1rem;text-align:center">
+<p style="font-size:.9rem;color:#bbb">この2つだけで「画面レイアウト」の操作は十分。</p>
+</div></div>
+
+<!-- Slide 10: Shortcut 9-10 Line Operations -->
+<div class="slide"><h2>行操作系 (9-10)</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="border-left:3px solid #ffcb6b">
+<h3 style="font-size:1.1rem;color:#ffcb6b">9. Cmd+Shift+K &mdash; 行を削除</h3>
+<div style="font-family:monospace;font-size:.85rem;margin-top:.5rem;line-height:1.8">
+<div><span style="color:#555">1</span> &nbsp;a = 1</div>
+<div style="background:#ff537033;text-decoration:line-through;color:#888"><span style="color:#555">2</span> &nbsp;debug_print(a) <span style="color:#ff5370">&larr; 削除!</span></div>
+<div><span style="color:#555">3</span> &nbsp;b = a + 1</div>
+</div>
+<p style="font-size:.85rem;margin-top:.5rem">選択不要。カーソルがある行を丸ごと削除。</p>
+</div>
+<div class="card" style="border-left:3px solid #7fdbca">
+<h3 style="font-size:1.1rem;color:#7fdbca">10. Shift+Alt+&darr; &mdash; 行をコピー</h3>
+<div style="font-family:monospace;font-size:.85rem;margin-top:.5rem;line-height:1.8">
+<div><span style="color:#555">1</span> &nbsp;item = create()</div>
+<div style="background:#7fdbca22"><span style="color:#555">2</span> &nbsp;item = create() <span style="color:#7fdbca">&larr; コピー!</span></div>
+</div>
+<p style="font-size:.85rem;margin-top:.5rem">現在の行を下に複製。テストケースの量産に便利。</p>
+</div>
+</div></div>
+
+<!-- Slide 11: Shortcut 11-12 -->
+<div class="slide"><h2>選択・ジャンプ系 (11-12)</h2>
+<div class="cols" style="max-width:900px">
+<div class="card" style="border-left:3px solid #ff5370">
+<h3 style="font-size:1.1rem;color:#ff5370">11. Cmd+L &mdash; 行を選択</h3>
+<p style="font-size:.9rem">現在の行を丸ごと選択。連続で押すと選択範囲が下に拡大。<br><br>複数行を選択してから <code>Cmd+/</code> でまとめてコメント化、のように組み合わせる。</p>
+</div>
+<div class="card" style="border-left:3px solid #c792ea">
+<h3 style="font-size:1.1rem;color:#c792ea">12. Cmd+Shift+\ &mdash; 対応括弧へジャンプ</h3>
+<p style="font-size:.9rem">ネストが深いコードで対応する括弧（{}, [], ()）に一発ジャンプ。<br><br>「この if 文の終わりはどこ?」が瞬時にわかる。</p>
+</div>
+</div></div>
+
+<!-- Slide 12: Line Operations Deep Dive -->
+<div class="slide"><h2>行操作の全体像</h2>
+<table style="max-width:800px">
+<tr><th>ショートカット</th><th>動作</th><th>補足</th></tr>
+<tr><td style="color:#00d2ff"><code>Alt+&uarr;/&darr;</code></td><td>行を上下に移動</td><td>複数行選択にも対応</td></tr>
+<tr><td style="color:#00d2ff"><code>Shift+Alt+&darr;</code></td><td>行を下にコピー</td><td>Shift+Alt+&uarr; で上にも</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+Shift+K</code></td><td>行を削除</td><td>選択不要、カーソル行を削除</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+Enter</code></td><td>下に空行挿入</td><td>行末にいなくても使える</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+Shift+Enter</code></td><td>上に空行挿入</td><td></td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+J</code></td><td>行を結合 (Join)</td><td>複数行を1行にまとめる</td></tr>
+<tr><td style="color:#00d2ff"><code>Tab / Shift+Tab</code></td><td>インデント / 逆インデント</td><td>複数行選択して一括</td></tr>
+</table></div>
+
+<!-- Slide 13: Selection Operations -->
+<div class="slide"><h2>選択操作の全体像</h2>
+<table style="max-width:800px">
+<tr><th>ショートカット</th><th>動作</th><th>補足</th></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+D</code></td><td>現在の単語を選択 / 次の一致を追加</td><td>マルチカーソル</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+Shift+L</code></td><td>全ての一致を一括選択</td><td>一括リネーム</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+L</code></td><td>行全体を選択</td><td>連打で範囲拡大</td></tr>
+<tr><td style="color:#00d2ff"><code>Ctrl+Shift+Cmd+&rarr;</code></td><td>選択範囲を拡大 (Smart Select)</td><td>単語 &rarr; 文 &rarr; ブロック</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+Shift+K</code></td><td>選択した行を削除</td><td></td></tr>
+<tr><td style="color:#00d2ff"><code>Alt+Click</code></td><td>マルチカーソルを追加</td><td>任意の位置に追加</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+Shift+Alt+&darr;</code></td><td>カーソルを下に追加（列選択）</td><td>矩形選択</td></tr>
+</table></div>
+
+<!-- Slide 14: Multi-cursor Demo -->
+<div class="slide"><h2>マルチカーソル実践</h2>
+<div class="vscode-ui" style="max-width:750px;background:#1e1e2e">
+<div style="padding:1rem 1.5rem;font-family:'Fira Code',monospace;font-size:.85rem;line-height:2">
+<div><span style="color:#555">1</span> &nbsp;<span style="color:#c792ea">const</span> items = [</div>
+<div><span style="color:#555">2</span> &nbsp;&nbsp;&nbsp;{<span style="color:#ff5370">name</span>: <span style="color:#c3e88d">"apple"</span>, <span style="color:#ff5370">price</span>: <span style="color:#f78c6c">100</span>}<span style="background:#264f78;color:#00d2ff">|</span>,</div>
+<div><span style="color:#555">3</span> &nbsp;&nbsp;&nbsp;{<span style="color:#ff5370">name</span>: <span style="color:#c3e88d">"banana"</span>, <span style="color:#ff5370">price</span>: <span style="color:#f78c6c">80</span>}<span style="background:#264f78;color:#00d2ff">|</span>,</div>
+<div><span style="color:#555">4</span> &nbsp;&nbsp;&nbsp;{<span style="color:#ff5370">name</span>: <span style="color:#c3e88d">"cherry"</span>, <span style="color:#ff5370">price</span>: <span style="color:#f78c6c">150</span>}<span style="background:#264f78;color:#00d2ff">|</span>,</div>
+<div><span style="color:#555">5</span> &nbsp;];</div>
+</div>
+</div>
+<div class="cols" style="max-width:750px;margin-top:1rem">
+<div class="card">
+<h3 style="font-size:1rem;color:#00d2ff">方法1: Cmd+D</h3>
+<p style="font-size:.85rem"><code>}</code> にカーソル &rarr; <code>Cmd+D</code> を連打 &rarr; 3つの <code>}</code> が選択 &rarr; 一括入力</p>
+</div>
+<div class="card">
+<h3 style="font-size:1rem;color:#c792ea">方法2: Alt+Click</h3>
+<p style="font-size:.85rem">1行目でクリック &rarr; Alt を押しながら2行目、3行目をクリック &rarr; 3つのカーソル出現</p>
+</div>
+<div class="card">
+<h3 style="font-size:1rem;color:#ffcb6b">方法3: 列選択</h3>
+<p style="font-size:.85rem"><code>Cmd+Shift+Alt+&darr;</code> で下方向にカーソルを追加（矩形選択）</p>
+</div>
+</div></div>
+
+<!-- Slide 15: File Operations -->
+<div class="slide"><h2>ファイル操作ショートカット</h2>
+<table style="max-width:800px">
+<tr><th>ショートカット</th><th>動作</th><th>補足</th></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+N</code></td><td>新規ファイル</td><td>未保存ファイルが作成される</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+O</code></td><td>ファイルを開く</td><td>ダイアログが開く</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+S</code></td><td>保存</td><td>autoSave有効なら不要</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+Shift+S</code></td><td>名前を付けて保存</td><td></td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+W</code></td><td>タブを閉じる</td><td></td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+Shift+T</code></td><td>閉じたタブを復元</td><td>ブラウザと同じ</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+\</code></td><td>エディタを分割</td><td></td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+1/2/3</code></td><td>エディタグループに移動</td><td>分割時のフォーカス切替</td></tr>
+</table></div>
+
+<!-- Slide 16: Navigation Shortcuts -->
+<div class="slide"><h2>ナビゲーションショートカット</h2>
+<table style="max-width:800px">
+<tr><th>ショートカット</th><th>動作</th></tr>
+<tr><td style="color:#00d2ff"><code>Ctrl+G</code></td><td>行番号ジャンプ</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+Shift+O</code></td><td>ファイル内シンボルへジャンプ (@)</td></tr>
+<tr><td style="color:#00d2ff"><code>Cmd+T</code></td><td>ワークスペースシンボル検索 (#)</td></tr>
+<tr><td style="color:#00d2ff"><code>F12</code></td><td>定義元へジャンプ (Go to Definition)</td></tr>
+<tr><td style="color:#00d2ff"><code>Alt+F12</code></td><td>定義をインライン表示 (Peek)</td></tr>
+<tr><td style="color:#00d2ff"><code>Shift+F12</code></td><td>参照元を表示 (Go to References)</td></tr>
+<tr><td style="color:#00d2ff"><code>Ctrl+-</code></td><td>前の位置に戻る (Go Back)</td></tr>
+<tr><td style="color:#00d2ff"><code>Ctrl+Shift+-</code></td><td>次の位置に進む (Go Forward)</td></tr>
+</table></div>
+
+<!-- Slide 17: Multi-window -->
+<div class="slide"><h2>マルチウィンドウ操作</h2>
+<div style="max-width:800px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+<div class="card" style="border-left:3px solid #00d2ff">
+<h3 style="font-size:1rem;color:#00d2ff">Cmd+Shift+N</h3>
+<p style="font-size:.9rem">新しいウィンドウを開く。複数プロジェクトを同時に開くときに使う。</p>
+</div>
+<div class="card" style="border-left:3px solid #7fdbca">
+<h3 style="font-size:1rem;color:#7fdbca">Cmd+` (Switch Window)</h3>
+<p style="font-size:.9rem">VS Code のウィンドウ間を切り替え。</p>
+</div>
+<div class="card" style="border-left:3px solid #c792ea">
+<h3 style="font-size:1rem;color:#c792ea">Cmd+K Cmd+S</h3>
+<p style="font-size:.9rem">キーボードショートカット設定を開く。カスタマイズの入口。</p>
+</div>
+<div class="card" style="border-left:3px solid #ffcb6b">
+<h3 style="font-size:1rem;color:#ffcb6b">Ctrl+Cmd+F</h3>
+<p style="font-size:.9rem">フルスクリーン切替。プレゼン時にも便利。</p>
+</div>
+</div></div>
+
+<!-- Slide 18: Windows/Linux Equivalents -->
+<div class="slide"><h2>Windows / Linux 対応表</h2>
+<p style="text-align:center;color:#888;margin-bottom:1rem">基本ルール: macOS の <code>Cmd</code> = Windows/Linux の <code>Ctrl</code></p>
+<table style="max-width:850px;font-size:.9rem">
+<tr><th>機能</th><th>macOS</th><th>Windows / Linux</th></tr>
+<tr><td>コマンドパレット</td><td style="color:#00d2ff"><code>Cmd+Shift+P</code></td><td style="color:#7fdbca"><code>Ctrl+Shift+P</code></td></tr>
+<tr><td>Quick Open</td><td style="color:#00d2ff"><code>Cmd+P</code></td><td style="color:#7fdbca"><code>Ctrl+P</code></td></tr>
+<tr><td>プロジェクト検索</td><td style="color:#00d2ff"><code>Cmd+Shift+F</code></td><td style="color:#7fdbca"><code>Ctrl+Shift+F</code></td></tr>
+<tr><td>次の一致を選択</td><td style="color:#00d2ff"><code>Cmd+D</code></td><td style="color:#7fdbca"><code>Ctrl+D</code></td></tr>
+<tr><td>コメントトグル</td><td style="color:#00d2ff"><code>Cmd+/</code></td><td style="color:#7fdbca"><code>Ctrl+/</code></td></tr>
+<tr><td>行移動</td><td style="color:#00d2ff"><code>Alt+&uarr;/&darr;</code></td><td style="color:#7fdbca"><code>Alt+&uarr;/&darr;</code></td></tr>
+<tr><td>行削除</td><td style="color:#00d2ff"><code>Cmd+Shift+K</code></td><td style="color:#7fdbca"><code>Ctrl+Shift+K</code></td></tr>
+<tr><td>ターミナル</td><td style="color:#00d2ff"><code>Ctrl+`</code></td><td style="color:#7fdbca"><code>Ctrl+`</code></td></tr>
+</table>
+<p style="margin-top:1rem;color:#888;font-size:.85rem;text-align:center">例外: 行移動の <code>Alt</code> は全OSで共通。ターミナルの <code>Ctrl+`</code> も共通。</p>
 </div>
 
-<!-- Slide 3: Why Shortcuts -->
-<div class="slide">
-  <h2>なぜショートカットを覚えるのか</h2>
-  <div class="cols" style="max-width:900px">
-    <div class="card" style="text-align:center">
-      <div style="font-size:3rem;margin-bottom:.5rem">🐌</div>
-      <h3>マウス操作</h3>
-      <p style="font-size:.9rem">
-        メニュー → クリック → サブメニュー...<br>
-        <strong style="color:#ff5370">1回の操作に3-5秒</strong><br>
-        1日に何百回もやると大きな差に
-      </p>
-    </div>
-    <div class="card" style="text-align:center;border-color:#00d2ff44">
-      <div style="font-size:3rem;margin-bottom:.5rem">⚡</div>
-      <h3>キーボード操作</h3>
-      <p style="font-size:.9rem">
-        ショートカット一発<br>
-        <strong style="color:#7fdbca">1回の操作に0.5秒</strong><br>
-        思考の流れを止めない
-      </p>
-    </div>
-  </div>
-  <p style="margin-top:1.5rem;color:#888;text-align:center">
-    1日500回の操作 × 3秒短縮 = <strong style="color:#ffcb6b">1日25分の節約</strong>
-  </p>
+<!-- Slide 19: Keyboard Shortcuts Settings -->
+<div class="slide"><h2>ショートカットのカスタマイズ</h2>
+<div class="step-progress">
+<div class="sp-item"><span class="sp-node sp-done">1. 設定を開く</span></div>
+<div class="sp-arrow sp-done">&rarr;</div>
+<div class="sp-item"><span class="sp-node sp-done">2. 検索</span></div>
+<div class="sp-arrow sp-done">&rarr;</div>
+<div class="sp-item"><span class="sp-node sp-active">3. 変更</span></div>
+<div class="sp-arrow">&rarr;</div>
+<div class="sp-item"><span class="sp-node">4. 保存</span></div>
 </div>
-
-<!-- Slide 4: Essential 12 -->
-<div class="slide">
-  <h2>必須ショートカット12選</h2>
-  <table style="max-width:950px;font-size:.9rem">
-    <tr><th>#</th><th>操作</th><th>macOS</th><th>Win/Linux</th></tr>
-    <tr><td>1</td><td>コマンドパレット</td><td><code>Cmd+Shift+P</code></td><td><code>Ctrl+Shift+P</code></td></tr>
-    <tr><td>2</td><td>ファイル検索</td><td><code>Cmd+P</code></td><td><code>Ctrl+P</code></td></tr>
-    <tr><td>3</td><td>保存</td><td><code>Cmd+S</code></td><td><code>Ctrl+S</code></td></tr>
-    <tr><td>4</td><td>元に戻す / やり直し</td><td><code>Cmd+Z</code> / <code>Cmd+Shift+Z</code></td><td><code>Ctrl+Z</code> / <code>Ctrl+Y</code></td></tr>
-    <tr><td>5</td><td>行の移動</td><td><code>Alt+↑↓</code></td><td><code>Alt+↑↓</code></td></tr>
-    <tr><td>6</td><td>行の複製</td><td><code>Shift+Alt+↓</code></td><td><code>Shift+Alt+↓</code></td></tr>
-    <tr><td>7</td><td>行の削除</td><td><code>Cmd+Shift+K</code></td><td><code>Ctrl+Shift+K</code></td></tr>
-    <tr><td>8</td><td>コメントトグル</td><td><code>Cmd+/</code></td><td><code>Ctrl+/</code></td></tr>
-    <tr><td>9</td><td>検索</td><td><code>Cmd+F</code></td><td><code>Ctrl+F</code></td></tr>
-    <tr><td>10</td><td>ターミナル</td><td><code>Ctrl+`</code></td><td><code>Ctrl+`</code></td></tr>
-    <tr><td>11</td><td>サイドバー</td><td><code>Cmd+B</code></td><td><code>Ctrl+B</code></td></tr>
-    <tr><td>12</td><td>定義へジャンプ</td><td><code>F12</code></td><td><code>F12</code></td></tr>
-  </table>
+<div class="cols" style="max-width:900px">
+<div class="card">
+<h3 style="font-size:1.1rem">GUI で変更</h3>
+<ol style="color:#bbb;font-size:.9rem;line-height:2;padding-left:1.2rem">
+<li><code>Cmd+K Cmd+S</code> で設定画面を開く</li>
+<li>変更したいコマンドを検索</li>
+<li>ペンアイコンをクリック</li>
+<li>新しいキーを押して Enter</li>
+</ol>
 </div>
-
-<!-- Slide 5: Line Move -->
-<div class="slide">
-  <h2>行の移動: Alt+↑↓</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="card" style="margin-bottom:1rem">
-      <h3>行を上下に移動</h3>
-      <p style="font-size:.95rem">カーソルがある行（or 選択した複数行）をそのまま上下に移動。<br>
-        コピー&ペーストより圧倒的に速い。</p>
-    </div>
-    <div class="cols">
-      <div class="card">
-        <p class="label red">Before</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div style="color:#888">1 | def process():</div>
-          <div style="color:#888">2 |     load_data()</div>
-          <div style="color:#ffcb6b;background:#ffcb6b11;padding:0 .3rem">3 |     validate()  ← カーソル</div>
-          <div style="color:#888">4 |     transform()</div>
-        </div>
-      </div>
-      <div class="card">
-        <p class="label green">After (Alt+↑)</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div style="color:#888">1 | def process():</div>
-          <div style="color:#7fdbca;background:#7fdbca11;padding:0 .3rem">2 |     validate()  ← 移動した！</div>
-          <div style="color:#888">3 |     load_data()</div>
-          <div style="color:#888">4 |     transform()</div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="card">
+<h3 style="font-size:1.1rem">keybindings.json で変更</h3>
+<div style="font-family:monospace;font-size:.78rem;background:#0a0a15;padding:.6rem;border-radius:6px;margin-top:.5rem">
+<div>[{</div>
+<div>&nbsp;&nbsp;<span style="color:#ff5370">"key"</span>: <span style="color:#c3e88d">"cmd+shift+d"</span>,</div>
+<div>&nbsp;&nbsp;<span style="color:#ff5370">"command"</span>: <span style="color:#c3e88d">"editor.action.duplicateSelection"</span></div>
+<div>}]</div>
 </div>
-
-<!-- Slide 6: Line Duplicate -->
-<div class="slide">
-  <h2>行の複製: Shift+Alt+↓</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="card" style="margin-bottom:1rem">
-      <h3>行を瞬時にコピー</h3>
-      <p style="font-size:.95rem">選択不要。カーソル行がそのまま下に複製される。<br>
-        似たコードを書く時に非常に便利。</p>
-    </div>
-    <div class="cols">
-      <div class="card">
-        <p class="label red">Before</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div style="color:#ffcb6b">print("name:", name)</div>
-        </div>
-      </div>
-      <div class="card">
-        <p class="label green">After (Shift+Alt+↓)</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div style="color:#888">print("name:", name)</div>
-          <div style="color:#7fdbca">print("name:", name)  ← 編集</div>
-        </div>
-      </div>
-    </div>
-    <p style="margin-top:1rem;color:#888;font-size:.9rem;text-align:center">
-      複製 → 変数名だけ変える、という流れが最速
-    </p>
-  </div>
 </div>
+</div></div>
 
-<!-- Slide 7: Line Delete -->
-<div class="slide">
-  <h2>行の削除: Cmd+Shift+K</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="card" style="margin-bottom:1rem">
-      <h3>行ごと消す</h3>
-      <p style="font-size:.95rem">
-        行を選択 → Delete ではなく、カーソルがある行を丸ごと削除。<br>
-        複数行選択した状態なら、選択行を全て削除。
-      </p>
-    </div>
-    <div class="card">
-      <h3>比較</h3>
-      <table style="max-width:100%">
-        <tr><th>方法</th><th>手順</th><th>時間</th></tr>
-        <tr><td style="color:#ff5370">マウス</td><td>行頭クリック → Shift+行末 → Delete</td><td>3秒</td></tr>
-        <tr><td style="color:#7fdbca">ショートカット</td><td><code>Cmd+Shift+K</code></td><td>0.3秒</td></tr>
-      </table>
-    </div>
-  </div>
+<!-- Slide 20: How to Learn Shortcuts -->
+<div class="slide"><h2>ショートカットの覚え方</h2>
+<div style="max-width:800px;width:100%">
+<div class="flow" style="margin-bottom:2rem">
+<div class="flow-box active-box"><span style="font-size:.8rem">Week 1<br><span style="color:#888;font-size:.7rem">3つだけ</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.8rem">Week 2<br><span style="color:#888;font-size:.7rem">+3つ追加</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.8rem">Week 3<br><span style="color:#888;font-size:.7rem">+3つ追加</span></span></div>
+<div class="flow-arrow">&rarr;</div>
+<div class="flow-box active-box"><span style="font-size:.8rem">Week 4<br><span style="color:#888;font-size:.7rem">+3つで12個</span></span></div>
 </div>
-
-<!-- Slide 8: Comment Toggle -->
-<div class="slide">
-  <h2>コメントトグル: Cmd+/</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="card" style="margin-bottom:1rem">
-      <h3>最も使うショートカットの一つ</h3>
-      <p style="font-size:.95rem">
-        カーソル行、または選択した複数行を一括コメント/アンコメント。<br>
-        言語に応じて適切なコメント記号が使われる。
-      </p>
-    </div>
-    <div class="cols">
-      <div class="card">
-        <p class="label">Python</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div style="color:#6a9955"># print("debug")</div>
-          <div style="color:#6a9955"># x = calculate()</div>
-        </div>
-      </div>
-      <div class="card">
-        <p class="label">HTML</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div style="color:#6a9955">&lt;!-- &lt;div&gt; --&gt;</div>
-        </div>
-      </div>
-      <div class="card">
-        <p class="label">JavaScript</p>
-        <div style="font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.8">
-          <div style="color:#6a9955">// const x = 42;</div>
-        </div>
-      </div>
-    </div>
-    <p style="margin-top:1rem;color:#888;font-size:.9rem;text-align:center">
-      ブロックコメント: <code>Shift+Alt+A</code> （/* ... */ 形式）
-    </p>
-  </div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
+<h3 style="font-size:1rem;color:#00d2ff">ルール: 一度に3つまで</h3>
+<p style="font-size:.9rem">一気に12個覚えようとしない。1週間に3つずつ。4週間で必須12が体に入る。</p>
 </div>
-
-<!-- Slide 9: Selection Shortcuts -->
-<div class="slide">
-  <h2>選択系ショートカット</h2>
-  <table style="max-width:850px">
-    <tr><th>操作</th><th>macOS</th><th>Win/Linux</th></tr>
-    <tr><td>単語選択</td><td><code>Cmd+D</code></td><td><code>Ctrl+D</code></td></tr>
-    <tr><td>行選択</td><td><code>Cmd+L</code></td><td><code>Ctrl+L</code></td></tr>
-    <tr><td>選択範囲を拡張</td><td><code>Cmd+Shift+→</code></td><td><code>Ctrl+Shift+→</code></td></tr>
-    <tr><td>全選択</td><td><code>Cmd+A</code></td><td><code>Ctrl+A</code></td></tr>
-    <tr><td>括弧のマッチへジャンプ</td><td><code>Cmd+Shift+\</code></td><td><code>Ctrl+Shift+\</code></td></tr>
-    <tr><td>インデント追加</td><td><code>Cmd+]</code></td><td><code>Ctrl+]</code></td></tr>
-    <tr><td>インデント削除</td><td><code>Cmd+[</code></td><td><code>Ctrl+[</code></td></tr>
-  </table>
-  <p style="margin-top:1rem;color:#888;font-size:.9rem">
-    <code>Cmd+D</code> はマルチカーソルの入口。Session 05 で詳しく解説。
-  </p>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+<h3 style="font-size:1rem;color:#7fdbca">コツ: マウスで操作しそうになったらショートカットを思い出す</h3>
+<p style="font-size:.9rem">「メニューからフォーマットしよう」&rarr; 立ち止まって <code>Shift+Alt+F</code>。この繰り返しが筋肉記憶になる。</p>
 </div>
-
-<!-- Slide 10: Cursor Movement -->
-<div class="slide">
-  <h2>カーソル移動の高速化</h2>
-  <table style="max-width:850px">
-    <tr><th>移動先</th><th>macOS</th><th>Win/Linux</th></tr>
-    <tr><td>単語単位で移動</td><td><code>Alt+←→</code></td><td><code>Ctrl+←→</code></td></tr>
-    <tr><td>行頭 / 行末</td><td><code>Cmd+←→</code> or <code>Home/End</code></td><td><code>Home/End</code></td></tr>
-    <tr><td>ファイル先頭 / 末尾</td><td><code>Cmd+↑↓</code></td><td><code>Ctrl+Home/End</code></td></tr>
-    <tr><td>指定行へジャンプ</td><td><code>Ctrl+G</code></td><td><code>Ctrl+G</code></td></tr>
-    <tr><td>定義へジャンプ</td><td><code>F12</code></td><td><code>F12</code></td></tr>
-    <tr><td>前の位置に戻る</td><td><code>Ctrl+-</code></td><td><code>Alt+←</code></td></tr>
-    <tr><td>次の位置に進む</td><td><code>Ctrl+Shift+-</code></td><td><code>Alt+→</code></td></tr>
-  </table>
-  <p style="margin-top:1rem;color:#ffcb6b;font-size:.95rem;text-align:center">
-    <code>Ctrl+-</code>（戻る）は「ジャンプした後に元の場所に戻る」最重要キー
-  </p>
+<div class="card" style="border-left:3px solid #c792ea">
+<h3 style="font-size:1rem;color:#c792ea">チートシート: Cmd+K Cmd+R</h3>
+<p style="font-size:.9rem">VS Code公式のキーボードショートカットPDFが開く。印刷してデスクに置くのが最強。</p>
 </div>
+</div></div>
 
-<!-- Slide 11: Cheat Sheet -->
-<div class="slide">
-  <h2>ショートカット PDF</h2>
-  <div style="max-width:700px;width:100%">
-    <div class="card" style="text-align:center;padding:2rem">
-      <h3 style="font-size:1.3rem">公式チートシート（印刷推奨）</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1.5rem">
-        <div class="card" style="border-color:#00d2ff44">
-          <p style="font-size:.85rem;color:#00d2ff;font-weight:600">macOS</p>
-          <p style="font-size:.8rem;color:#888;margin-top:.3rem">code.visualstudio.com<br>/shortcuts/keyboard-shortcuts-macos.pdf</p>
-        </div>
-        <div class="card" style="border-color:#7fdbca44">
-          <p style="font-size:.85rem;color:#7fdbca;font-weight:600">Windows</p>
-          <p style="font-size:.8rem;color:#888;margin-top:.3rem">keyboard-shortcuts-windows.pdf</p>
-        </div>
-        <div class="card" style="border-color:#c792ea44">
-          <p style="font-size:.85rem;color:#c792ea;font-weight:600">Linux</p>
-          <p style="font-size:.8rem;color:#888;margin-top:.3rem">keyboard-shortcuts-linux.pdf</p>
-        </div>
-      </div>
-      <p style="margin-top:1.5rem;color:#888;font-size:.9rem">
-        <code>Cmd+Shift+P</code> → "Help: Keyboard Shortcuts Reference" でも開ける
-      </p>
-    </div>
-  </div>
+<!-- Slide 21: Week 1 Plan -->
+<div class="slide"><h2>Week 1: まず覚える3つ</h2>
+<div style="max-width:700px;width:100%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem">
+<div class="card" style="text-align:center;border-top:3px solid #00d2ff;padding:2rem 1rem">
+<div style="font-size:1.2rem;font-family:'Fira Code',monospace;color:#00d2ff;margin-bottom:1rem;background:#0a0a15;padding:.5rem;border-radius:6px">Cmd+Shift+P</div>
+<h3 style="font-size:1rem">コマンドパレット</h3>
+<p style="font-size:.85rem">迷ったらこれ。</p>
 </div>
-
-<!-- Slide 12: Learning Strategy -->
-<div class="slide">
-  <h2>覚え方のコツ</h2>
-  <div style="max-width:800px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
-    <div class="card" style="border-left:3px solid #00d2ff">
-      <h3 style="color:#00d2ff;font-size:1.1rem">1. 毎日2-3個ずつ</h3>
-      <p style="font-size:.9rem">一度に全部覚えようとしない。<br>今日は「行移動」「行複製」「コメント」の3つだけ。</p>
-    </div>
-    <div class="card" style="border-left:3px solid #7fdbca">
-      <h3 style="color:#7fdbca;font-size:1.1rem">2. マウスを禁止してみる</h3>
-      <p style="font-size:.9rem">30分だけマウス禁止タイム。<br>強制的にショートカットを使う。</p>
-    </div>
-    <div class="card" style="border-left:3px solid #c792ea">
-      <h3 style="color:#c792ea;font-size:1.1rem">3. 付箋に書いて貼る</h3>
-      <p style="font-size:.9rem">モニターの端に今週覚えるショートカットを貼る。</p>
-    </div>
-    <div class="card" style="border-left:3px solid #ffcb6b">
-      <h3 style="color:#ffcb6b;font-size:1.1rem">4. 10回使えば覚える</h3>
-      <p style="font-size:.9rem">意識して10回使えば、指が覚える。<br>最初の3回がつらいだけ。</p>
-    </div>
-  </div>
+<div class="card" style="text-align:center;border-top:3px solid #7fdbca;padding:2rem 1rem">
+<div style="font-size:1.2rem;font-family:'Fira Code',monospace;color:#7fdbca;margin-bottom:1rem;background:#0a0a15;padding:.5rem;border-radius:6px">Cmd+P</div>
+<h3 style="font-size:1rem">ファイル検索</h3>
+<p style="font-size:.85rem">Explorerで探すのをやめる。</p>
 </div>
-
-<!-- Slide 13: Windows/Linux Mapping -->
-<div class="slide">
-  <h2>macOS → Windows/Linux 対応表</h2>
-  <div style="max-width:700px;width:100%">
-    <div class="card">
-      <h3>キーの読み替えルール</h3>
-      <table style="max-width:100%">
-        <tr><th>macOS</th><th>Windows / Linux</th><th>注意点</th></tr>
-        <tr><td><code>Cmd</code></td><td><code>Ctrl</code></td><td>ほぼ全てこの置き換え</td></tr>
-        <tr><td><code>Alt (Option)</code></td><td><code>Alt</code></td><td>同じキー</td></tr>
-        <tr><td><code>Ctrl</code></td><td><code>Ctrl</code></td><td>macOS固有の一部に注意</td></tr>
-        <tr><td><code>Cmd+Shift+P</code></td><td><code>Ctrl+Shift+P</code></td><td>コマンドパレット</td></tr>
-      </table>
-      <p style="font-size:.85rem;color:#888;margin-top:.8rem">
-        例外: macOS の <code>Ctrl+`</code>（ターミナル）は Windows でも <code>Ctrl+`</code>
-      </p>
-    </div>
-  </div>
+<div class="card" style="text-align:center;border-top:3px solid #c792ea;padding:2rem 1rem">
+<div style="font-size:1.2rem;font-family:'Fira Code',monospace;color:#c792ea;margin-bottom:1rem;background:#0a0a15;padding:.5rem;border-radius:6px">Cmd+/</div>
+<h3 style="font-size:1rem">コメントトグル</h3>
+<p style="font-size:.85rem">毎日使う。</p>
 </div>
-
-<!-- Slide 14: Exercise -->
-<div class="slide">
-  <h2>練習タイム：10回チャレンジ</h2>
-  <p class="label green">HANDS-ON</p>
-  <div style="max-width:700px;width:100%">
-    <div class="card">
-      <h3>各ショートカットを10回使おう（15分）</h3>
-      <ol style="color:#bbb;font-size:1rem;line-height:2.2;padding-left:1.5rem">
-        <li>Pythonファイルを開いて10行程度のコードを書く</li>
-        <li><code>Alt+↑↓</code> で行を10回移動する</li>
-        <li><code>Shift+Alt+↓</code> で行を5回複製する</li>
-        <li><code>Cmd+Shift+K</code> で不要な行を5回削除する</li>
-        <li><code>Cmd+/</code> で行を10回コメント/アンコメントする</li>
-        <li><code>Cmd+D</code> で同じ単語を5回選択する</li>
-        <li><code>Cmd+P</code> でファイルを10回切り替える</li>
-      </ol>
-    </div>
-  </div>
 </div>
+<div class="card" style="max-width:700px;margin-top:1.5rem;text-align:center">
+<p style="font-size:1rem;color:#ffcb6b;font-weight:600">1週間、この3つだけをマウスの代わりに使い続ける</p>
+</div></div>
 
-<!-- Slide 15: Advanced Shortcuts -->
-<div class="slide">
-  <h2>中級者向けショートカット</h2>
-  <table style="max-width:850px;font-size:.9rem">
-    <tr><th>操作</th><th>macOS</th><th>説明</th></tr>
-    <tr><td>同じ単語を全選択</td><td><code>Cmd+Shift+L</code></td><td>全てにカーソル配置</td></tr>
-    <tr><td>名前変更（リファクタ）</td><td><code>F2</code></td><td>全参照を一括リネーム</td></tr>
-    <tr><td>Quick Fix</td><td><code>Cmd+.</code></td><td>エラー修正の提案</td></tr>
-    <tr><td>全ファイル検索</td><td><code>Cmd+Shift+F</code></td><td>プロジェクト横断検索</td></tr>
-    <tr><td>ファイルを閉じる</td><td><code>Cmd+W</code></td><td>現在のタブを閉じる</td></tr>
-    <tr><td>閉じたタブ復元</td><td><code>Cmd+Shift+T</code></td><td>間違って閉じた時</td></tr>
-    <tr><td>折りたたみ</td><td><code>Cmd+Shift+[</code></td><td>コードブロック折畳</td></tr>
-    <tr><td>展開</td><td><code>Cmd+Shift+]</code></td><td>折畳を展開</td></tr>
-  </table>
+<!-- Slide 22: Week 2-4 Plan -->
+<div class="slide"><h2>Week 2-4 の計画</h2>
+<div style="max-width:800px;width:100%">
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
+<h3 style="font-size:1.1rem;color:#7fdbca">Week 2: 編集操作</h3>
+<div style="display:flex;gap:1rem;margin-top:.5rem">
+<div class="key-card"><span class="key">Cmd+D</span><span class="desc">次の一致</span></div>
+<div class="key-card"><span class="key">Alt+&uarr;/&darr;</span><span class="desc">行移動</span></div>
+<div class="key-card"><span class="key">Cmd+Shift+K</span><span class="desc">行削除</span></div>
 </div>
-
-<!-- Slide 16: Customize Keybindings -->
-<div class="slide">
-  <h2>キーバインドのカスタマイズ</h2>
-  <div style="max-width:800px;width:100%">
-    <div class="card" style="margin-bottom:1rem">
-      <h3>変更方法</h3>
-      <p style="font-size:.95rem"><code>Cmd+K Cmd+S</code> でキーバインド設定画面を開く</p>
-      <ul class="feature-list" style="margin-top:.5rem">
-        <li>検索バーでコマンド名を入力</li>
-        <li>左のアイコンをクリックして新しいキーを入力</li>
-        <li>「keybindings.json」でJSON直接編集も可能</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>キーマップ拡張</h3>
-      <p style="font-size:.9rem">
-        他のエディタから移行？ キーマップ拡張で慣れたキーバインドをそのまま使える。<br>
-        Vim, Sublime Text, IntelliJ, Atom 等に対応。
-      </p>
-    </div>
-  </div>
 </div>
-
-<!-- Slide 17: Summary -->
-<div class="slide">
-  <h2>まとめ</h2>
-  <div style="max-width:700px;width:100%">
-    <div class="card" style="margin-bottom:1rem;border-left:3px solid #00d2ff">
-      <h3 style="color:#00d2ff">行操作は最優先で覚える</h3>
-      <p style="font-size:.9rem"><code>Alt+↑↓</code>（移動）, <code>Shift+Alt+↓</code>（複製）, <code>Cmd+Shift+K</code>（削除）, <code>Cmd+/</code>（コメント）</p>
-    </div>
-    <div class="card" style="margin-bottom:1rem;border-left:3px solid #7fdbca">
-      <h3 style="color:#7fdbca">毎日2-3個ずつ、10回使う</h3>
-      <p style="font-size:.9rem">一度に全部は無理。継続して体に覚えさせる。</p>
-    </div>
-    <div class="card" style="border-left:3px solid #c792ea">
-      <h3 style="color:#c792ea">公式チートシートを印刷</h3>
-      <p style="font-size:.9rem">Cmd+Shift+P → "Keyboard Shortcuts Reference" で確認。</p>
-    </div>
-  </div>
+<div class="card" style="margin-bottom:1rem;border-left:3px solid #c792ea">
+<h3 style="font-size:1.1rem;color:#c792ea">Week 3: UI操作</h3>
+<div style="display:flex;gap:1rem;margin-top:.5rem">
+<div class="key-card"><span class="key">Cmd+B</span><span class="desc">サイドバー</span></div>
+<div class="key-card"><span class="key">Ctrl+`</span><span class="desc">ターミナル</span></div>
+<div class="key-card"><span class="key">Cmd+Shift+F</span><span class="desc">検索</span></div>
 </div>
-
-<!-- Slide 18: Next Session -->
-<div class="slide">
-  <h2>次回予告</h2>
-  <div style="text-align:center;max-width:600px">
-    <p class="label purple">SESSION 05</p>
-    <h1 style="font-size:2rem;margin-bottom:1rem">マルチカーソル：一括編集の技術</h1>
-    <p style="font-size:1.1rem;color:#888;margin-bottom:2rem">
-      Cmd+D を使いこなすと、繰り返し作業が一瞬で終わります。
-    </p>
-    <div class="card" style="text-align:left">
-      <h3>予習</h3>
-      <ul class="feature-list">
-        <li><code>Cmd+D</code> で同じ単語を2-3個選択してみる</li>
-        <li><code>Alt+Click</code> で複数箇所にカーソルを置いてみる</li>
-      </ul>
-    </div>
-  </div>
 </div>
+<div class="card" style="border-left:3px solid #ffcb6b">
+<h3 style="font-size:1.1rem;color:#ffcb6b">Week 4: 仕上げ</h3>
+<div style="display:flex;gap:1rem;margin-top:.5rem">
+<div class="key-card"><span class="key">Shift+Alt+&darr;</span><span class="desc">行コピー</span></div>
+<div class="key-card"><span class="key">Cmd+L</span><span class="desc">行選択</span></div>
+<div class="key-card"><span class="key">Cmd+Shift+\</span><span class="desc">括弧ジャンプ</span></div>
+</div>
+</div>
+</div></div>
 
-<div class="progress"></div><div class="nav-hint">← → / j k / Space</div>
-<script>
-const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');let cur=0,busy=false;function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}prog.textContent='1 / '+slides.length;document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});
-</script>
+<!-- Slide 23: Common Combos -->
+<div class="slide"><h2>よく使う組み合わせパターン</h2>
+<div style="max-width:800px;width:100%">
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #00d2ff">
+<h3 style="font-size:1rem;color:#00d2ff">変数リネーム</h3>
+<p style="font-size:.85rem"><code>Cmd+D</code> &times; N回 &rarr; 新しい名前を入力 &rarr; ESC</p>
+</div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #7fdbca">
+<h3 style="font-size:1rem;color:#7fdbca">コードブロックのコメントアウト</h3>
+<p style="font-size:.85rem"><code>Cmd+L</code> &times; N回で範囲選択 &rarr; <code>Cmd+/</code></p>
+</div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #c792ea">
+<h3 style="font-size:1rem;color:#c792ea">テストケース量産</h3>
+<p style="font-size:.85rem">テストケースを書く &rarr; <code>Shift+Alt+&darr;</code> でコピー &rarr; 値だけ変更</p>
+</div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #ffcb6b">
+<h3 style="font-size:1rem;color:#ffcb6b">print文の一括削除</h3>
+<p style="font-size:.85rem"><code>Cmd+Shift+F</code> で「print(」を検索 &rarr; 各行で <code>Cmd+Shift+K</code></p>
+</div>
+<div class="card" style="border-left:3px solid #ff5370">
+<h3 style="font-size:1rem;color:#ff5370">関数定義の探索</h3>
+<p style="font-size:.85rem">関数名にカーソル &rarr; <code>F12</code> &rarr; 確認 &rarr; <code>Ctrl+-</code> で戻る</p>
+</div>
+</div></div>
+
+<!-- Slide 24: Essential shortcuts - Compact Reference -->
+<div class="slide"><h2>ショートカットリファレンス（必須）</h2>
+<div style="max-width:900px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.85rem">
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">コマンドパレット</span><code style="font-size:.8rem">Cmd+Shift+P</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">Quick Open</span><code style="font-size:.8rem">Cmd+P</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">プロジェクト検索</span><code style="font-size:.8rem">Cmd+Shift+F</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">次の一致を選択</span><code style="font-size:.8rem">Cmd+D</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">コメントトグル</span><code style="font-size:.8rem">Cmd+/</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">行を移動</span><code style="font-size:.8rem">Alt+&uarr;/&darr;</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">サイドバー切替</span><code style="font-size:.8rem">Cmd+B</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">ターミナル切替</span><code style="font-size:.8rem">Ctrl+`</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">行を削除</span><code style="font-size:.8rem">Cmd+Shift+K</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">行をコピー</span><code style="font-size:.8rem">Shift+Alt+&darr;</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">行を選択</span><code style="font-size:.8rem">Cmd+L</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">対応括弧へ</span><code style="font-size:.8rem">Cmd+Shift+\</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">フォーマット</span><code style="font-size:.8rem">Shift+Alt+F</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">定義へジャンプ</span><code style="font-size:.8rem">F12</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">戻る</span><code style="font-size:.8rem">Ctrl+-</code></div>
+<div style="background:#1a1a2e;padding:.5rem .8rem;border-radius:6px;display:flex;justify-content:space-between"><span style="color:#bbb">全一致選択</span><code style="font-size:.8rem">Cmd+Shift+L</code></div>
+</div></div>
+
+<!-- Slide 25: Exercise 1 -->
+<div class="slide"><h2>演習1: 10回チャレンジ</h2>
+<p style="text-align:center;color:#888;margin-bottom:1rem">各ショートカットを10回ずつ使う（10分）</p>
+<div style="max-width:700px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+<div class="card" style="padding:1rem;border-left:3px solid #00d2ff"><p style="font-size:.9rem"><code>Cmd+Shift+P</code> &times; 10回<br><span style="color:#888;font-size:.8rem">毎回違うコマンドを試す</span></p></div>
+<div class="card" style="padding:1rem;border-left:3px solid #7fdbca"><p style="font-size:.9rem"><code>Cmd+P</code> &times; 10回<br><span style="color:#888;font-size:.8rem">色々なファイルを開く</span></p></div>
+<div class="card" style="padding:1rem;border-left:3px solid #c792ea"><p style="font-size:.9rem"><code>Cmd+D</code> &times; 10回<br><span style="color:#888;font-size:.8rem">変数名を選択して変更</span></p></div>
+<div class="card" style="padding:1rem;border-left:3px solid #ffcb6b"><p style="font-size:.9rem"><code>Cmd+/</code> &times; 10回<br><span style="color:#888;font-size:.8rem">コメント化 &rarr; 解除を繰り返す</span></p></div>
+<div class="card" style="padding:1rem;border-left:3px solid #ff5370"><p style="font-size:.9rem"><code>Alt+&uarr;/&darr;</code> &times; 10回<br><span style="color:#888;font-size:.8rem">行を上下に動かしまくる</span></p></div>
+<div class="card" style="padding:1rem;border-left:3px solid #f78c6c"><p style="font-size:.9rem"><code>Cmd+Shift+K</code> &times; 10回<br><span style="color:#888;font-size:.8rem">不要な行をどんどん消す</span></p></div>
+</div></div>
+
+<!-- Slide 26: Exercise 2 -->
+<div class="slide"><h2>演習2: 実践チャレンジ</h2>
+<p style="text-align:center;color:#888;margin-bottom:1rem">以下のタスクをマウスを使わずに完了させよう（10分）</p>
+<div style="max-width:700px;width:100%">
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid #00d2ff"><h3 style="font-size:1rem;color:#00d2ff">1. Cmd+P で app.py を開く</h3></div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid #7fdbca"><h3 style="font-size:1rem;color:#7fdbca">2. Cmd+D で変数名を3箇所同時にリネーム</h3></div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid #c792ea"><h3 style="font-size:1rem;color:#c792ea">3. Alt+&uarr;/&darr; で関数の順番を入れ替え</h3></div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid #ffcb6b"><h3 style="font-size:1rem;color:#ffcb6b">4. Shift+Alt+&darr; で1行コピーして値を変更</h3></div>
+<div class="card" style="margin-bottom:.6rem;border-left:3px solid #ff5370"><h3 style="font-size:1rem;color:#ff5370">5. Cmd+L + Cmd+/ で3行をコメントアウト</h3></div>
+<div class="card" style="border-left:3px solid #f78c6c"><h3 style="font-size:1rem;color:#f78c6c">6. F12 で関数定義に飛んで Ctrl+- で戻る</h3></div>
+</div></div>
+
+<!-- Slide 27: Summary -->
+<div class="slide"><h2>まとめ</h2>
+<div style="max-width:750px;width:100%">
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #00d2ff"><h3 style="color:#00d2ff">必須12ショートカット</h3><p style="font-size:.9rem">Command Palette, Quick Open, 検索, Cmd+D, コメント, 行移動, サイドバー, ターミナル, 行削除, 行コピー, 行選択, 括弧ジャンプ。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #7fdbca"><h3 style="color:#7fdbca">マルチカーソル = 生産性の鍵</h3><p style="font-size:.9rem">Cmd+D, Alt+Click, 列選択で複数箇所を同時編集。リネーム・テンプレート生成が爆速に。</p></div>
+<div class="card" style="margin-bottom:.8rem;border-left:3px solid #c792ea"><h3 style="color:#c792ea">1週間に3つずつ</h3><p style="font-size:.9rem">無理に全部覚えない。4週間で12個を体に染み込ませる。</p></div>
+<div class="card" style="border-left:3px solid #ffcb6b"><h3 style="color:#ffcb6b">Cmd+K Cmd+S でカスタマイズ</h3><p style="font-size:.9rem">自分に合わないキーバインドは変更可能。keybindings.json で管理。</p></div>
+</div></div>
+
+<!-- Slide 28: Next Session Preview -->
+<div class="slide"><h2>次回予告</h2>
+<div style="text-align:center;max-width:600px">
+<p class="label orange">SESSION 5</p>
+<h1 style="font-size:2rem;margin-bottom:1rem">マルチカーソル & 検索置換</h1>
+<p style="font-size:1.1rem;color:#888;margin-bottom:2rem">Cmd+Dの応用、正規表現検索、Find and Replace、<br>Rename Symbolで安全なリファクタリング。</p>
+<div class="card" style="text-align:left">
+<h3 style="font-size:1rem">予習タスク</h3>
+<ul class="feature-list">
+<li>今日学んだ12ショートカットを復習（3つ選んで集中練習）</li>
+<li><code>Cmd+H</code> でファイル内検索&置換を試す</li>
+</ul>
+</div>
+</div></div>
+
+<div class="progress"></div><div class="nav-hint">&larr; &rarr; / j k / Space</div>
+<script>const slides=document.querySelectorAll('.slide'),prog=document.querySelector('.progress');let cur=0,busy=false;function go(i){if(busy||i===cur)return;var next=Math.max(0,Math.min(i,slides.length-1));if(next===cur)return;busy=true;slides[cur].classList.remove('active');slides[next].style.animation='none';slides[next].offsetHeight;slides[next].style.animation='';slides[next].classList.add('active');cur=next;prog.textContent=(cur+1)+' / '+slides.length;setTimeout(function(){busy=false},350)}prog.textContent='1 / '+slides.length;document.addEventListener('keydown',function(e){if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;if(['ArrowRight','l','j','n',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1)}else if(['ArrowLeft','h','k'].indexOf(e.key)>=0){e.preventDefault();go(cur-1)}else if(e.key==='g')go(0);else if(e.key==='G')go(slides.length-1)});</script>
 <style>._ts-toolbar{position:fixed;bottom:1rem;left:1.5rem;display:flex;gap:.5rem;z-index:9999;font-family:-apple-system,BlinkMacSystemFont,sans-serif}._ts-btn{background:rgba(30,30,48,.85);color:#888;border:1px solid #333;padding:.4rem .8rem;border-radius:6px;font-size:.85rem;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);user-select:none}._ts-btn:hover{background:rgba(0,210,255,.15);color:#00d2ff;border-color:#00d2ff55}._ts-btn._ts-active{color:#00d2ff;border-color:#00d2ff55}._ts-jump{position:fixed;bottom:3.5rem;left:1.5rem;background:rgba(20,20,35,.95);border:1px solid #333;border-radius:10px;padding:.8rem;display:none;z-index:9999;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-height:60vh;overflow-y:auto}._ts-jump.show{display:block;animation:_tsFadeUp .2s ease-out}._ts-jump-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:.4rem;min-width:200px}._ts-jump-item{background:rgba(30,30,48,.9);color:#aaa;border:1px solid #2a2a4a;border-radius:6px;padding:.4rem;text-align:center;cursor:pointer;font-size:.85rem;transition:all .15s}._ts-jump-item:hover{background:rgba(0,210,255,.2);color:#fff;border-color:#00d2ff}._ts-jump-item._ts-current{background:rgba(0,210,255,.25);color:#00d2ff;border-color:#00d2ff;font-weight:bold}._ts-gallery-overlay{position:fixed;inset:0;background:rgba(5,5,15,.92);z-index:9998;display:none;overflow-y:auto;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}._ts-gallery-overlay.show{display:block;animation:_tsFadeIn .25s ease-out}._ts-gallery-header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem 2rem;background:rgba(5,5,15,.8);backdrop-filter:blur(8px);z-index:1}._ts-gallery-title{color:#00d2ff;font-size:1.2rem;font-weight:600}._ts-gallery-close{background:none;border:1px solid #333;color:#888;width:36px;height:36px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}._ts-gallery-close:hover{color:#ff5370;border-color:#ff5370}._ts-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;padding:1.2rem 2rem 2rem}._ts-gallery-card{background:rgba(26,26,46,.9);border:1px solid #2a2a4a;border-radius:10px;cursor:pointer;transition:all .2s;overflow:hidden;position:relative}._ts-gallery-card:hover{border-color:#00d2ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,210,255,.12)}._ts-gallery-card._ts-current-card{border-color:#00d2ff;box-shadow:0 0 12px rgba(0,210,255,.2)}._ts-gallery-num{position:absolute;top:.6rem;left:.8rem;background:rgba(0,210,255,.2);color:#00d2ff;font-size:.75rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;z-index:1}._ts-gallery-preview{height:160px;overflow:hidden;position:relative;background:#0f0f1a}._ts-gallery-preview-inner{transform:scale(0.28);transform-origin:top left;width:357%;height:357%;pointer-events:none;position:absolute;top:0;left:0}._ts-gallery-info{padding:.8rem 1rem}._ts-gallery-info h4{color:#e0e0e0;font-size:.9rem;margin:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}._ts-gallery-info p{color:#666;font-size:.75rem;margin:.2rem 0 0}@keyframes _tsFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@keyframes _tsFadeIn{from{opacity:0}to{opacity:1}}</style>
 <script>(function(){var _slides=document.querySelectorAll('.slide');if(_slides.length<2)return;function _tsCurIdx(){for(var i=0;i<_slides.length;i++){if(_slides[i].classList.contains('active'))return i}return 0}var oldHint=document.querySelector('.nav-hint');if(oldHint)oldHint.style.display='none';function _getTitle(el){var h=el.querySelector('h1,h2,h3,h4');return h?h.textContent.trim():''}var toolbar=document.createElement('div');toolbar.className='_ts-toolbar';toolbar.innerHTML='<button class="_ts-btn _ts-counter-btn">1 / '+_slides.length+'</button><button class="_ts-btn _ts-grid-btn" title="全体表示 (Gallery)">&#9638;</button>';document.body.appendChild(toolbar);var counterBtn=toolbar.querySelector('._ts-counter-btn');var gridBtn=toolbar.querySelector('._ts-grid-btn');var jumpEl=document.createElement('div');jumpEl.className='_ts-jump';var jumpGrid=document.createElement('div');jumpGrid.className='_ts-jump-grid';for(var i=0;i<_slides.length;i++){var item=document.createElement('div');item.className='_ts-jump-item';item.textContent=i+1;item.dataset.idx=i;item.addEventListener('click',function(){var idx=parseInt(this.dataset.idx);go(idx);closeJump();_tsUpdateUI()});jumpGrid.appendChild(item)}jumpEl.appendChild(jumpGrid);document.body.appendChild(jumpEl);var jumpOpen=false;function toggleJump(){jumpOpen=!jumpOpen;if(jumpOpen){jumpEl.classList.add('show');counterBtn.classList.add('_ts-active');highlightJumpCurrent()}else closeJump()}function closeJump(){jumpOpen=false;jumpEl.classList.remove('show');counterBtn.classList.remove('_ts-active')}function highlightJumpCurrent(){var c=_tsCurIdx();var items=jumpGrid.querySelectorAll('._ts-jump-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('_ts-current',i===c)}}counterBtn.addEventListener('click',function(e){e.stopPropagation();closeGallery();toggleJump()});var gallery=document.createElement('div');gallery.className='_ts-gallery-overlay';var galleryHTML='<div class="_ts-gallery-header"><span class="_ts-gallery-title">全スライド一覧</span><button class="_ts-gallery-close">&times;</button></div><div class="_ts-gallery-grid">';for(var i=0;i<_slides.length;i++){var title=_getTitle(_slides[i])||'Slide '+(i+1);galleryHTML+='<div class="_ts-gallery-card" data-idx="'+i+'"><span class="_ts-gallery-num">'+(i+1)+'</span><div class="_ts-gallery-preview"><div class="_ts-gallery-preview-inner" data-slide-idx="'+i+'"></div></div><div class="_ts-gallery-info"><h4>'+title+'</h4><p>'+(i+1)+' / '+_slides.length+'</p></div></div>'}galleryHTML+='</div>';gallery.innerHTML=galleryHTML;document.body.appendChild(gallery);var previews=gallery.querySelectorAll('._ts-gallery-preview-inner');for(var i=0;i<previews.length;i++){var idx=parseInt(previews[i].dataset.slideIdx);var clone=_slides[idx].cloneNode(true);clone.style.display='flex';clone.style.position='static';clone.style.animation='none';clone.classList.remove('out-left','out-right');clone.classList.add('active');previews[i].appendChild(clone)}var cards=gallery.querySelectorAll('._ts-gallery-card');for(var i=0;i<cards.length;i++){cards[i].addEventListener('click',function(){var idx=parseInt(this.dataset.idx);closeGallery();go(idx);_tsUpdateUI()})}var galleryOpen=false;function openGallery(){galleryOpen=true;_tsUpdateUI();gallery.classList.add('show');gridBtn.classList.add('_ts-active')}function closeGallery(){galleryOpen=false;gallery.classList.remove('show');gridBtn.classList.remove('_ts-active')}function highlightGalleryCard(){var c=_tsCurIdx();for(var i=0;i<cards.length;i++){cards[i].classList.toggle('_ts-current-card',i===c)}}gallery.querySelector('._ts-gallery-close').addEventListener('click',function(e){e.stopPropagation();closeGallery()});gridBtn.addEventListener('click',function(e){e.stopPropagation();closeJump();if(galleryOpen)closeGallery();else openGallery()});document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(galleryOpen){closeGallery();e.stopPropagation();e.preventDefault()}else if(jumpOpen){closeJump();e.stopPropagation();e.preventDefault()}}},true);document.addEventListener('click',function(e){if(jumpOpen&&!jumpEl.contains(e.target)&&!counterBtn.contains(e.target))closeJump()});function _tsUpdateUI(){var c=_tsCurIdx();counterBtn.textContent=(c+1)+' / '+_slides.length;if(jumpOpen)highlightJumpCurrent();if(galleryOpen)highlightGalleryCard()}var _lastIdx=_tsCurIdx();setInterval(function(){var c=_tsCurIdx();if(c!==_lastIdx){_lastIdx=c;_tsUpdateUI()}},200);_tsUpdateUI()})();</script>
+
 </body></html>
